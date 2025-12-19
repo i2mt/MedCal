@@ -1,0 +1,2490 @@
+/* ===============================
+   RESET & BASE STYLES
+   =============================== */
+:root {
+    /* Gradient Colors */
+    --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --gradient-secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    --gradient-success: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    --gradient-warning: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+    --gradient-danger: linear-gradient(135deg, #ff758c 0%, #ff7eb3 100%);
+    --gradient-dark: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+    
+    /* Solid Colors */
+    --primary: #667eea;
+    --primary-dark: #5a67d8;
+    --primary-light: rgba(102, 126, 234, 0.1);
+    --secondary: #f093fb;
+    --danger: #ff6b6b;
+    --warning: #ffa726;
+    --success: #4cd964;
+    --info: #5ac8fa;
+    
+    /* Light Mode */
+    --bg-primary: #f8fafc;
+    --bg-secondary: #f1f5f9;
+    --surface: #ffffff;
+    --surface-elevated: #f8fafc;
+    --text-primary: #1e293b;
+    --text-secondary: #64748b;
+    --text-tertiary: #94a3b8;
+    --border: #e2e8f0;
+    --border-light: #f1f5f9;
+    
+    /* Shadows */
+    --shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.15);
+    --shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.2);
+    --shadow-inset: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+    
+    /* Spacing */
+    --spacing-xs: 0.5rem;
+    --spacing-sm: 1rem;
+    --spacing-md: 1.5rem;
+    --spacing-lg: 2rem;
+    --spacing-xl: 3rem;
+    
+    /* Border Radius */
+    --radius-sm: 0.75rem;
+    --radius-md: 1rem;
+    --radius-lg: 1.25rem;
+    --radius-xl: 1.5rem;
+    
+    /* Transitions */
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ===============================
+   DARK MODE
+   =============================== */
+.dark-mode {
+    --primary: #818cf8;
+    --primary-dark: #6366f1;
+    --primary-light: rgba(129, 140, 248, 0.15);
+    --secondary: #c084fc;
+    --danger: #f87171;
+    --warning: #fbbf24;
+    --success: #34d399;
+    --info: #60a5fa;
+    
+    --bg-primary: #0f172a;
+    --bg-secondary: #1e293b;
+    --surface: #1e293b;
+    --surface-elevated: #2d3748;
+    
+    /* All text white/light in dark mode */
+    --text-primary: #f8fafc;
+    --text-secondary: #e2e8f0;
+    --text-tertiary: #94a3b8;
+    
+    --border: #475569;
+    --border-light: #4b5563;
+    
+    --shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.5);
+    --shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.6);
+    --shadow-inset: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* ===============================
+   FONT SETUP
+   =============================== */
+@font-face {
+    font-family: 'Mitra';
+    src: url('fonts/Mitra.eot');
+    src: url('fonts/Mitra.eot?#iefix') format('embedded-opentype'),
+         url('fonts/Mitra.woff2') format('woff2'),
+         url('fonts/Mitra.woff') format('woff'),
+         url('fonts/Mitra.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+* {
+    font-family: 'Mitra', Tahoma, Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+html {
+    font-size: 16px;
+    height: 100%;
+}
+
+body {
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    line-height: 1.6;
+    min-height: 100vh;
+    direction: rtl;
+    overflow-x: hidden;
+}
+
+/* ===============================
+   UTILITY CLASSES
+   =============================== */
+.text-latin {
+    direction: ltr;
+    font-family: 'Roboto', 'Segoe UI', Arial, sans-serif;
+    text-align: left;
+}
+
+.gradient {
+    background: var(--gradient-primary);
+}
+
+.gradient-text {
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Force white text in dark mode for all headers */
+.dark-mode .gradient-text,
+.dark-mode .selected-drug-name-compact,
+.dark-mode .converters-container h2,
+.dark-mode .drugs-container h2,
+.dark-mode .tools-container h2,
+.dark-mode .converter-header h3,
+.dark-mode .tool-header h3,
+.dark-mode .drug-library-title,
+.dark-mode .modal-header h3,
+.dark-mode .logo-text h1,
+.dark-mode .history-drug,
+.dark-mode .result-value-enhanced {
+    background: none !important;
+    -webkit-text-fill-color: var(--text-primary) !important;
+    color: var(--text-primary) !important;
+}
+
+/* ===============================
+   TEXT DIRECTION FIXES
+   =============================== */
+/* Volume preset buttons - ensure correct LTR display */
+.volume-preset-btn {
+    direction: ltr !important;
+    unicode-bidi: embed;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.volume-preset-btn .number {
+    font-weight: 700;
+    color: var(--primary);
+    order: 1; /* Number comes first */
+}
+
+.volume-preset-btn .unit-text {
+    font-size: 12px;
+    color: var(--text-tertiary);
+    order: 2; /* Unit comes after number */
+    margin-left: 2px; /* Small space between number and unit */
+}
+
+/* Active state */
+.volume-preset-btn.active .number,
+.volume-preset-btn.active .unit-text {
+    color: white !important;
+    font-weight: 700;
+}
+
+/* Ampoule info - fix mixed text display */
+.ampoule-info-enhanced {
+    direction: ltr !important;
+    unicode-bidi: embed;
+    text-align: center;
+    font-family: 'Roboto', 'Courier New', monospace;
+}
+
+/* Dose unit - fix mixed text */
+.dose-unit-enhanced {
+    direction: ltr !important;
+    unicode-bidi: embed;
+    font-family: 'Roboto', 'Segoe UI', Arial, sans-serif;
+}
+
+/* Result values - LTR for numbers */
+.result-value-enhanced {
+    direction: ltr !important;
+    unicode-bidi: embed;
+    font-family: 'Roboto Mono', monospace;
+    text-align: center;
+}
+
+/* Converter and tool results */
+.converter-result,
+.tool-result {
+    direction: ltr !important;
+    unicode-bidi: embed;
+    font-family: 'Roboto Mono', monospace;
+}
+
+/* Ampoule type buttons */
+.ampoule-type-btn {
+    direction: ltr !important;
+    unicode-bidi: embed;
+    font-family: 'Roboto', 'Courier New', monospace;
+}
+
+/* Weight input and other numeric inputs */
+.weight-toggle-enhanced .weight-input-section input,
+.volume-custom-input input,
+.dose-input-wrapper input {
+    direction: ltr !important;
+    unicode-bidi: embed;
+    font-family: 'Roboto', 'Segoe UI', Arial, sans-serif;
+}
+
+/* Persian text should remain RTL */
+.persian-text {
+    direction: rtl;
+    unicode-bidi: embed;
+    text-align: right;
+}
+
+/* Mixed content containers */
+.mixed-content {
+    unicode-bidi: plaintext;
+}
+
+/* ===============================
+   APP LAYOUT
+   =============================== */
+.app-container {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* Header */
+.app-header {
+    height: 60px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 var(--spacing-md);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: var(--shadow);
+}
+
+.header-content {
+    height: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.logo-section {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.logo {
+    width: 40px;
+    height: 40px;
+    background: var(--gradient-primary);
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.25rem;
+}
+
+.logo-text h1 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.logo-text p {
+    font-size: 0.75rem;
+    color: var(--text-tertiary);
+}
+
+.header-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.icon-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-md);
+    background: var(--surface-elevated);
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.icon-btn:hover {
+    background: var(--primary-light);
+    color: var(--primary);
+    border-color: var(--primary);
+    transform: translateY(-2px);
+}
+
+/* Main Content */
+.main-content {
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.tab-pane {
+    display: none;
+    height: 100%;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.tab-pane.active {
+    display: block;
+}
+
+/* Bottom Tabs */
+.tab-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-around;
+    padding: 8px 4px;
+    z-index: 1000;
+}
+
+.tab-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    background: transparent;
+    border: none;
+    color: var(--text-tertiary);
+    cursor: pointer;
+    transition: var(--transition);
+    max-width: 90px;
+    border-radius: 12px;
+}
+
+.tab-item:hover {
+    background: var(--primary-light);
+    color: var(--primary);
+}
+
+.tab-item.active {
+    color: white;
+    background: var(--gradient-primary);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+/* ===============================
+   CALCULATOR TAB
+   =============================== */
+.calculator-layout {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+}
+
+/* ===============================
+   DRUG SIDEBAR - DESKTOP
+   =============================== */
+.drug-sidebar {
+    flex: 0 0 320px;
+    background: var(--surface);
+    padding: var(--spacing-lg);
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid var(--border);
+}
+
+.drug-search-container {
+    position: relative;
+    margin-bottom: var(--spacing-md);
+}
+
+.drug-search-container input {
+    width: 100%;
+    padding: 0.75rem 2.5rem 0.75rem 0.75rem;
+    background: var(--surface);
+    border: 2px solid var(--border);
+    border-radius: var(--radius-md);
+    font-size: 0.9rem;
+    color: var(--text-primary);
+    transition: var(--transition);
+    direction: rtl;
+    text-align: right;
+}
+
+.drug-search-container input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.drug-search-container i {
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-tertiary);
+}
+
+.drug-scroll-container {
+    flex: 1;
+    overflow-y: auto;
+    padding: 5px;
+}
+
+.drug-grid-compact {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+}
+
+.drug-item-compact {
+    background: var(--surface-elevated);
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    padding: 15px 10px;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    min-height: 95px;
+    justify-content: center;
+}
+
+.drug-item-compact:hover {
+    border-color: var(--primary);
+    transform: translateY(-4px);
+    box-shadow: var(--shadow);
+}
+
+.drug-item-compact.selected {
+    background: var(--primary-light);
+    border-color: var(--primary);
+}
+
+.drug-icon-small {
+    width: 36px;
+    height: 36px;
+    background: var(--primary-light);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary);
+    font-size: 18px;
+    margin-bottom: 8px;
+}
+
+.drug-item-compact.selected .drug-icon-small {
+    background: var(--gradient-primary);
+    color: white;
+}
+
+.drug-name-compact {
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 4px;
+    color: var(--text-primary);
+    direction: rtl;
+    text-align: center;
+}
+
+.drug-name-english {
+    font-size: 11px;
+    color: var(--text-tertiary);
+    direction: ltr;
+    text-align: center;
+    font-family: 'Roboto', 'Segoe UI', Arial, sans-serif;
+}
+
+/* Manual entry button */
+#openManual {
+    width: 100%;
+    padding: 14px;
+    background: var(--gradient-secondary);
+    color: white;
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: var(--spacing-md);
+}
+
+#openManual:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(240, 147, 251, 0.4);
+}
+
+/* ===============================
+   CALCULATOR MAIN AREA
+   =============================== */
+.calculator-main {
+    flex: 1;
+    padding: var(--spacing-lg);
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+}
+
+/* Selected drug header */
+.selected-drug-compact {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md);
+    background: var(--surface-elevated);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border);
+}
+
+.selected-drug-icon-compact {
+    width: 60px;
+    height: 60px;
+    background: var(--gradient-primary);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 24px;
+    flex-shrink: 0;
+}
+
+.selected-drug-info-compact {
+    flex: 1;
+    min-width: 0;
+}
+
+.selected-drug-name-compact {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    direction: rtl;
+    text-align: right;
+}
+
+.selected-drug-desc-compact {
+    font-size: 13px;
+    color: var(--text-tertiary);
+    direction: rtl;
+    text-align: right;
+}
+
+/* ===============================
+   METHOD BUTTONS - SMALL & INLINE
+   =============================== */
+.method-selector-compact {
+    display: flex;
+    gap: 10px;
+    margin-bottom: var(--spacing-md);
+}
+
+.method-btn-compact {
+    flex: 1;
+    padding: 10px 12px;
+    background: var(--surface);
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-secondary) !important;
+    text-align: center;
+    min-height: 50px;
+    direction: rtl;
+}
+
+.method-btn-compact:hover {
+    border-color: var(--primary);
+    color: var(--primary) !important;
+    background: var(--primary-light);
+}
+
+.method-btn-compact.active {
+    background: var(--gradient-primary);
+    border-color: transparent;
+    color: white !important;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+.method-btn-compact.active i,
+.method-btn-compact.active span {
+    color: white !important;
+}
+
+.method-btn-compact i {
+    font-size: 16px;
+}
+
+.method-btn-compact span {
+    direction: rtl;
+    text-align: center;
+}
+
+/* Dark mode adjustments */
+.dark-mode .method-btn-compact {
+    background: var(--surface-elevated);
+    border-color: var(--border);
+    color: var(--text-secondary) !important;
+}
+
+.dark-mode .method-btn-compact:hover {
+    border-color: var(--primary);
+    color: var(--primary) !important;
+    background: var(--surface);
+}
+
+.dark-mode .method-btn-compact.active {
+    background: var(--gradient-primary);
+    border-color: transparent;
+    color: white !important;
+}
+
+/* ===============================
+   CALCULATOR CONTROLS - REDUCED VERTICAL SPACING
+   =============================== */
+.calculator-controls-grid {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 8px; /* Reduced from var(--spacing-md) */
+}
+
+.control-group {
+    background: var(--surface-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 12px; /* Reduced from var(--spacing-md) */
+    transition: var(--transition);
+}
+
+.control-group:hover {
+    border-color: var(--primary);
+}
+
+.control-group label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    margin-bottom: 8px; /* Reduced from var(--spacing-sm) */
+    color: var(--text-secondary);
+    direction: rtl;
+}
+
+.control-group label i {
+    color: var(--primary);
+}
+
+/* ===============================
+   VOLUME PRESET BUTTONS - SINGLE LINE (FIXED RTL/LTR)
+   =============================== */
+.volume-presets {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px; /* Reduced from 8px */
+    margin-bottom: 6px; /* Reduced from 8px */
+}
+
+.volume-preset-btn {
+    padding: 6px 10px; /* Reduced from 8px 12px */
+    background: var(--surface);
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: var(--transition);
+    font-size: 14px;
+    min-width: 60px;
+    text-align: center;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    color: var(--text-secondary);
+    height: 36px; /* Reduced from 40px */
+}
+
+.volume-preset-btn:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+.volume-preset-btn.active {
+    background: var(--gradient-primary);
+    border-color: transparent;
+    color: white !important;
+}
+
+.volume-custom-input {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px; /* Reduced from 10px */
+    background: var(--surface-elevated);
+    border-radius: 10px;
+    border: 2px solid transparent;
+    transition: var(--transition);
+    direction: ltr;
+    unicode-bidi: embed;
+}
+
+.volume-custom-input:focus-within {
+    border-color: var(--primary);
+}
+
+.volume-custom-input input {
+    flex: 1;
+    background: none;
+    border: none;
+    padding: 4px 8px; /* Reduced from 6px 10px */
+    font-size: 15px;
+    color: var(--text-primary);
+    text-align: center;
+    direction: ltr;
+    font-family: 'Roboto Mono', monospace;
+    unicode-bidi: embed;
+}
+
+.volume-custom-input input:focus {
+    outline: none;
+}
+
+/* ===============================
+   AMPOULE TYPE BUTTONS (for drugs like norepinephrine, TNG)
+   =============================== */
+.ampoule-type-buttons {
+    display: flex;
+    gap: 8px;
+    margin-top: 6px; /* Reduced from 10px */
+    flex-wrap: wrap;
+}
+
+.ampoule-type-btn {
+    flex: 1;
+    min-width: 80px;
+    padding: 8px 12px;
+    background: var(--surface);
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-secondary) !important;
+    text-align: center;
+}
+
+.ampoule-type-btn:hover {
+    border-color: var(--primary);
+    color: var(--primary) !important;
+    background: var(--primary-light);
+}
+
+.ampoule-type-btn.active {
+    background: var(--gradient-primary);
+    border-color: transparent;
+    color: white !important;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+/* Dark mode adjustments */
+.dark-mode .ampoule-type-btn {
+    background: var(--surface-elevated);
+    border-color: var(--border);
+    color: var(--text-secondary) !important;
+}
+
+.dark-mode .ampoule-type-btn:hover {
+    border-color: var(--primary);
+    color: var(--primary) !important;
+    background: var(--surface);
+}
+
+.dark-mode .ampoule-type-btn.active {
+    background: var(--gradient-primary);
+    border-color: transparent;
+    color: white !important;
+}
+
+/* ===============================
+   AMPOULE CONTROLS
+   =============================== */
+.ampoule-control-enhanced {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--surface);
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    padding: 8px; /* Reduced from 10px */
+    margin-bottom: 8px; /* Reduced from 10px */
+}
+
+.ampoule-btn-enhanced {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    border: none;
+    background: var(--surface-elevated);
+    color: var(--text-secondary);
+    font-size: 16px;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ampoule-btn-enhanced:hover {
+    background: var(--primary-light);
+    color: var(--primary);
+}
+
+.ampoule-count-enhanced {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--primary);
+    min-width: 50px;
+    text-align: center;
+}
+
+.ampoule-info-enhanced {
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 13px;
+    padding: 6px;
+    background: var(--surface-elevated);
+    border-radius: 8px;
+}
+
+/* ===============================
+   DESIRED DOSE INPUT - REDUCED VERTICAL SPACING
+   =============================== */
+.dose-input-enhanced {
+    position: relative;
+    margin-bottom: 8px; /* Reduced from var(--spacing-md) */
+}
+
+.dose-input-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.dose-input-wrapper input {
+    width: 100%;
+    padding: 12px 100px 12px 12px; /* Reduced from 14px 100px 14px 14px */
+    background: var(--surface-elevated);
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-primary);
+    text-align: center;
+    transition: var(--transition);
+}
+
+.dose-input-wrapper input:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+.dose-unit-enhanced {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: white;
+    font-weight: 600;
+    background: var(--gradient-primary);
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 13px;
+}
+
+/* ===============================
+   WEIGHT TOGGLE - FIXED: ONE LINE LAYOUT - REDUCED VERTICAL SPACING
+   =============================== */
+.weight-toggle-enhanced {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px; /* Reduced from 10px */
+    background: var(--surface-elevated);
+    border-radius: 12px;
+    border: 2px solid var(--border);
+    margin-top: 6px; /* Reduced from 10px */
+    gap: 8px; /* Reduced from 10px */
+    flex-wrap: nowrap;
+}
+
+/* Weight input on LEFT side */
+.weight-toggle-enhanced .weight-input-section {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    order: 1;
+    flex: 0 0 auto;
+}
+
+.weight-toggle-enhanced .weight-input-section input {
+    width: 70px;
+    padding: 8px 10px;
+    background: var(--surface);
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    font-size: 14px;
+    color: var(--text-primary);
+    text-align: center;
+    transition: var(--transition);
+}
+
+.weight-toggle-enhanced .weight-input-section input:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+.weight-toggle-enhanced .weight-input-section input:disabled {
+    background: var(--surface-elevated);
+    color: var(--text-tertiary);
+}
+
+.weight-toggle-enhanced .weight-unit {
+    color: var(--text-secondary);
+    font-size: 13px;
+    min-width: 35px;
+    direction: rtl;
+}
+
+/* Toggle and label on RIGHT side */
+.weight-toggle-enhanced .toggle-section {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    order: 2;
+    flex: 1;
+    justify-content: flex-end;
+}
+
+.weight-toggle-enhanced .toggle-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    user-select: none;
+    color: var(--text-primary);
+    font-size: 13px;
+    white-space: nowrap;
+    direction: rtl;
+}
+
+.toggle-switch-enhanced {
+    position: relative;
+    width: 48px;
+    height: 24px;
+    flex-shrink: 0;
+}
+
+.toggle-switch-enhanced input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle-slider-enhanced {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    background: var(--border-light);
+    border-radius: 34px;
+    transition: var(--transition);
+}
+
+.toggle-slider-enhanced:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    right: 3px;
+    bottom: 3px;
+    background: white;
+    border-radius: 50%;
+    transition: var(--transition);
+}
+
+.toggle-switch-enhanced input:checked + .toggle-slider-enhanced {
+    background: var(--primary);
+}
+
+.toggle-switch-enhanced input:checked + .toggle-slider-enhanced:before {
+    transform: translateX(-24px);
+}
+
+/* ===============================
+   CALCULATE BUTTON
+   =============================== */
+.calculate-btn-enhanced {
+    width: 100%;
+    padding: 16px;
+    background: var(--gradient-primary);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin: 12px 0; /* Reduced from var(--spacing-lg) 0 */
+    direction: rtl;
+}
+
+.calculate-btn-enhanced:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+}
+
+/* ===============================
+   RESULTS SECTION
+   =============================== */
+.results-section-enhanced {
+    background: var(--surface-elevated);
+    border-radius: 16px;
+    padding: var(--spacing-lg);
+    border: 2px solid var(--primary);
+    display: none;
+    box-shadow: var(--shadow);
+}
+
+.results-section-enhanced.show {
+    display: block;
+}
+
+.results-grid-enhanced {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-md);
+}
+
+.result-item-enhanced {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: var(--spacing-md);
+    text-align: center;
+    transition: var(--transition);
+}
+
+.result-item-enhanced.highlight {
+    background: var(--gradient-primary);
+    border-color: transparent;
+    color: white;
+}
+
+.result-label-enhanced {
+    font-size: 13px;
+    color: var(--text-tertiary);
+    margin-bottom: 8px;
+    direction: rtl;
+    text-align: center;
+}
+
+.result-value-enhanced {
+    font-size: 24px;
+    font-weight: 800;
+    margin-bottom: 6px;
+}
+
+.result-item-enhanced.highlight .result-value-enhanced {
+    color: white;
+}
+
+.result-unit-enhanced {
+    font-size: 12px;
+    color: var(--text-tertiary);
+    direction: ltr;
+    text-align: center;
+}
+
+/* ===============================
+   OTHER SECTIONS (Guide, Warnings, Compatibility)
+   =============================== */
+.guide-section,
+.warnings-section,
+.compatibility-section {
+    background: var(--surface-elevated);
+    border-radius: 16px;
+    padding: var(--spacing-lg);
+    margin-top: var(--spacing-lg);
+    border: 1px solid var(--border);
+    display: none;
+}
+
+.guide-header,
+.warnings-header,
+.compatibility-header {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    color: var(--primary);
+    margin-bottom: var(--spacing-lg);
+    font-size: 17px;
+    font-weight: 600;
+    direction: rtl;
+}
+
+.guide-steps {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.guide-step {
+    padding: 14px;
+    background: var(--surface);
+    border-radius: 10px;
+    border-right: 4px solid var(--primary);
+    direction: rtl;
+    text-align: right;
+}
+
+.step-content {
+    font-size: 15px;
+    color: var(--text-primary);
+}
+
+.warnings-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+.warning-item {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing-sm);
+    padding: 10px;
+    background: rgba(255, 167, 38, 0.05);
+    border-radius: 8px;
+    border-right: 3px solid var(--warning);
+    direction: rtl;
+    text-align: right;
+}
+
+.warning-text {
+    font-size: 14px;
+    color: var(--text-secondary);
+}
+
+.compatibility-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-md);
+}
+
+.compatible-drugs,
+.incompatible-drugs {
+    padding: 14px;
+    border-radius: 10px;
+    direction: rtl;
+    text-align: right;
+}
+
+.compatible-drugs {
+    background: rgba(76, 217, 100, 0.05);
+    border: 1px solid var(--success);
+}
+
+.incompatible-drugs {
+    background: rgba(255, 107, 107, 0.05);
+    border: 1px solid var(--danger);
+}
+
+.compatibility-list {
+    font-size: 14px;
+    color: var(--text-secondary);
+}
+
+/* ===============================
+   OTHER TABS (Converters, Drugs, Tools) - COMPACT SPACING
+   =============================== */
+.converters-container,
+.drugs-container,
+.tools-container {
+    padding: 12px; /* Reduced from var(--spacing-lg) */
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.converters-container h2,
+.drugs-container h2,
+.tools-container h2 {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Reduced from var(--spacing-sm) */
+    margin-bottom: 12px; /* Reduced from var(--spacing-lg) */
+    font-size: 20px; /* Reduced from 24px */
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    direction: rtl;
+}
+
+.converter-grid,
+.tools-grid {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 12px; /* Reduced from var(--spacing-md) */
+}
+
+.drugs-library {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 12px; /* Reduced from var(--spacing-md) */
+}
+
+.converter-card,
+.tool-card,
+.drug-library-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    transition: var(--transition);
+    box-shadow: var(--shadow);
+}
+
+.converter-card:hover,
+.tool-card:hover,
+.drug-library-card:hover {
+    border-color: var(--primary);
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-xl);
+}
+
+.converter-header,
+.tool-header,
+.drug-library-header {
+    background: var(--surface-elevated);
+    padding: 12px; /* Reduced from var(--spacing-md) */
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Reduced from var(--spacing-sm) */
+    direction: rtl;
+}
+
+.converter-header h3,
+.tool-header h3,
+.drug-library-title {
+    font-size: 1rem; /* Reduced from 1.1rem */
+    font-weight: 600;
+    color: var(--primary);
+    direction: rtl;
+    text-align: right;
+}
+
+.converter-body,
+.tool-body,
+.drug-library-body {
+    padding: 12px; /* Reduced from var(--spacing-md) */
+}
+
+.input-group {
+    margin-bottom: 8px; /* Reduced from var(--spacing-sm) */
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 6px; /* Reduced from 0.5rem */
+    font-weight: 600;
+    color: var(--text-secondary);
+    direction: rtl;
+    text-align: right;
+    font-size: 14px; /* Added for consistency */
+}
+
+.input-group input,
+.input-group select {
+    width: 100%;
+    padding: 10px; /* Reduced from 0.75rem */
+    background: var(--surface-elevated);
+    border: 2px solid var(--border);
+    border-radius: var(--radius-md);
+    font-size: 0.95rem; /* Slightly reduced */
+    color: var(--text-primary);
+    transition: var(--transition);
+}
+
+.input-group input:focus,
+.input-group select:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+.converter-btn,
+.tool-btn,
+.drug-library-btn {
+    width: 100%;
+    padding: 12px; /* Reduced from 0.85rem */
+    background: var(--gradient-primary);
+    color: white;
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: 0.95rem; /* Slightly reduced */
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin: 12px 0; /* Reduced from var(--spacing-md) 0 */
+    direction: rtl;
+}
+
+.converter-btn:hover,
+.tool-btn:hover,
+.drug-library-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+.converter-result,
+.tool-result {
+    background: var(--surface-elevated);
+    border: 2px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 12px; /* Reduced from var(--spacing-md) */
+    text-align: center;
+    font-weight: 600;
+    color: var(--primary);
+    min-height: 50px; /* Reduced from 60px */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Drug search in library */
+.drugs-search {
+    position: relative;
+    margin-bottom: 12px; /* Reduced from var(--spacing-lg) */
+}
+
+.drugs-search input {
+    width: 100%;
+    padding: 12px 40px 12px 12px; /* Reduced padding */
+    background: var(--surface);
+    border: 2px solid var(--border);
+    border-radius: var(--radius-lg);
+    font-size: 0.95rem; /* Slightly reduced */
+    color: var(--text-primary);
+    transition: var(--transition);
+    direction: rtl;
+    text-align: right;
+}
+
+.drugs-search input:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+.drugs-search i {
+    position: absolute;
+    left: 12px; /* Reduced from 1rem */
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-tertiary);
+}
+
+/* ===============================
+   MODALS
+   =============================== */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-md);
+}
+
+.modal.active {
+    display: flex;
+}
+
+.modal-content {
+    background: var(--surface);
+    border-radius: var(--radius-xl);
+    width: 100%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow: hidden;
+    box-shadow: var(--shadow-xl);
+}
+
+.modal-header {
+    padding: var(--spacing-lg);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--surface-elevated);
+    direction: rtl;
+}
+
+.modal-header h3 {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    color: var(--primary);
+    font-size: 1.2rem;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 2rem;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.modal-close:hover {
+    color: var(--text-primary);
+}
+
+.modal-body {
+    padding: var(--spacing-lg);
+    overflow-y: auto;
+    max-height: 60vh;
+}
+
+/* Settings */
+.settings-group {
+    margin-bottom: var(--spacing-xl);
+}
+
+.settings-group h4 {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-md);
+    font-size: 1.1rem;
+    color: var(--primary);
+    direction: rtl;
+}
+
+.setting-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-sm) 0;
+    border-bottom: 1px solid var(--border);
+    direction: rtl;
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 30px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.switch .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    background: var(--border);
+    border-radius: 34px;
+    transition: var(--transition);
+}
+
+.switch .slider:before {
+    position: absolute;
+    content: "";
+    height: 22px;
+    width: 22px;
+    right: 4px;
+    bottom: 4px;
+    background: white;
+    border-radius: 50%;
+    transition: var(--transition);
+}
+
+.switch input:checked + .slider {
+    background: var(--primary);
+}
+
+.switch input:checked + .slider:before {
+    transform: translateX(-30px);
+}
+
+.setting-btn {
+    width: 100%;
+    padding: 1rem;
+    background: var(--surface-elevated);
+    border: 2px solid var(--border);
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    font-weight: 600;
+    margin-top: var(--spacing-sm);
+    direction: rtl;
+}
+
+.setting-btn:hover {
+    background: var(--primary-light);
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+/* ===============================
+   TOAST
+   =============================== */
+.toast {
+    position: fixed;
+    bottom: 80px;
+    right: 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-md);
+    box-shadow: var(--shadow-lg);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    z-index: 1000;
+    max-width: 400px;
+    direction: rtl;
+    text-align: right;
+}
+
+.toast-icon {
+    font-size: 1.5rem;
+}
+
+.toast-content {
+    flex: 1;
+}
+
+.toast-title {
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+}
+
+.toast-message {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+.toast-close {
+    background: none;
+    border: none;
+    color: var(--text-tertiary);
+    cursor: pointer;
+    font-size: 1.25rem;
+}
+
+/* ===============================
+   HIDE UNNECESSARY ELEMENTS
+   =============================== */
+.quick-actions-enhanced,
+.quick-actions,
+.action-btn-enhanced,
+.action-btn,
+#saveCalculation,
+#shareCalculation,
+#resetCalculator,
+#manualResetBtn,
+#closeManualBtn2,
+.floating-bar,
+.bottom-action-bar,
+.overlay-bar,
+.float-bottom {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    height: 0 !important;
+    width: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    position: absolute !important;
+    left: -9999px !important;
+}
+
+/* ===============================
+   MOBILE LAYOUT - OPTIMIZED FOR NO SCROLLING (UPDATED)
+   =============================== */
+@media (max-width: 768px) {
+    /* Use viewport units for better scaling */
+    html {
+        font-size: calc(12px + 0.5vw);
+    }
+    
+    body {
+        height: 100vh;
+        overflow: hidden;
+    }
+    
+    .app-container {
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+    
+    /* Header - fixed and tighter */
+    .app-header {
+        height: 45px;
+        padding: 0 10px;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+        background: var(--surface);
+        border-bottom: 1px solid var(--border);
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    
+    .logo {
+        width: 28px;
+        height: 28px;
+        font-size: 11px;
+    }
+    
+    .logo-text h1 {
+        font-size: 11px;
+        margin: 0;
+        direction: rtl;
+    }
+    
+    .logo-text p {
+        display: none;
+    }
+    
+    .icon-btn {
+        width: 26px;
+        height: 26px;
+        font-size: 11px;
+        border-radius: 6px;
+    }
+    
+    /* Main content - fixed heights with viewport units */
+    .main-content {
+        flex: 1;
+        overflow: hidden;
+        margin-top: 45px;
+        margin-bottom: 45px;
+        height: calc(100vh - 90px);
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    /* Tabs - tighter */
+    .tab-bar {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 45px;
+        padding: 3px 2px;
+        background: var(--surface);
+        border-top: 1px solid var(--border);
+        z-index: 1000;
+    }
+    
+    .tab-item {
+        padding: 2px 0;
+        gap: 1px;
+        border-radius: 8px;
+    }
+    
+    .tab-item i {
+        font-size: 14px;
+    }
+    
+    .tab-item span {
+        font-size: 8px;
+        direction: rtl;
+    }
+    
+    /* ===============================
+       MOBILE DRUG SIDEBAR - SEARCH BAR REMOVED, ONLY DRUG LIST
+       =============================== */
+    .drug-sidebar {
+        flex: 0 0 78px !important; /* Reduced height since no search bar */
+        height: 78px !important;
+        min-height: 78px !important;
+        max-height: 78px !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        background: var(--surface) !important;
+        border-bottom: 1px solid var(--border) !important;
+        position: relative;
+        overflow: hidden;
+        display: flex !important;
+        flex-direction: column !important;
+    }
+    
+    /* HIDE SEARCH BAR ON MOBILE */
+    .drug-search-container {
+        display: none !important;
+        visibility: hidden !important;
+        height: 0 !important;
+        width: 0 !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+    
+    /* Drug scroll container - FULL HEIGHT (no search bar taking space) */
+    .drug-scroll-container {
+        position: relative !important;
+        height: 100% !important; /* Take full height */
+        padding: 6px 4px !important; /* Tight padding */
+        margin: 0 !important;
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
+        -webkit-overflow-scrolling: touch !important;
+        background: var(--surface) !important;
+        z-index: 1 !important;
+        flex: 1;
+    }
+    
+    /* Drug grid - horizontal scroll */
+    .drug-grid-compact {
+        display: flex !important;
+        flex-direction: row !important;
+        gap: 5px !important;
+        padding: 0 2px !important;
+        height: 100% !important;
+        align-items: center !important;
+        flex-wrap: nowrap !important;
+        min-width: min-content !important;
+    }
+    
+    /* Drug items - compact size */
+    .drug-item-compact {
+        flex: 0 0 70px !important;
+        width: 70px !important;
+        height: 66px !important;
+        padding: 6px 3px !important;
+        margin: 0 !important;
+        border-radius: 6px !important;
+        min-height: auto !important;
+        border: 1.5px solid var(--border) !important;
+    }
+    
+    .drug-icon-small {
+        width: 22px !important;
+        height: 22px !important;
+        font-size: 11px !important;
+        margin-bottom: 4px !important;
+        border-radius: 6px !important;
+    }
+    
+    .drug-name-compact {
+        font-size: 9px !important;
+        line-height: 1.1 !important;
+        margin-bottom: 2px !important;
+        color: var(--text-primary) !important;
+        direction: rtl !important;
+        text-align: center !important;
+    }
+    
+    .drug-name-english {
+        font-size: 7px !important;
+        line-height: 1 !important;
+        direction: ltr !important;
+        text-align: center !important;
+    }
+    
+    /* Manual calculation button for mobile */
+    #openManualMobile {
+        flex: 0 0 70px !important;
+        width: 70px !important;
+        height: 66px !important;
+        padding: 6px 3px !important;
+        background: var(--gradient-secondary) !important;
+        color: white !important;
+        border: none !important;
+        border-radius: 6px !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 2px !important;
+        font-size: 8px !important;
+        font-weight: 700 !important;
+        cursor: pointer !important;
+        order: 9999 !important;
+        direction: rtl !important;
+    }
+    
+    #openManualMobile i {
+        font-size: 12px !important;
+        color: white !important;
+        margin-bottom: 2px !important;
+    }
+    
+    #openManualMobile span {
+        font-size: 7px !important;
+        text-align: center;
+        line-height: 1;
+        color: white !important;
+    }
+    
+    /* Hide desktop manual button */
+    #openManual {
+        display: none !important;
+    }
+    
+    /* Calculator main area - minimal gaps */
+    .calculator-main {
+        flex: 1;
+        padding: 8px;
+        gap: 6px;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        background: var(--bg-primary);
+        display: flex;
+        flex-direction: column;
+        max-height: calc(100vh - 45px - 78px - 45px); /* header, drug bar (no search), tab bar */
+    }
+    
+    /* Selected drug header - tighter */
+    .selected-drug-compact {
+        padding: 8px;
+        margin: 0 0 4px 0;
+        gap: 6px;
+        flex-shrink: 0;
+    }
+    
+    .selected-drug-icon-compact {
+        width: 36px;
+        height: 36px;
+        font-size: 14px;
+    }
+    
+    .selected-drug-name-compact {
+        font-size: 13px;
+        direction: rtl;
+        text-align: right;
+    }
+    
+    .selected-drug-desc-compact {
+        font-size: 9px;
+        direction: rtl;
+        text-align: right;
+    }
+    
+    /* Calculator controls - tighter grid with reduced vertical spacing */
+    .calculator-controls-grid {
+        grid-template-columns: 1fr;
+        gap: 6px; /* Reduced from 8px */
+        flex-shrink: 0;
+    }
+    
+    .control-group {
+        padding: 8px; /* Reduced from 10px */
+        border-radius: 10px; /* Reduced from 12px */
+        margin-bottom: 0;
+    }
+    
+    .control-group label {
+        margin-bottom: 6px !important; /* Reduced from 8px */
+        font-size: 12px !important;
+    }
+    
+    /* Method buttons - tighter */
+    .method-selector-compact {
+        gap: 6px;
+        margin-bottom: 6px;
+    }
+    
+    .method-btn-compact {
+        padding: 6px 4px !important;
+        font-size: 10px !important;
+        min-height: 36px !important; /* Reduced from 40px */
+        gap: 4px !important;
+        border-radius: 6px;
+        direction: rtl;
+    }
+    
+    .method-btn-compact i {
+        font-size: 12px !important;
+    }
+    
+    .method-btn-compact span {
+        font-size: 9px !important;
+    }
+    
+    /* Ampoule type buttons - tighter */
+    .ampoule-type-buttons {
+        gap: 5px;
+        margin-top: 4px; /* Reduced from 6px */
+    }
+    
+    .ampoule-type-btn {
+        min-width: 65px;
+        padding: 5px 6px;
+        font-size: 10px;
+        gap: 3px;
+        border-radius: 6px;
+    }
+    
+    /* Volume presets - single line and tighter */
+    .volume-presets {
+        gap: 4px; /* Reduced from 5px */
+        margin-bottom: 4px; /* Reduced from 6px */
+    }
+    
+    .volume-preset-btn {
+        min-width: 50px;
+        padding: 4px 3px; /* Reduced from 6px 4px */
+        font-size: 9px; /* Reduced from 10px */
+        height: 32px; /* Reduced from 36px */
+        border-radius: 6px;
+    }
+    
+    /* Ampoule controls - tighter */
+    .ampoule-control-enhanced {
+        padding: 5px; /* Reduced from 6px */
+        margin-bottom: 4px;
+        border-radius: 8px; /* Reduced from 10px */
+    }
+    
+    .ampoule-btn-enhanced {
+        width: 28px; /* Reduced from 30px */
+        height: 28px; /* Reduced from 30px */
+        font-size: 11px;
+        border-radius: 6px;
+    }
+    
+    .ampoule-count-enhanced {
+        font-size: 16px;
+        min-width: 30px; /* Reduced from 35px */
+    }
+    
+    /* Desired dose input - tighter */
+    .dose-input-enhanced {
+        margin-bottom: 6px !important; /* Reduced from 8px */
+    }
+    
+    .dose-input-wrapper input {
+        padding: 10px 60px 10px 10px !important;
+        font-size: 15px !important;
+        height: 40px !important;
+        border-radius: 8px;
+    }
+    
+    .dose-unit-enhanced {
+        right: 8px !important;
+        padding: 4px 6px !important;
+        font-size: 9px !important;
+        max-width: 55px !important;
+        border-radius: 4px;
+    }
+    
+    /* Weight toggle - even tighter */
+    .weight-toggle-enhanced {
+        padding: 5px !important; /* Reduced from 6px */
+        gap: 5px !important; /* Reduced from 6px */
+        margin-top: 4px; /* Reduced from 6px */
+        border-radius: 8px; /* Reduced from 10px */
+    }
+    
+    .weight-toggle-enhanced .weight-input-section input {
+        width: 50px !important; /* Reduced from 55px */
+        padding: 4px !important; /* Reduced from 5px */
+        font-size: 11px !important;
+        border-radius: 6px;
+    }
+    
+    .toggle-switch-enhanced {
+        width: 38px !important;
+        height: 20px !important;
+    }
+    
+    .toggle-slider-enhanced:before {
+        width: 14px !important;
+        height: 14px !important;
+        right: 3px !important;
+        bottom: 3px !important;
+    }
+    
+    .toggle-switch-enhanced input:checked + .toggle-slider-enhanced:before {
+        transform: translateX(-16px) !important;
+    }
+    
+    .weight-toggle-enhanced .toggle-label {
+        font-size: 10px !important;
+        gap: 4px !important;
+        direction: rtl;
+    }
+    
+    /* Calculate button - tighter */
+    .calculate-btn-enhanced {
+        padding: 10px; /* Reduced from 12px */
+        font-size: 14px;
+        margin: 6px 0;
+        border-radius: 10px;
+        direction: rtl;
+    }
+    
+    /* Results section - tighter */
+    .results-section-enhanced {
+        padding: 8px; /* Reduced from 10px */
+        margin-top: 6px;
+        border-radius: 10px; /* Reduced from 12px */
+    }
+    
+    .results-grid-enhanced {
+        grid-template-columns: 1fr;
+        gap: 5px; /* Reduced from 6px */
+    }
+    
+    .result-item-enhanced {
+        padding: 8px; /* Reduced from 10px */
+        border-radius: 8px; /* Reduced from 10px */
+    }
+    
+    .result-value-enhanced {
+        font-size: 16px; /* Reduced from 18px */
+    }
+    
+    /* ===============================
+       OTHER TABS - MOBILE COMPACT STYLES
+       =============================== */
+    #convertersTab,
+    #drugsTab,
+    #toolsTab {
+        padding: 8px !important;
+        overflow-y: auto;
+    }
+    
+    .converters-container,
+    .drugs-container,
+    .tools-container {
+        padding: 8px !important; /* Even tighter on mobile */
+    }
+    
+    .converters-container h2,
+    .drugs-container h2,
+    .tools-container h2 {
+        font-size: 16px !important;
+        margin-bottom: 8px !important;
+        direction: rtl;
+        gap: 8px !important;
+    }
+    
+    .converter-grid,
+    .tools-grid,
+    .drugs-library {
+        grid-template-columns: 1fr !important;
+        gap: 8px !important;
+    }
+    
+    .converter-card,
+    .tool-card,
+    .drug-library-card {
+        border-radius: 10px !important; /* Reduced from var(--radius-lg) */
+    }
+    
+    .converter-header,
+    .tool-header,
+    .drug-library-header {
+        padding: 10px !important; /* Reduced from 12px */
+        gap: 8px !important;
+    }
+    
+    .converter-header h3,
+    .tool-header h3,
+    .drug-library-title {
+        font-size: 14px !important; /* Reduced from 1rem */
+    }
+    
+    .converter-body,
+    .tool-body,
+    .drug-library-body {
+        padding: 10px !important; /* Reduced from 12px */
+    }
+    
+    .input-group {
+        margin-bottom: 6px !important; /* Reduced from 8px */
+    }
+    
+    .input-group label {
+        font-size: 12px !important; /* Smaller on mobile */
+        margin-bottom: 4px !important; /* Reduced from 6px */
+    }
+    
+    .input-group input,
+    .input-group select {
+        padding: 8px !important; /* Reduced from 10px */
+        font-size: 13px !important; /* Smaller on mobile */
+    }
+    
+    .converter-btn,
+    .tool-btn,
+    .drug-library-btn {
+        padding: 10px !important; /* Reduced from 12px */
+        font-size: 13px !important; /* Smaller on mobile */
+        margin: 8px 0 !important; /* Reduced from 12px 0 */
+    }
+    
+    .converter-result,
+    .tool-result {
+        padding: 10px !important; /* Reduced from 12px */
+        min-height: 45px !important; /* Reduced from 50px */
+        font-size: 13px !important; /* Smaller on mobile */
+    }
+    
+    /* Drug search in library - mobile compact */
+    .drugs-search {
+        margin-bottom: 8px !important; /* Reduced from 12px */
+    }
+    
+    .drugs-search input {
+        padding: 10px 36px 10px 10px !important; /* Reduced padding */
+        font-size: 13px !important; /* Smaller on mobile */
+    }
+    
+    .drugs-search i {
+        left: 10px !important; /* Reduced from 12px */
+        font-size: 13px !important;
+    }
+    
+    /* Modals - tighter */
+    .modal {
+        padding: 8px;
+    }
+    
+    .modal-content {
+        max-height: 85vh;
+    }
+    
+    /* Hide guide/warnings/compatibility by default to save space */
+    .guide-section,
+    .warnings-section,
+    .compatibility-section {
+        margin-top: 8px;
+        padding: 8px; /* Reduced from 10px */
+        border-radius: 10px; /* Reduced from 12px */
+    }
+    
+    .guide-section.show,
+    .warnings-section.show,
+    .compatibility-section.show {
+        margin-top: 6px;
+    }
+}
+
+/* ===============================
+   EXTRA SMALL PHONES (iPhone SE, etc.)
+   =============================== */
+@media (max-width: 360px) {
+    html {
+        font-size: calc(11px + 0.5vw);
+    }
+    
+    .app-header {
+        height: 40px;
+        padding: 0 8px;
+    }
+    
+    .main-content {
+        margin-top: 40px;
+        margin-bottom: 40px;
+        height: calc(100vh - 80px);
+    }
+    
+    .drug-sidebar {
+        flex: 0 0 72px !important; /* Reduced from 78px */
+        height: 72px !important;
+        min-height: 72px !important;
+        max-height: 72px !important;
+    }
+    
+    .drug-scroll-container {
+        padding: 5px 3px !important;
+    }
+    
+    .drug-item-compact {
+        flex: 0 0 65px !important;
+        width: 65px !important;
+        height: 62px !important;
+    }
+    
+    #openManualMobile {
+        flex: 0 0 65px !important;
+        width: 65px !important;
+        height: 62px !important;
+    }
+    
+    .calculator-main {
+        padding: 6px;
+        gap: 4px;
+        max-height: calc(100vh - 40px - 72px - 40px);
+    }
+    
+    /* Even tighter spacing for other tabs on very small phones */
+    .converters-container,
+    .drugs-container,
+    .tools-container {
+        padding: 6px !important;
+    }
+    
+    .converters-container h2,
+    .drugs-container h2,
+    .tools-container h2 {
+        font-size: 14px !important;
+        margin-bottom: 6px !important;
+    }
+    
+    .converter-grid,
+    .tools-grid,
+    .drugs-library {
+        gap: 6px !important;
+    }
+}
+
+/* ===============================
+   MEDIUM PHONES & TABLETS
+   =============================== */
+@media (min-width: 361px) and (max-width: 768px) {
+    html {
+        font-size: calc(13px + 0.5vw);
+    }
+    
+    /* Slightly larger elements for medium phones */
+    .drug-sidebar {
+        flex: 0 0 85px !important; /* Slightly taller on medium phones */
+        height: 85px !important;
+        min-height: 85px !important;
+        max-height: 85px !important;
+    }
+    
+    .drug-item-compact {
+        flex: 0 0 75px !important;
+        width: 75px !important;
+        height: 72px !important;
+    }
+    
+    #openManualMobile {
+        flex: 0 0 75px !important;
+        width: 75px !important;
+        height: 72px !important;
+    }
+}
+
+/* ===============================
+   DESKTOP LAYOUT
+   =============================== */
+@media (min-width: 769px) {
+    .calculator-layout {
+        flex-direction: row;
+    }
+    
+    .calculator-main {
+        margin-left: 20px;
+    }
+    
+    .calculator-controls-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .results-grid-enhanced {
+        grid-template-columns: repeat(4, 1fr);
+    }
+    
+    .converter-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--spacing-md); /* Restore original gap */
+    }
+    
+    .tools-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--spacing-md); /* Restore original gap */
+    }
+    
+    .drugs-library {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--spacing-md); /* Restore original gap */
+    }
+    
+    /* Restore original desktop padding for other tabs */
+    .converters-container,
+    .drugs-container,
+    .tools-container {
+        padding: var(--spacing-lg);
+    }
+    
+    .converters-container h2,
+    .drugs-container h2,
+    .tools-container h2 {
+        font-size: 24px;
+        margin-bottom: var(--spacing-lg);
+        gap: var(--spacing-sm);
+    }
+    
+    .converter-header,
+    .tool-header,
+    .drug-library-header {
+        padding: var(--spacing-md);
+        gap: var(--spacing-sm);
+    }
+    
+    .converter-header h3,
+    .tool-header h3,
+    .drug-library-title {
+        font-size: 1.1rem;
+    }
+    
+    .converter-body,
+    .tool-body,
+    .drug-library-body {
+        padding: var(--spacing-md);
+    }
+    
+    .input-group {
+        margin-bottom: var(--spacing-sm);
+    }
+    
+    .input-group label {
+        margin-bottom: 0.5rem;
+    }
+    
+    .input-group input,
+    .input-group select {
+        padding: 0.75rem;
+        font-size: 1rem;
+    }
+    
+    .converter-btn,
+    .tool-btn,
+    .drug-library-btn {
+        padding: 0.85rem;
+        margin: var(--spacing-md) 0;
+    }
+    
+    .converter-result,
+    .tool-result {
+        padding: var(--spacing-md);
+        min-height: 60px;
+    }
+    
+    .drugs-search {
+        margin-bottom: var(--spacing-lg);
+    }
+    
+    .drugs-search input {
+        padding: 1rem 3rem 1rem 1rem;
+        font-size: 1rem;
+    }
+    
+    /* Show search bar on desktop */
+    .drug-search-container {
+        display: block !important;
+    }
+    
+    /* Hide mobile manual button */
+    #openManualMobile {
+        display: none !important;
+    }
+    
+    /* Show desktop manual button */
+    #openManual {
+        display: flex !important;
+    }
+}
+
+@media (min-width: 1200px) {
+    .converter-grid,
+    .tools-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    
+    .drugs-library {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}

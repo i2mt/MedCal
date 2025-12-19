@@ -1,0 +1,72 @@
+{
+    "name": "MedCalc Pro",
+    "short_name": "MedCalc",
+    "description": "دستیار هوشمند محاسبات دارویی برای پرستاران و پزشکان",
+    "start_url": "./index.html",
+    "display": "standalone",
+    "orientation": "portrait",
+    "theme_color": "#2563eb",
+    "background_color": "#f8fafc",
+    "icons": [
+        {
+            "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💊</text></svg>",
+            "sizes": "any",
+            "type": "image/svg+xml",
+            "purpose": "any"
+        },
+        {
+            "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💊</text></svg>",
+            "sizes": "192x192",
+            "type": "image/svg+xml",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💊</text></svg>",
+            "sizes": "512x512",
+            "type": "image/svg+xml",
+            "purpose": "any maskable"
+        }
+    ],
+    "categories": ["medical", "health", "productivity", "education"],
+    "lang": "fa",
+    "dir": "rtl",
+    "scope": "./",
+    "screenshots": [
+        {
+            "src": "https://via.placeholder.com/540x720/2563eb/ffffff?text=MedCalc+Pro",
+            "sizes": "540x720",
+            "type": "image/png",
+            "form_factor": "narrow",
+            "label": "ماشین حساب دارویی"
+        },
+        {
+            "src": "https://via.placeholder.com/720x540/2563eb/ffffff?text=MedCalc+Pro",
+            "sizes": "720x540",
+            "type": "image/png",
+            "form_factor": "wide",
+            "label": "بانک اطلاعات دارویی"
+        }
+    ],
+    "shortcuts": [
+        {
+            "name": "محاسبه جدید",
+            "short_name": "محاسبه",
+            "description": "شروع یک محاسبه جدید",
+            "url": "./index.html?action=calculate",
+            "icons": [{
+                "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧮</text></svg>",
+                "sizes": "192x192"
+            }]
+        },
+        {
+            "name": "مبدل واحدها",
+            "short_name": "مبدل",
+            "description": "تبدیل واحدهای دارویی",
+            "url": "./index.html?action=converters",
+            "icons": [{
+                "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔄</text></svg>",
+                "sizes": "192x192"
+            }]
+        }
+    ]
+}
