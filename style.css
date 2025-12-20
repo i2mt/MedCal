@@ -142,6 +142,136 @@
 }
 
 /* ===============================
+   BIDIRECTIONAL TEXT FIXES
+   =============================== */
+.bidi-fix {
+    unicode-bidi: isolate;
+}
+
+.persian-text {
+    direction: rtl;
+    text-align: right;
+    unicode-bidi: isolate;
+}
+
+.latin-text {
+    direction: ltr;
+    text-align: left;
+    unicode-bidi: isolate;
+    font-family: 'Roboto', 'Segoe UI', Arial, sans-serif;
+}
+
+.mixed-text {
+    unicode-bidi: plaintext;
+    text-align: right;
+}
+
+/* For inline mixing */
+.persian-inline {
+    display: inline;
+    direction: rtl;
+    unicode-bidi: embed;
+}
+
+.latin-inline {
+    display: inline;
+    direction: ltr;
+    unicode-bidi: embed;
+    font-family: 'Roboto', 'Segoe UI', Arial, sans-serif;
+}
+
+/* For drug descriptions */
+.drug-description-mixed {
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: center;
+    gap: 8px;
+    unicode-bidi: isolate;
+}
+
+/* ===============================
+   SPECIFIC FIXES FOR DRUG DATABASE
+   =============================== */
+.drug-info-row {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: space-between;
+    align-items: center;
+    margin: 4px 0;
+    padding: 4px 8px;
+    background: var(--surface-elevated);
+    border-radius: 8px;
+}
+
+.drug-label {
+    font-weight: 600;
+    color: var(--primary);
+    min-width: 120px;
+    direction: rtl;
+    text-align: right;
+}
+
+.drug-value {
+    flex: 1;
+    direction: ltr;
+    text-align: left;
+    font-family: 'Roboto', 'Segoe UI', Arial, sans-serif;
+    padding-right: 12px;
+}
+
+/* Fix for numbers in RTL context */
+.rtl-number {
+    direction: ltr;
+    display: inline-block;
+    unicode-bidi: embed;
+}
+
+/* Fix for units */
+.unit-fix {
+    display: inline-flex;
+    direction: ltr;
+    unicode-bidi: embed;
+    gap: 2px;
+}
+
+/* ===============================
+   INPUT FIXES
+   =============================== */
+input.mixed-input {
+    unicode-bidi: plaintext;
+    text-align: right;
+}
+
+/* For Persian text with Latin numbers */
+.persian-with-numbers {
+    unicode-bidi: plaintext;
+    text-align: right;
+}
+
+/* For Latin text with Persian words */
+.latin-with-persian {
+    unicode-bidi: plaintext;
+    text-align: left;
+}
+
+/* Numeric input mode for mobile */
+input[inputmode="numeric"],
+input[inputmode="decimal"],
+input[type="number"] {
+    -moz-appearance: textfield;
+}
+
+input[inputmode="numeric"]::-webkit-outer-spin-button,
+input[inputmode="numeric"]::-webkit-inner-spin-button,
+input[inputmode="decimal"]::-webkit-outer-spin-button,
+input[inputmode="decimal"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* ===============================
    FONT SETUP
    =============================== */
 @font-face {

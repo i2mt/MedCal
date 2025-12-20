@@ -24,14 +24,188 @@ const AppState = {
 };
 
 // ============================================
-// UTILITY FUNCTIONS - PERSIAN NUMBER SUPPORT
+// BIDIRECTIONAL TEXT SUPPORT
+// ============================================
+const TextDirection = {
+    /**
+     * Wrap Latin text with LTR marks for correct display in RTL context
+     * @param {string} text - Text to wrap
+     * @returns {string} - Properly wrapped text
+     */
+    wrapLatin: function(text) {
+        if (!text) return '';
+        // Check if text contains Latin characters
+        const hasLatin = /[A-Za-z0-9]/.test(text);
+        if (hasLatin) {
+            return `\u202B${text}\u202C`;
+        }
+        return text;
+    },
+
+    /**
+     * Wrap Persian text with RTL marks for correct display in LTR context
+     * @param {string} text - Text to wrap
+     * @returns {string} - Properly wrapped text
+     */
+    wrapPersian: function(text) {
+        if (!text) return '';
+        // Check if text contains Persian/Arabic characters
+        const hasRTL = /[\u0600-\u06FF]/.test(text);
+        if (hasRTL) {
+            return `\u202B${text}\u202C`;
+        }
+        return text;
+    },
+
+    /**
+     * Fix mixed text display by properly wrapping segments
+     * @param {string} text - Mixed text
+     * @returns {string} - Correctly formatted text
+     */
+    fixMixedText: function(text) {
+        if (!text) return '';
+        
+        // Split text by language segments
+        const segments = this.splitByLanguage(text);
+        
+        return segments.map(segment => {
+            if (segment.isLatin) {
+                return this.wrapLatin(segment.text);
+            } else {
+                return segment.text;
+            }
+        }).join('');
+    },
+
+    /**
+     * Split text into language segments
+     * @param {string} text - Text to split
+     * @returns {Array} - Array of segments with language info
+     */
+    splitByLanguage: function(text) {
+        const segments = [];
+        let currentSegment = '';
+        let currentIsLatin = null;
+        
+        for (let i = 0; i < text.length; i++) {
+            const char = text[i];
+            const isLatin = /[A-Za-z0-9.,\/;:!?@#$%^&*()_+\-=\[\]{}'"\\|<>]/.test(char);
+            
+            // Check if language changed
+            if (currentIsLatin !== isLatin && currentSegment !== '') {
+                segments.push({
+                    text: currentSegment,
+                    isLatin: currentIsLatin
+                });
+                currentSegment = '';
+            }
+            
+            currentSegment += char;
+            currentIsLatin = isLatin;
+        }
+        
+        // Add last segment
+        if (currentSegment !== '') {
+            segments.push({
+                text: currentSegment,
+                isLatin: currentIsLatin
+            });
+        }
+        
+        return segments;
+    },
+
+    /**
+     * Format drug info with proper text direction
+     * @param {string} persian - Persian text
+     * @param {string} latin - Latin text
+     * @returns {string} - Formatted string
+     */
+    formatDrugInfo: function(persian, latin) {
+        if (!latin) return persian;
+        if (!persian) return this.wrapLatin(latin);
+        
+        // Persian text should come first in RTL context
+        // Use non-breaking space (‌) and directional marks
+        return `${persian}\u200F \u200E${this.wrapLatin(latin)}\u200F`;
+    },
+
+    /**
+     * Create a bilingual label
+     * @param {string} persianLabel - Persian label
+     * @param {string} latinValue - Latin value
+     * @returns {string} - Formatted label
+     */
+    createBilingualLabel: function(persianLabel, latinValue) {
+        // For RTL: Persian label + colon + Latin value
+        return `${persianLabel}:\u200F \u200E${this.wrapLatin(latinValue)}`;
+    },
+
+    /**
+     * Apply bidirectional fixes to all elements on page
+     */
+    applyBidiFixes: function() {
+        console.log('Applying bidirectional text fixes...');
+        
+        // Fix all elements with mixed content
+        document.querySelectorAll('.text-mixed, .text-latin, .drug-name-english').forEach(el => {
+            el.style.unicodeBidi = 'isolate';
+            el.style.direction = 'ltr';
+            el.classList.add('latin-text');
+        });
+        
+        // Fix Persian text elements
+        document.querySelectorAll('.persian-text, .drug-name-compact, .selected-drug-name-compact').forEach(el => {
+            el.style.unicodeBidi = 'isolate';
+            el.style.direction = 'rtl';
+            el.classList.add('persian-text');
+        });
+        
+        // Fix input fields
+        document.querySelectorAll('input[type="number"], input[type="text"]').forEach(input => {
+            input.style.textAlign = 'right';
+            input.style.unicodeBidi = 'plaintext';
+        });
+        
+        // Apply to drug descriptions
+        document.querySelectorAll('.selected-drug-desc-compact').forEach(el => {
+            if (el.textContent.includes('-')) {
+                const parts = el.textContent.split(' - ');
+                if (parts.length === 2) {
+                    el.innerHTML = `
+                        <span class="persian-inline">${parts[0]}</span>
+                        <span class="text-mixed"> - </span>
+                        <span class="latin-inline">${parts[1]}</span>
+                    `;
+                }
+            }
+        });
+        
+        console.log('Bidirectional text fixes applied');
+    }
+};
+
+// ============================================
+// UTILITY FUNCTIONS - ENHANCED PERSIAN NUMBER SUPPORT
 // ============================================
 const PersianNumbers = {
     // Persian to Latin mapping
     persianToLatin: {
+        // Persian-Indic digits
         '۰': '0', '۱': '1', '۲': '2', '۳': '3', '۴': '4',
         '۵': '5', '۶': '6', '۷': '7', '۸': '8', '۹': '9',
-        '٫': '.', '٬': ','
+
+        // Arabic-Indic digits (some keyboards output these)
+        '٠': '0', '١': '1', '٢': '2', '٣': '3', '٤': '4',
+        '٥': '5', '٦': '6', '٧': '7', '٨': '8', '٩': '9',
+
+        // Separators
+        '٫': '.',     // Arabic decimal separator
+        '٬': ',',     // Arabic thousands separator
+        '،': ',',     // Arabic comma
+
+        // Minus variants
+        '−': '-', '–': '-', '—': '-'
     },
     
     // Latin to Persian mapping
@@ -57,68 +231,289 @@ const PersianNumbers = {
         ).join('');
     },
 
-    // Parse a number that might be in Persian format
+    // Parse a number that might be in Persian/Arabic or Latin format
     parseNumber: function(text) {
-        const latinText = this.toLatin(text.toString());
-        return parseFloat(latinText.replace(/,/g, ''));
+        if (!text || text.toString().trim() === '') {
+            return NaN;
+        }
+
+        let s = this.toLatin(text.toString()).trim();
+
+        // Remove whitespace
+        s = s.replace(/\s+/g, '');
+
+        // Handle comma/decimal ambiguity:
+        // - If there's a dot, treat commas as thousands separators.
+        // - If there's no dot but there is a comma, treat comma as decimal ONLY if it doesn't look like thousands grouping.
+        if (s.includes('.')) {
+            s = s.replace(/,/g, '');
+        } else if (s.includes(',')) {
+            const thousandsPattern = /^-?\d{1,3}(,\d{3})+$/;
+            if (thousandsPattern.test(s)) {
+                s = s.replace(/,/g, '');
+            } else {
+                // Assume first comma is decimal separator
+                s = s.replace(',', '.');
+                s = s.replace(/,/g, '');
+            }
+        }
+
+        return parseFloat(s);
     },
 
-    // Format a number with Persian digits
+    // Format a number for display (ALWAYS LATIN)
     formatNumber: function(number, decimals = 2) {
-        if (isNaN(number) || number === null) return '۰';
+        if (!Number.isFinite(number)) {
+            return '0';
+        }
+
+        const d = parseInt(decimals, 10);
+        const usedDecimals = Number.isFinite(d) ? d : 2;
+
+        return number.toFixed(usedDecimals);
+    },
+
+    /**
+     * Format mixed text with proper number direction (numbers stay LATIN)
+     * @param {string} text - Mixed text
+     * @returns {string} - Formatted text
+     */
+    formatMixedText: function(text) {
+        if (!text) return '';
+
+        // Normalize any Persian/Arabic digits to Latin
+        let formatted = this.toLatin(text.toString());
+
+        // Use existing bidi fix for mixed content
+        formatted = TextDirection.fixMixedText(formatted);
+
+        // Wrap Latin text segments with LTR marks
+        formatted = formatted.replace(/([A-Za-z][A-Za-z0-9\s.,\/;:!?@#$%^&*()_+\-=\[\]{}'"\\|<>]+)/g,
+            match => `\u202B${match}\u202C`);
+
+        return formatted;
+    },
+
+    /**
+     * Parse mixed text for calculations
+     * @param {string} text - Mixed text
+     * @returns {number} - Parsed number
+     */
+    parseMixed: function(text) {
+        if (!text) return 0;
         
-        const formatted = number.toFixed(decimals);
-        return this.toPersian(formatted);
+        // First convert Persian numbers to Latin
+        let latinText = this.toLatin(text.toString());
+        
+        // Remove non-numeric characters except decimal point and minus
+        latinText = latinText.replace(/[^\d.\-]/g, '');
+        
+        return parseFloat(latinText) || 0;
+    },
+
+    /**
+     * Create a bilingual display string
+     * @param {string} persian - Persian text
+     * @param {string} latin - Latin text
+     * @param {boolean} showBoth - Whether to show both languages
+     * @returns {string} - Display string
+     */
+    bilingual: function(persian, latin, showBoth = true) {
+        if (!showBoth || !latin) return persian;
+        
+        // Use RLM (Right-to-Left Mark) and LRM (Left-to-Right Mark) for proper display
+        return `${persian}\u200F \u200E(${latin})\u200F`;
     }
 };
 
 // ============================================
-// INPUT VALIDATION & FORMATTING
+// SIMPLE INPUT HANDLING - NO AGGRESSIVE CONVERSION
 // ============================================
-function setupPersianNumberSupport() {
-    // Set up input event listeners for all number inputs
-    document.querySelectorAll('input[type="number"]').forEach(input => {
-        // Convert Persian to Latin on input
-        input.addEventListener('input', function(e) {
-            const persianValue = this.value;
-            const latinValue = PersianNumbers.toLatin(persianValue);
-            
-            // Only update if different to prevent cursor jumping
-            if (persianValue !== latinValue) {
-                this.value = latinValue;
-            }
+function setupSimpleInputHandling() {
+    console.log('Setting up simple input handling...');
+    
+    // Center align all input text
+    document.querySelectorAll('input[type="text"], input[type="number"], input[type="tel"], textarea').forEach(input => {
+        input.style.textAlign = 'center';
+    });
+    
+    // Add placeholder centering style
+    const style = document.createElement('style');
+    style.textContent = `
+        ::placeholder {
+            text-align: center !important;
+        }
+        input::placeholder {
+            text-align: center !important;
+        }
+        textarea::placeholder {
+            text-align: center !important;
+        }
+    `;
+    document.head.appendChild(style);
+    
+    // SIMPLE FOCUS HANDLING - Select text on focus for easy replacement
+    document.querySelectorAll('input[type="number"], input[type="text"].numeric-input').forEach(input => {
+        // Select all text when input gets focus
+        input.addEventListener('focus', function() {
+            this.select();
         });
         
-        // Convert to Persian on blur for display
-        input.addEventListener('blur', function(e) {
-            if (this.value) {
-                const persianValue = PersianNumbers.toPersian(this.value);
-                this.value = persianValue;
-            }
+        // Also handle click for mobile
+        input.addEventListener('click', function() {
+            this.select();
+        });
+    });
+    
+    // For calculator inputs specifically
+    const calculatorInputs = [
+        DOM.doctorOrder,
+        DOM.patientWeight,
+        DOM.customVolume
+    ];
+    
+    calculatorInputs.forEach(input => {
+        if (!input) return;
+        
+        // Select text on focus
+        input.addEventListener('focus', function() {
+            this.select();
         });
         
-        // Convert back to Latin on focus for editing
-        input.addEventListener('focus', function(e) {
-            if (this.value) {
-                const latinValue = PersianNumbers.toLatin(this.value);
-                this.value = latinValue;
+        input.addEventListener('click', function() {
+            this.select();
+        });
+        
+        // Normalize on blur if it's a valid number
+        // Normalize to LATIN while typing (accept Persian/Arabic digits too)
+        input.addEventListener('input', function() {
+            const before = this.value || '';
+            const normalized = PersianNumbers.toLatin(before);
+
+            if (normalized !== before) {
+                const start = this.selectionStart;
+                const end = this.selectionEnd;
+                this.value = normalized;
+                if (start != null && end != null) {
+                    this.setSelectionRange(start, end);
+                }
+            }
+
+            // Store numeric value (if valid)
+            const numValue = PersianNumbers.parseNumber(this.value);
+            if (!isNaN(numValue)) {
+                this.dataset.numericValue = numValue;
+            }
+
+            clearResults();
+        });
+
+        // Normalize on blur if it's a valid number
+        input.addEventListener('blur', function() {
+            if (this.value && this.value.trim() !== '') {
+                try {
+                    const numValue = PersianNumbers.parseNumber(this.value);
+                    if (!isNaN(numValue)) {
+                        // Store the numeric value for calculations
+                        this.dataset.numericValue = numValue;
+                        
+                        // Keep display ALWAYS Latin
+                        const decimalsAttr = this.getAttribute('data-decimals');
+                        const decimals = decimalsAttr == null ? 2 : parseInt(decimalsAttr, 10);
+                        const latinValue = PersianNumbers.formatNumber(numValue, Number.isFinite(decimals) ? decimals : 2);
+
+                        // Only update if different
+                        if (this.value !== latinValue) {
+                            this.value = latinValue;
+                        }
+                    }
+                } catch (e) {
+                    // Keep original value if conversion fails
+                    console.log('Conversion error:', e);
+                }
             }
         });
     });
     
-    // Also handle converter inputs
-    document.querySelectorAll('.converter-body input, .tool-body input').forEach(input => {
-        if (input.type === 'number' || input.type === 'text') {
+    console.log('Simple input handling setup complete');
+}
+
+// ============================================
+// MOBILE NUMERIC KEYBOARD OPTIMIZATION
+// ============================================
+function setupMobileNumericKeyboard() {
+    console.log('Setting up mobile numeric keyboard...');
+    
+    // Set inputmode for all number input fields
+    document.querySelectorAll('input').forEach(input => {
+        const type = input.type;
+        const name = input.name || input.id || '';
+        
+        // Check if this field should show numeric keyboard
+        const isNumericField = 
+            type === 'number' || 
+            name.includes('dose') || 
+            name.includes('weight') || 
+            name.includes('volume') || 
+            name.includes('count') ||
+            name.includes('value') ||
+            name.includes('amount') ||
+            input.classList.contains('numeric-input') ||
+            input.getAttribute('data-numeric') === 'true';
+        
+        if (isNumericField) {
+            // For integer-only fields
+            if (input.getAttribute('step') === '1' || 
+                name.includes('count') || 
+                name.includes('age') ||
+                name.includes('ampoule')) {
+                input.setAttribute('inputmode', 'numeric');
+                input.setAttribute('pattern', '[0-9]*');
+            } 
+            // For decimal fields
+            else {
+                input.setAttribute('inputmode', 'decimal');
+                
+                // Set appropriate pattern for decimal numbers
+                if (input.getAttribute('step') === '0.1') {
+                    input.setAttribute('pattern', '[0-9]*[.,]?[0-9]*');
+                } else if (input.getAttribute('step') === '0.01') {
+                    input.setAttribute('pattern', '[0-9]*[.,]?[0-9]{0,2}');
+                } else {
+                    input.setAttribute('pattern', '[0-9]*[.,]?[0-9]*');
+                }
+            }
+            
+            // Add CSS class for styling
+            input.classList.add('numeric-keyboard');
+            
+            // Center align text
+            input.style.textAlign = 'center';
+            
+            // SIMPLE VALIDATION - Only prevent obviously invalid characters
             input.addEventListener('input', function() {
-                const value = PersianNumbers.parseNumber(this.value);
-                if (!isNaN(value)) {
-                    this.dataset.numericValue = value;
+                const before = this.value || '';
+                const normalized = PersianNumbers.toLatin(before);
+
+                if (normalized !== before) {
+                    const start = this.selectionStart;
+                    const end = this.selectionEnd;
+                    this.value = normalized;
+                    if (start != null && end != null) {
+                        this.setSelectionRange(start, end);
+                    }
+                }
+
+                // Store numeric value for calculations
+                const numValue = PersianNumbers.parseNumber(this.value);
+                if (!isNaN(numValue)) {
+                    this.dataset.numericValue = numValue;
                 }
             });
         }
     });
     
-    console.log('Persian number support initialized');
+    console.log('Mobile numeric keyboard setup complete');
 }
 
 // ============================================
@@ -251,6 +646,12 @@ function setupMobileLayout() {
         
         // Fix method button text color
         fixMethodButtonTextColor();
+        
+        // Apply bidirectional text fixes for mobile
+        TextDirection.applyBidiFixes();
+        
+        // Setup numeric keyboard for mobile
+        setupMobileNumericKeyboard();
         
         console.log('Mobile layout setup complete');
     } else {
@@ -441,7 +842,7 @@ function positionManualButtonInDrugGrid() {
     
     const mobileManualBtn = document.createElement('div');
     mobileManualBtn.id = 'openManualMobile';
-    mobileManualBtn.className = 'drug-item-compact';
+    mobileManualBtn.className = 'drug-item-compact manual-drug-item';
     mobileManualBtn.innerHTML = `
         <div class="drug-icon-small" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
             <i class="fas fa-edit" style="color: white; font-size: 16px;"></i>
@@ -499,7 +900,7 @@ function resetDesktopLayout() {
 }
 
 // ============================================
-// INITIALIZATION
+// INITIALIZATION - SIMPLIFIED
 // ============================================
 document.addEventListener('DOMContentLoaded', () => {
     console.log('DOM loaded, initializing app...');
@@ -541,8 +942,14 @@ function initializeApp() {
     // Apply mobile optimizations
     setupMobileOptimizations();
     
-    // Initialize Persian number support
-    setupPersianNumberSupport();
+    // NEW: SIMPLE INPUT HANDLING - NO AGGRESSIVE CONVERSION
+    setupSimpleInputHandling();
+    
+    // Initialize bidirectional text support
+    TextDirection.applyBidiFixes();
+    
+    // Setup mobile numeric keyboard
+    setupMobileNumericKeyboard();
     
     // Initialize all converters
     initializeConverters();
@@ -570,7 +977,7 @@ function initializeApp() {
             month: '2-digit',
             day: '2-digit'
         }).format(now);
-        DOM.lastUpdate.textContent = persianDate;
+        DOM.lastUpdate.textContent = PersianNumbers.toLatin(persianDate);
     }
     
     // Initialize manual calculation
@@ -662,6 +1069,27 @@ function testAllFixes() {
         console.log(`Main content visible: ${mainContent.offsetHeight > 0}`);
     }
     
+    // Test numeric keyboard setup
+    const numericInputs = document.querySelectorAll('input[inputmode="decimal"], input[inputmode="numeric"]');
+    console.log(`Numeric keyboard inputs configured: ${numericInputs.length}`);
+    
+    // Test center alignment
+    const inputs = document.querySelectorAll('input[type="text"], input[type="number"]');
+    const centeredCount = Array.from(inputs).filter(input => 
+        window.getComputedStyle(input).textAlign === 'center'
+    ).length;
+    console.log(`Center aligned inputs: ${centeredCount}/${inputs.length}`);
+    
+    // Test if inputs accept typing
+    const testInput = DOM.doctorOrder || document.querySelector('input[type="number"]');
+    if (testInput) {
+        console.log(`Test input value: "${testInput.value}"`);
+        console.log(`Test input type: ${testInput.type}`);
+        // Test if input has event listeners that might reset it
+        const listeners = getEventListeners(testInput);
+        console.log(`Test input event listeners:`, listeners);
+    }
+    
     console.log('Test complete');
 }
 
@@ -730,7 +1158,7 @@ function loadDrugGrid() {
                 <i class="${drug.icon}"></i>
             </div>
             <div class="drug-name-compact">${drug.persianName}</div>
-            <div class="drug-name-english">${drug.englishName}</div>
+            <div class="drug-name-english latin-text">${TextDirection.wrapLatin(drug.englishName)}</div>
         `;
         
         card.addEventListener('click', () => selectDrug(id));
@@ -756,11 +1184,17 @@ function selectDrug(drugId) {
     console.log('Selected drug:', drug.persianName);
     
     DOM.selectedDrugName.textContent = drug.persianName;
+    
+    // Use bidirectional formatting for description
     DOM.selectedDrugDesc.innerHTML = `
-        <span class="text-latin">${drug.englishName}</span>
+        <span class="persian-inline">${drug.persianName}</span>
         <span class="text-mixed"> - </span>
-        <span class="text-latin">${drug.category}</span>
+        <span class="latin-inline">${drug.englishName}</span>
+        <span class="text-mixed"> (</span>
+        <span class="latin-inline">${drug.category}</span>
+        <span class="text-mixed">)</span>
     `;
+    
     DOM.selectedDrugIcon.innerHTML = `<i class="${drug.icon}"></i>`;
     DOM.selectedDrugIcon.style.background = `linear-gradient(135deg, ${drug.color}, ${drug.color}99)`;
     
@@ -779,8 +1213,17 @@ function selectDrug(drugId) {
             DOM.weightCheckbox.checked = defaultUseWeight;
             DOM.patientWeight.disabled = !defaultUseWeight;
             
+            // Set default weight value - DON'T CONVERT TO PERSIAN HERE
             DOM.patientWeight.value = drug.weightBased.defaultWeight || '70';
             DOM.patientWeight.placeholder = 'کیلوگرم';
+            
+            // Set numeric keyboard attributes for weight input
+            DOM.patientWeight.setAttribute('inputmode', 'decimal');
+            DOM.patientWeight.setAttribute('pattern', '[0-9]*[.,]?[0-9]*');
+            DOM.patientWeight.setAttribute('data-numeric', 'true');
+            
+            // Center align text
+            DOM.patientWeight.style.textAlign = 'center';
             
             updateWeightBasedUnit(drug);
         } else {
@@ -797,6 +1240,19 @@ function selectDrug(drugId) {
         }
     }
     
+    // Set numeric keyboard for doctor order input
+    if (DOM.doctorOrder) {
+        DOM.doctorOrder.setAttribute('inputmode', 'decimal');
+        DOM.doctorOrder.setAttribute('pattern', '[0-9]*[.,]?[0-9]*');
+        DOM.doctorOrder.setAttribute('data-numeric', 'true');
+        
+        // Center align text
+        DOM.doctorOrder.style.textAlign = 'center';
+        
+        // Clear the value - DON'T CONVERT TO PERSIAN HERE
+        DOM.doctorOrder.value = '';
+    }
+    
     document.querySelectorAll('.drug-item-compact').forEach(card => {
         card.classList.remove('selected');
     });
@@ -806,8 +1262,6 @@ function selectDrug(drugId) {
     }
     
     clearResults();
-    
-    if (DOM.doctorOrder) DOM.doctorOrder.value = '';
     
     if (DOM.customVolumeContainer) {
         DOM.customVolumeContainer.style.display = 'none';
@@ -866,10 +1320,21 @@ function updateAmpouleInfo() {
     
     if (DOM.ampouleCount) DOM.ampouleCount.textContent = AppState.ampouleCount;
     if (DOM.ampouleInfo) {
-        DOM.ampouleInfo.innerHTML = `
-            <span class="text-mixed">هر آمپول:</span>
-            <span class="text-latin">${ampoule.label}</span>
-        `;
+        // Use bidirectional formatting for ampoule info
+        const labelParts = ampoule.label.split(' in ');
+        if (labelParts.length === 2) {
+            DOM.ampouleInfo.innerHTML = `
+                <span class="text-mixed">هر آمپول:</span>
+                <span class="latin-inline">${labelParts[0]}</span>
+                <span class="text-mixed"> در </span>
+                <span class="latin-inline">${labelParts[1]}</span>
+            `;
+        } else {
+            DOM.ampouleInfo.innerHTML = `
+                <span class="text-mixed">هر آمپول:</span>
+                <span class="latin-inline">${ampoule.label}</span>
+            `;
+        }
     }
 }
 
@@ -931,122 +1396,216 @@ function updateVolumeOptions() {
 }
 
 // ============================================
-// CALCULATION FUNCTIONS
+// CALCULATION FUNCTIONS - FIXED VERSION
 // ============================================
 function calculateInfusion() {
+    console.log('Starting calculation...');
+    
     const drug = drugDatabase[AppState.selectedDrug];
     const ampoule = drug.ampouleOptions[AppState.currentAmpouleIndex];
     
-    // Parse dose with Persian number support
-    const doseText = DOM.doctorOrder.value;
-    const doseValue = PersianNumbers.parseNumber(doseText);
+    // Get the dose value - check both the value and data-numeric-value
+    let doseValue;
+    
+    if (DOM.doctorOrder.value && DOM.doctorOrder.value.trim() !== '') {
+        // Try to get from data attribute first (set by blur event)
+        if (DOM.doctorOrder.dataset.numericValue) {
+            doseValue = parseFloat(DOM.doctorOrder.dataset.numericValue);
+        } else {
+            // Fall back to parsing the value
+            doseValue = PersianNumbers.parseNumber(DOM.doctorOrder.value);
+        }
+    }
+    
+    console.log('Dose value:', doseValue);
     
     if (!doseValue || isNaN(doseValue) || doseValue <= 0) {
         showToast('خطا', 'لطفاً مقدار دوز درخواستی را وارد کنید', 'error');
         DOM.doctorOrder.focus();
+        DOM.doctorOrder.style.borderColor = 'var(--danger)';
         return;
     }
     
-    let desiredDosePerHour;
+    // Reset border color if valid
+    DOM.doctorOrder.style.borderColor = '';
     
+    let desiredDosePerHour;
+    let weightValue = null;
+    
+    // Handle weight-based vs non-weight-based calculation
     if (drug.weightBased && drug.weightBased.active && AppState.useWeight) {
-        const weightText = DOM.patientWeight.value;
-        const weightValue = PersianNumbers.parseNumber(weightText);
+        // Weight-based calculation
+        let weightValue;
+        
+        if (DOM.patientWeight.value && DOM.patientWeight.value.trim() !== '') {
+            // Try to get from data attribute first
+            if (DOM.patientWeight.dataset.numericValue) {
+                weightValue = parseFloat(DOM.patientWeight.dataset.numericValue);
+            } else {
+                // Fall back to parsing the value
+                weightValue = PersianNumbers.parseNumber(DOM.patientWeight.value);
+            }
+        }
+        
+        console.log('Weight value:', weightValue);
         
         if (!weightValue || isNaN(weightValue) || weightValue <= 0) {
             showToast('خطا', 'لطفاً وزن بیمار را وارد کنید', 'error');
             DOM.patientWeight.focus();
+            DOM.patientWeight.style.borderColor = 'var(--danger)';
             return;
         }
+        
+        DOM.patientWeight.style.borderColor = '';
         AppState.patientWeight = weightValue;
         
+        // Calculate dose per hour based on drug
         switch(drug.id) {
             case 'dopamine':
             case 'norepinephrine':
-                desiredDosePerHour = doseValue * AppState.patientWeight * 60;
+                // Convert mcg/kg/min to mcg/hour
+                desiredDosePerHour = doseValue * weightValue * 60;
                 break;
             case 'fentanyl':
-                desiredDosePerHour = doseValue * AppState.patientWeight;
+                // mcg/kg/hour to mcg/hour
+                desiredDosePerHour = doseValue * weightValue;
                 break;
             case 'midazolam':
-                desiredDosePerHour = (doseValue * AppState.patientWeight * 60) / 1000;
+                // mcg/kg/min to mg/hour
+                desiredDosePerHour = (doseValue * weightValue * 60) / 1000;
                 break;
             case 'heparin':
             case 'insulin':
-                desiredDosePerHour = doseValue * AppState.patientWeight;
+                // units/kg/hour to units/hour
+                desiredDosePerHour = doseValue * weightValue;
                 break;
             default:
-                desiredDosePerHour = doseValue * AppState.patientWeight;
+                // Default weight-based calculation
+                desiredDosePerHour = doseValue * weightValue;
         }
     } else {
+        // Non-weight-based calculation
         AppState.patientWeight = null;
         
+        // Handle different units for different drugs
         switch(drug.id) {
             case 'dopamine':
             case 'norepinephrine':
             case 'tng':
+                // Dose is in mcg/min, convert to mcg/hour
                 desiredDosePerHour = doseValue * 60;
                 break;
             case 'amiodarone':
+                // Dose is in mg/min, convert to mg/hour
                 desiredDosePerHour = doseValue * 60;
                 break;
             case 'fentanyl':
+                // Dose is in mcg/hour (no conversion needed)
                 desiredDosePerHour = doseValue;
                 break;
             case 'midazolam':
+                // Dose is in mg/hour (no conversion needed)
                 desiredDosePerHour = doseValue;
                 break;
             case 'heparin':
             case 'insulin':
+                // Dose is in units/hour (no conversion needed)
                 desiredDosePerHour = doseValue;
                 break;
             default:
+                // Default: assume dose is already in per hour
                 desiredDosePerHour = doseValue;
         }
     }
     
+    // Handle custom volume
     if (AppState.customVolume) {
-        const customVolText = DOM.customVolume.value;
-        const customVol = PersianNumbers.parseNumber(customVolText);
+        let customVol;
+        
+        if (DOM.customVolume.value && DOM.customVolume.value.trim() !== '') {
+            // Try to get from data attribute first
+            if (DOM.customVolume.dataset.numericValue) {
+                customVol = parseFloat(DOM.customVolume.dataset.numericValue);
+            } else {
+                // Fall back to parsing the value
+                customVol = PersianNumbers.parseNumber(DOM.customVolume.value);
+            }
+        }
+        
+        console.log('Custom volume:', customVol);
         
         if (!customVol || isNaN(customVol) || customVol <= 0) {
-            showToast('خطا', 'لطفاً حجم محلول را وارد کنید', 'error');
+            showToast('خطا', 'حجم محلول وارد شده معتبر نیست', 'error');
+            DOM.customVolume.focus();
+            DOM.customVolume.style.borderColor = 'var(--danger)';
             return;
         }
+        
+        DOM.customVolume.style.borderColor = '';
         AppState.solutionVolume = customVol;
     }
     
+    // Store desired dose
     AppState.desiredDose = doseValue;
     
+    // Calculate total drug in original unit
     const totalDrug = AppState.ampouleCount * ampoule.strength;
+    
+    // Calculate concentration
     const concentration = totalDrug / AppState.solutionVolume;
     
+    // Convert units for calculation if needed
     let totalDrugForCalculation = totalDrug;
     let concentrationForCalculation = concentration;
     let desiredDoseForCalculation = desiredDosePerHour;
     
+    // Handle drugs that need unit conversion (e.g., mg to mcg)
     if (drug.id === 'norepinephrine' || drug.id === 'dopamine' || drug.id === 'fentanyl' || drug.id === 'tng') {
-        totalDrugForCalculation = totalDrug * 1000;
+        // These drugs need conversion from mg to mcg
+        totalDrugForCalculation = totalDrug * 1000; // Convert mg to mcg
         concentrationForCalculation = totalDrugForCalculation / AppState.solutionVolume;
     } else if (drug.id === 'midazolam') {
+        // Midazolam: ampoules are in mg, but weight-based calculation might be in mcg
         if (drug.weightBased && drug.weightBased.active && AppState.useWeight) {
-            // Already converted above
+            // We already converted to mg/hour above, so no further conversion needed
         }
     }
     
+    // Calculate pump rate
     const pumpRate = desiredDoseForCalculation / concentrationForCalculation;
+    
+    // Calculate infusion duration
     const duration = AppState.solutionVolume / pumpRate;
     
+    console.log('Calculation results:', {
+        totalDrug,
+        concentration,
+        pumpRate,
+        duration,
+        desiredDosePerHour
+    });
+    
+    // Display results with appropriate unit
     displayResults(totalDrug, concentration, pumpRate, duration, ampoule.unit);
+    
+    // Generate guide
     generateStepByStepGuide(drug, totalDrug, concentration, pumpRate, doseValue);
+    
+    // Show warnings
     displayWarnings(drug);
+    
+    // Show compatibility
     displayCompatibility(drug);
     
+    // Save calculation if enabled
     if (AppState.settings.saveHistory) {
         saveCalculation(totalDrug, concentration, pumpRate, duration);
     }
     
+    // Update stats
     updateCalculationStats();
+    
+    showToast('موفق', 'محاسبه با موفقیت انجام شد', 'success');
 }
 
 function displayResults(totalDrug, concentration, pumpRate, duration, unit) {
@@ -1062,7 +1621,7 @@ function displayResults(totalDrug, concentration, pumpRate, duration, unit) {
     
     // Format with Persian numbers
     DOM.totalDrugAmount.textContent = PersianNumbers.formatNumber(totalDrug, 0);
-    DOM.totalDrugUnit.textContent = unit;
+    DOM.totalDrugUnit.innerHTML = `<span class="latin-inline">${unit}</span>`;
     
     let concentrationDisplay, concentrationUnitDisplay;
     
@@ -1080,13 +1639,13 @@ function displayResults(totalDrug, concentration, pumpRate, duration, unit) {
     }
     
     DOM.concentrationResult.textContent = concentrationDisplay;
-    DOM.concentrationUnit.textContent = concentrationUnitDisplay;
+    DOM.concentrationUnit.innerHTML = `<span class="latin-inline">${concentrationUnitDisplay}</span>`;
     
     DOM.pumpRateResult.textContent = PersianNumbers.formatNumber(pumpRate, 2);
-    DOM.pumpRateUnit.textContent = 'cc/hour';
+    DOM.pumpRateUnit.innerHTML = `<span class="latin-inline">cc/hour</span>`;
     
     DOM.durationResult.textContent = PersianNumbers.formatNumber(duration, 1);
-    DOM.durationUnit.textContent = 'ساعت';
+    DOM.durationUnit.innerHTML = `<span class="persian-inline">ساعت</span>`;
     
     if (DOM.resultsSection) {
         DOM.resultsSection.classList.add('show');
@@ -1169,12 +1728,14 @@ function displayCompatibility(drug) {
         drug.ySiteCompatibilities.compatible.forEach(drugName => {
             const item = document.createElement('div');
             item.textContent = drugName;
+            item.className = 'persian-text';
             DOM.compatibleDrugsList.appendChild(item);
         });
         
         drug.ySiteCompatibilities.incompatible.forEach(drugName => {
             const item = document.createElement('div');
             item.textContent = drugName;
+            item.className = 'persian-text';
             DOM.incompatibleDrugsList.appendChild(item);
         });
     }
@@ -1196,7 +1757,7 @@ function updateWeightBasedUnit(drug) {
 }
 
 // ============================================
-// EVENT HANDLERS
+// EVENT HANDLERS - SIMPLIFIED
 // ============================================
 function setupEventListeners() {
     console.log('Setting up event listeners...');
@@ -1291,14 +1852,14 @@ function setupEventListeners() {
     }
     
     if (DOM.customVolume) {
-        DOM.customVolume.addEventListener('input', function() {
-            const value = PersianNumbers.parseNumber(this.value);
-            if (!isNaN(value) && value > 0) {
-                AppState.solutionVolume = value;
-                AppState.customVolume = true;
-                clearResults();
-            }
-        });
+        // Set numeric keyboard attributes for custom volume
+        if (DOM.customVolume) {
+            DOM.customVolume.setAttribute('inputmode', 'numeric');
+            DOM.customVolume.setAttribute('pattern', '[0-9]*');
+            DOM.customVolume.setAttribute('data-numeric', 'true');
+            // Center align text
+            DOM.customVolume.style.textAlign = 'center';
+        }
     }
     
     if (DOM.calculateBtn) {
@@ -1508,7 +2069,7 @@ function createManualCalculationContent() {
         <div class="manual-controls">
             <div class="control-group">
                 <label><i class="fas fa-pills"></i> نام دارو (اختیاری)</label>
-                <input type="text" id="manualDrugName" placeholder="نام دارو را وارد کنید" class="persian-text">
+                <input type="text" id="manualDrugName" placeholder="نام دارو را وارد کنید" class="persian-text" style="text-align: center;">
             </div>
             
             <div class="control-group">
@@ -1527,7 +2088,8 @@ function createManualCalculationContent() {
                 <div class="control-group">
                     <label><i class="fas fa-vial"></i> قدرت آمپول</label>
                     <div class="manual-input-with-unit">
-                        <input type="number" id="manualStrength" placeholder="0" step="0.01" min="0.01" value="5000">
+                        <input type="number" id="manualStrength" placeholder="0" step="0.01" min="0.01" value="5000" 
+                               inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" data-numeric="true" style="text-align: center;">
                         <select id="manualStrengthUnit">
                             <option value="units">واحد</option>
                             <option value="mg">میلی‌گرم</option>
@@ -1540,7 +2102,8 @@ function createManualCalculationContent() {
                 <div class="control-group">
                     <label><i class="fas fa-vial"></i> حجم آمپول</label>
                     <div class="manual-input-with-unit">
-                        <input type="number" id="manualVialVolume" placeholder="0" step="0.1" min="0.1" value="1">
+                        <input type="number" id="manualVialVolume" placeholder="0" step="0.1" min="0.1" value="1"
+                               inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" data-numeric="true" style="text-align: center;">
                         <span class="unit">میلی‌لیتر</span>
                     </div>
                 </div>
@@ -1564,7 +2127,8 @@ function createManualCalculationContent() {
                 <div class="control-group">
                     <label><i class="fas fa-flask"></i> حجم محلول</label>
                     <div class="manual-input-with-unit">
-                        <input type="number" id="manualSolutionVolume" placeholder="0" step="1" min="1" value="50">
+                        <input type="number" id="manualSolutionVolume" placeholder="0" step="1" min="1" value="50"
+                               inputmode="numeric" pattern="[0-9]*" data-numeric="true" style="text-align: center;">
                         <span class="unit">سی‌سی</span>
                     </div>
                 </div>
@@ -1573,7 +2137,8 @@ function createManualCalculationContent() {
                     <label><i class="fas fa-file-medical-alt"></i> دوز درخواستی</label>
                     <div class="dose-input-enhanced">
                         <div class="dose-input-wrapper">
-                            <input type="number" id="manualDesiredDose" placeholder="0" step="0.01" min="0.01" value="1000">
+                            <input type="number" id="manualDesiredDose" placeholder="0" step="0.01" min="0.01" value="1000"
+                                   inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" data-numeric="true" style="text-align: center;">
                             <select class="dose-unit-enhanced" id="manualDoseUnit">
                                 <option value="units/hour">واحد/ساعت</option>
                                 <option value="mg/hour">میلی‌گرم/ساعت</option>
@@ -1589,7 +2154,8 @@ function createManualCalculationContent() {
                 <div class="control-group">
                     <label><i class="fas fa-weight-scale"></i> وزن بیمار (اختیاری)</label>
                     <div class="manual-input-with-unit">
-                        <input type="number" id="manualPatientWeight" placeholder="0" step="0.1" min="1" value="70">
+                        <input type="number" id="manualPatientWeight" placeholder="0" step="0.1" min="1" value="70"
+                               inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" data-numeric="true" style="text-align: center;">
                         <span class="unit">کیلوگرم</span>
                     </div>
                 </div>
@@ -1651,6 +2217,12 @@ function setupManualCalculationFunctionality() {
     document.getElementById('closeManualBtn').addEventListener('click', () => {
         document.getElementById('manualSection').style.display = 'none';
         document.getElementById('calculatorControls').style.display = 'grid';
+        
+        // Show drug sidebar again
+        const drugSidebar = document.querySelector('.drug-sidebar');
+        if (drugSidebar && window.innerWidth < 768) {
+            drugSidebar.style.display = 'flex';
+        }
     });
 }
 
@@ -1689,7 +2261,11 @@ function calculateManualInfusion() {
     pumpRate = desiredDosePerHour / concentration;
     
     document.getElementById('manualConcentration').textContent = PersianNumbers.formatNumber(concentration, 2);
-    document.getElementById('manualConcentrationUnit').textContent = strengthUnit + '/سی‌سی';
+    document.getElementById('manualConcentrationUnit').innerHTML = `
+        <span class="latin-inline">${strengthUnit}</span>
+        <span class="text-mixed">/</span>
+        <span class="latin-inline">سی‌سی</span>
+    `;
     document.getElementById('manualPumpRate').textContent = PersianNumbers.formatNumber(pumpRate, 2);
     
     document.getElementById('manualResults').style.display = 'block';
@@ -1773,6 +2349,28 @@ function initializeConverters() {
     document.getElementById('unitValue').value = '1000';
     document.getElementById('dripVolume').value = '1000';
     document.getElementById('dripTime').value = '8';
+    
+    // Set numeric keyboard attributes for converter inputs
+    const converterInputs = [
+        'electrolyteValue',
+        'percentageValue',
+        'percentageVolume',
+        'unitValue',
+        'dripVolume',
+        'dripTime',
+        'dripFactor'
+    ];
+    
+    converterInputs.forEach(id => {
+        const input = document.getElementById(id);
+        if (input) {
+            input.setAttribute('inputmode', 'decimal');
+            input.setAttribute('pattern', '[0-9]*[.,]?[0-9]*');
+            input.setAttribute('data-numeric', 'true');
+            // Center align text
+            input.style.textAlign = 'center';
+        }
+    });
 }
 
 // Electrolyte Converter
@@ -1809,7 +2407,9 @@ function convertElectrolyte() {
         result = `${PersianNumbers.formatNumber(mEq, 2)} mEq`;
     }
     
-    document.getElementById('electrolyteResult').textContent = result;
+    document.getElementById('electrolyteResult').innerHTML = `
+        <span class="latin-inline">${result}</span>
+    `;
     showToast('موفق', 'تبدیل انجام شد', 'success');
 }
 
@@ -1829,7 +2429,9 @@ function convertPercentage() {
     const grams = (percent / 100) * volume;
     const result = `${PersianNumbers.formatNumber(grams, 2)} گرم در ${PersianNumbers.formatNumber(volume, 0)} میلی‌لیتر`;
     
-    document.getElementById('percentageResult').textContent = result;
+    document.getElementById('percentageResult').innerHTML = `
+        <span class="latin-inline">${result}</span>
+    `;
     showToast('موفق', 'محاسبه انجام شد', 'success');
 }
 
@@ -1888,7 +2490,9 @@ function convertUnits() {
     }
     
     const resultText = `${PersianNumbers.formatNumber(result, 3)} ${toUnit}`;
-    document.getElementById('unitResult').textContent = resultText;
+    document.getElementById('unitResult').innerHTML = `
+        <span class="latin-inline">${resultText}</span>
+    `;
     showToast('موفق', 'تبدیل واحد انجام شد', 'success');
 }
 
@@ -1911,7 +2515,9 @@ function calculateDripRate() {
     const dropsPerMinute = (mlPerHour * factor) / 60;
     
     const result = `${PersianNumbers.formatNumber(dropsPerMinute, 1)} قطره در دقیقه`;
-    document.getElementById('dripResult').textContent = result;
+    document.getElementById('dripResult').innerHTML = `
+        <span class="latin-inline">${result}</span>
+    `;
     showToast('موفق', 'محاسبه دراپ انجام شد', 'success');
 }
 
@@ -1933,6 +2539,26 @@ function initializeTools() {
     document.getElementById('doseNeeded').value = '100';
     document.getElementById('doseConcentration').value = '10';
     document.getElementById('doseVialVolume').value = '10';
+    
+    // Set numeric keyboard attributes for tool inputs
+    const toolInputs = [
+        'bmiWeight', 'bmiHeight',
+        'bsaWeight', 'bsaHeight',
+        'ibwHeight',
+        'crclAge', 'crclWeight', 'crclValue',
+        'doseNeeded', 'doseConcentration', 'doseVialVolume'
+    ];
+    
+    toolInputs.forEach(id => {
+        const input = document.getElementById(id);
+        if (input) {
+            input.setAttribute('inputmode', 'decimal');
+            input.setAttribute('pattern', '[0-9]*[.,]?[0-9]*');
+            input.setAttribute('data-numeric', 'true');
+            // Center align text
+            input.style.textAlign = 'center';
+        }
+    });
 }
 
 // BMI Calculator
@@ -1958,7 +2584,9 @@ function calculateBMI() {
     else category = 'چاقی';
     
     const result = `BMI: ${PersianNumbers.formatNumber(bmi, 1)} (${category})`;
-    document.getElementById('bmiResult').textContent = result;
+    document.getElementById('bmiResult').innerHTML = `
+        <span class="latin-inline">${result}</span>
+    `;
     showToast('موفق', 'محاسبه BMI انجام شد', 'success');
 }
 
@@ -1991,7 +2619,9 @@ function calculateBSA() {
     }
     
     const result = `${PersianNumbers.formatNumber(bsa, 2)} متر مربع`;
-    document.getElementById('bsaResult').textContent = result;
+    document.getElementById('bsaResult').innerHTML = `
+        <span class="latin-inline">${result}</span>
+    `;
     showToast('موفق', 'محاسبه BSA انجام شد', 'success');
 }
 
@@ -2036,7 +2666,9 @@ function calculateIBW() {
     }
     
     const result = `${PersianNumbers.formatNumber(ibw, 1)} کیلوگرم`;
-    document.getElementById('ibwResult').textContent = result;
+    document.getElementById('ibwResult').innerHTML = `
+        <span class="latin-inline">${result}</span>
+    `;
     showToast('موفق', 'محاسبه وزن ایده‌آل انجام شد', 'success');
 }
 
@@ -2070,7 +2702,9 @@ function calculateCrCl() {
     else kidneyFunction = 'نارسایی کلیه';
     
     const result = `${PersianNumbers.formatNumber(crcl, 0)} ml/min (${kidneyFunction})`;
-    document.getElementById('crclResult').textContent = result;
+    document.getElementById('crclResult').innerHTML = `
+        <span class="latin-inline">${result}</span>
+    `;
     showToast('موفق', 'محاسبه کلیرانس انجام شد', 'success');
 }
 
@@ -2086,7 +2720,9 @@ function checkCompatibility() {
     }
     
     if (drug1 === drug2) {
-        document.getElementById('compatResult').textContent = 'داروهای یکسان انتخاب شده‌اند';
+        document.getElementById('compatResult').innerHTML = `
+            <span class="persian-text">داروهای یکسان انتخاب شده‌اند</span>
+        `;
         showToast('هشدار', 'داروهای یکسان انتخاب شده‌اند', 'warning');
         return;
     }
@@ -2096,7 +2732,9 @@ function checkCompatibility() {
     const drug2Data = drugDatabase[drug2];
     
     if (!drug1Data || !drug2Data) {
-        document.getElementById('compatResult').textContent = 'اطلاعات دارو یافت نشد';
+        document.getElementById('compatResult').innerHTML = `
+            <span class="persian-text">اطلاعات دارو یافت نشد</span>
+        `;
         showToast('خطا', 'اطلاعات دارو یافت نشد', 'error');
         return;
     }
@@ -2108,7 +2746,9 @@ function checkCompatibility() {
     if (!drug1Compatible || !drug2Compatible) {
         const incompatibleDrug = !drug1Compatible ? drug1Data.persianName : drug2Data.persianName;
         const result = `${incompatibleDrug} با محلول ${solution} سازگار نیست`;
-        document.getElementById('compatResult').textContent = result;
+        document.getElementById('compatResult').innerHTML = `
+            <span class="persian-text">${result}</span>
+        `;
         showToast('هشدار', 'سازگاری محلول بررسی شود', 'warning');
         return;
     }
@@ -2130,11 +2770,15 @@ function checkCompatibility() {
     
     if (isCompatible) {
         const result = `${drug1Data.persianName} و ${drug2Data.persianName} سازگار هستند`;
-        document.getElementById('compatResult').textContent = result;
+        document.getElementById('compatResult').innerHTML = `
+            <span class="persian-text">${result}</span>
+        `;
         showToast('موفق', 'داروها سازگار هستند', 'success');
     } else {
         const result = `${drug1Data.persianName} و ${drug2Data.persianName} نیاز به بررسی بیشتر دارند`;
-        document.getElementById('compatResult').textContent = result;
+        document.getElementById('compatResult').innerHTML = `
+            <span class="persian-text">${result}</span>
+        `;
         showToast('هشدار', 'سازگاری نیاز به تأیید دارد', 'warning');
     }
 }
@@ -2169,7 +2813,9 @@ function calculateDose() {
         result = `${PersianNumbers.formatNumber(volumeNeeded, 1)} میلی‌لیتر (${vialsNeeded} ویال)`;
     }
     
-    document.getElementById('doseResult').textContent = result;
+    document.getElementById('doseResult').innerHTML = `
+        <span class="latin-inline">${result}</span>
+    `;
     showToast('موفق', 'محاسبه دوز انجام شد', 'success');
 }
 
@@ -2287,7 +2933,7 @@ function loadHistory() {
             <div class="history-details">
                 <div>دوز: ${PersianNumbers.formatNumber(item.dose, 2)}</div>
                 <div>سرعت پمپ: ${PersianNumbers.formatNumber(item.pumpRate, 2)} سی‌سی/ساعت</div>
-                <div class="history-time">${new Date(item.timestamp).toLocaleDateString('fa-IR')}</div>
+                <div class="history-time">${PersianNumbers.toLatin(new Date(item.timestamp).toLocaleDateString('fa-IR'))}</div>
             </div>
         `;
         historyList.appendChild(historyItem);
@@ -2309,8 +2955,8 @@ function loadDrugLibrary() {
         card.innerHTML = `
             <div class="drug-library-header">
                 <div>
-                    <div class="drug-library-title">${drug.persianName}</div>
-                    <div class="drug-library-english">${drug.englishName}</div>
+                    <div class="drug-library-title persian-text">${drug.persianName}</div>
+                    <div class="drug-library-english latin-text">${TextDirection.wrapLatin(drug.englishName)}</div>
                 </div>
                 <div style="color: ${drug.color}; font-size: 1.5rem;">
                     <i class="${drug.icon}"></i>
@@ -2319,20 +2965,20 @@ function loadDrugLibrary() {
             <div class="drug-library-body">
                 <div class="drug-library-info">
                     <div class="drug-library-row">
-                        <span class="drug-library-label">دسته:</span>
-                        <span class="drug-library-value">${drug.category || '--'}</span>
+                        <span class="drug-library-label persian-text">دسته:</span>
+                        <span class="drug-library-value latin-text">${drug.category || '--'}</span>
                     </div>
                     <div class="drug-library-row">
-                        <span class="drug-library-label">دوز معمول:</span>
-                        <span class="drug-library-value">${drug.typicalDoseRange ? `${drug.typicalDoseRange.min}-${drug.typicalDoseRange.max} ${drug.typicalDoseRange.unit}` : '--'}</span>
+                        <span class="drug-library-label persian-text">دوز معمول:</span>
+                        <span class="drug-library-value latin-text">${drug.typicalDoseRange ? `${drug.typicalDoseRange.min}-${drug.typicalDoseRange.max} ${drug.typicalDoseRange.unit}` : '--'}</span>
                     </div>
                     <div class="drug-library-row">
-                        <span class="drug-library-label">محلول:</span>
-                        <span class="drug-library-value">${drug.solutionType.join(', ')}</span>
+                        <span class="drug-library-label persian-text">محلول:</span>
+                        <span class="drug-library-value latin-text">${drug.solutionType.join(', ')}</span>
                     </div>
                     <div class="drug-library-row">
-                        <span class="drug-library-label">آمپول معمول:</span>
-                        <span class="drug-library-value">${drug.ampouleOptions[0].label}</span>
+                        <span class="drug-library-label persian-text">آمپول معمول:</span>
+                        <span class="drug-library-value latin-text">${drug.ampouleOptions[0].label}</span>
                     </div>
                 </div>
                 <div class="drug-library-actions">
@@ -2396,20 +3042,24 @@ function loadDrugDetails(drugId, container) {
             
             <div style="display: grid; gap: 10px;">
                 <div>
-                    <strong>نام انگلیسی:</strong> ${drug.englishName}
+                    <strong class="persian-text">نام انگلیسی:</strong> 
+                    <span class="latin-text">${drug.englishName}</span>
                 </div>
                 <div>
-                    <strong>دسته:</strong> ${drug.category || '--'}
+                    <strong class="persian-text">دسته:</strong> 
+                    <span class="latin-text">${drug.category || '--'}</span>
                 </div>
                 <div>
-                    <strong>آمپول معمول:</strong> ${drug.ampouleOptions[0].label}
+                    <strong class="persian-text">آمپول معمول:</strong> 
+                    <span class="latin-text">${drug.ampouleOptions[0].label}</span>
                 </div>
                 <div>
-                    <strong>دوز معمول:</strong> 
-                    ${drug.typicalDoseRange ? `${drug.typicalDoseRange.min}-${drug.typicalDoseRange.max} ${drug.typicalDoseRange.unit}` : '--'}
+                    <strong class="persian-text">دوز معمول:</strong> 
+                    <span class="latin-text">${drug.typicalDoseRange ? `${drug.typicalDoseRange.min}-${drug.typicalDoseRange.max} ${drug.typicalDoseRange.unit}` : '--'}</span>
                 </div>
                 <div>
-                    <strong>محلول‌ها:</strong> ${drug.solutionType.join(', ')}
+                    <strong class="persian-text">محلول‌ها:</strong> 
+                    <span class="latin-text">${drug.solutionType.join(', ')}</span>
                 </div>
             </div>
             
@@ -2419,7 +3069,7 @@ function loadDrugDetails(drugId, container) {
                         <i class="fas fa-exclamation-triangle"></i> نکات ایمنی:
                     </h5>
                     <ul style="padding-right: 20px;">
-                        ${drug.cautions.map(caution => `<li>${caution}</li>`).join('')}
+                        ${drug.cautions.map(caution => `<li class="persian-text">${caution}</li>`).join('')}
                     </ul>
                 </div>
             ` : ''}
@@ -2451,3 +3101,5 @@ window.calculateIBW = calculateIBW;
 window.calculateCrCl = calculateCrCl;
 window.checkCompatibility = checkCompatibility;
 window.calculateDose = calculateDose;
+window.TextDirection = TextDirection;
+window.PersianNumbers = PersianNumbers;
