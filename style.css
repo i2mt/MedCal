@@ -84,10 +84,10 @@
     --surface:           #1a2035;   /* cards, panels */
     --surface-elevated:  #212840;   /* raised elements inside cards */
 
-    /* Text: warm white hierarchy */
-    --text-primary:   #f0f4ff;      /* near-white with slight blue tint */
-    --text-secondary: #a8b4d0;      /* muted but still readable */
-    --text-tertiary:  #5c6a8a;      /* hints, placeholders */
+    /* Text: warm white hierarchy — all pass WCAG AA on dark surfaces */
+    --text-primary:   #f0f4ff;      /* near-white, slight blue tint — on #1a2035 = 13:1 */
+    --text-secondary: #bdc8e8;      /* raised from #a8b4d0 — labels, descriptions */
+    --text-tertiary:  #8896b8;      /* raised from #5c6a8a — hints, sub-labels, units */
 
     /* Borders: subtle but visible */
     --border:       #2e3a55;
@@ -103,10 +103,6 @@
     --gradient-primary: linear-gradient(135deg, #818cf8 0%, #a855f7 100%);
 }
 
-.dark-mode body,
-.dark-mode .app-container,
-.dark-mode .main-content,
-.dark-mode .calculator-main,
 /* ── Dark mode: deep surfaces with blue-grey tint ── */
 .dark-mode body,
 .dark-mode .app-container,
@@ -243,6 +239,85 @@
 /* English sub-labels */
 .dark-mode .drug-name-english,
 .dark-mode .drug-library-english { color: var(--text-tertiary) !important; }
+
+/* ── Comprehensive text colour fixes for dark mode ──
+   Every element that uses --text-secondary or --text-tertiary needs
+   to reference the dark-mode variables which are now brighter. 
+   Because CSS variables cascade, these are already handled automatically
+   once .dark-mode redefines --text-secondary and --text-tertiary.
+   The rules below are explicit overrides for cases where a hardcoded
+   colour or an !important from a JS inline style fights the variables. */
+
+/* Labels and descriptions */
+.dark-mode .control-group label,
+.dark-mode .input-group label,
+.dark-mode .result-label-enhanced,
+.dark-mode .result-unit-enhanced,
+.dark-mode .setting-item span,
+.dark-mode .weight-toggle-enhanced .toggle-label,
+.dark-mode .weight-toggle-enhanced .weight-unit {
+    color: var(--text-secondary) !important;
+}
+
+/* Sub-text / hints */
+.dark-mode .selected-drug-desc-compact,
+.dark-mode .logo-text p,
+.dark-mode .drug-name-english,
+.dark-mode .drug-library-english,
+.dark-mode .ampoule-info-enhanced,
+.dark-mode .toast-message,
+.dark-mode .compatibility-list,
+.dark-mode .warning-text,
+.dark-mode .step-content {
+    color: var(--text-secondary) !important;
+}
+
+/* Tab bar inactive labels */
+.dark-mode .tab-item {
+    color: var(--text-secondary) !important;
+}
+
+/* Icon buttons in header */
+.dark-mode .icon-btn {
+    background: var(--surface-elevated) !important;
+    border-color: var(--border) !important;
+    color: var(--text-secondary) !important;
+}
+
+/* Volume unit text inside buttons */
+.dark-mode .volume-preset-btn .unit-text { color: var(--text-tertiary) !important; }
+.dark-mode .volume-preset-btn .number    { color: var(--primary) !important; }
+
+/* Result units */
+.dark-mode .result-unit-enhanced { color: var(--text-secondary) !important; }
+
+/* Converter/tool result area */
+.dark-mode .converter-result,
+.dark-mode .tool-result {
+    background: var(--surface-elevated) !important;
+    border-color: var(--border) !important;
+    color: var(--primary) !important;
+}
+
+/* Dose unit badge */
+.dark-mode .dose-unit-enhanced { background: var(--gradient-primary) !important; color: white !important; }
+
+/* Ampoule count number */
+.dark-mode .ampoule-count-enhanced { color: var(--primary) !important; }
+
+/* History time */
+.dark-mode .history-time { color: var(--text-tertiary) !important; }
+.dark-mode .history-details { color: var(--text-secondary) !important; }
+
+/* About info */
+.dark-mode .about-info p { color: var(--text-secondary) !important; border-color: var(--border-light) !important; }
+
+/* Drug library row values */
+.dark-mode .drug-library-label { color: var(--text-secondary) !important; }
+.dark-mode .drug-library-value { color: var(--text-primary) !important; }
+
+/* Placeholder text — needs to be visible but not primary */
+.dark-mode ::placeholder { color: var(--text-tertiary) !important; opacity: 1 !important; }
 
 /* ===============================
    FONT SETUP
