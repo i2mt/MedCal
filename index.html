@@ -8,75 +8,17 @@
     <title>MedCalc Pro | دستیار محاسبات دارویی</title>
     <meta name="description" content="محاسبه گر هوشمند تزریق دارو برای پرستاران و پزشکان">
     <link rel="manifest" href="manifest.json">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@vazirmatn/mathn@latest/dist/Vazirmatn-font-face.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<!-- Vazirmatn: best Persian web font, also renders Latin beautifully.
+     The @vazirmatn/mathn package path was incorrect — use fonts.googleapis.com instead. -->
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&family=Roboto:wght@400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<!-- Font Awesome icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
     <style>
-@font-face {
-    font-family: 'Mitra';
-    src: url('fonts/Mitra.eot');
-    src: url('fonts/Mitra.eot?#iefix') format('embedded-opentype'),
-         url('fonts/Mitra.woff2') format('woff2'),
-         url('fonts/Mitra.woff') format('woff'),
-         url('fonts/Mitra.ttf') format('truetype');
-    font-weight: normal;
-    font-style: normal;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: 'Vazirmatn';
-    src: url('fonts/Vazirmatn-Regular.woff2') format('woff2');
-    font-weight: normal;
-    font-style: normal;
-    font-display: swap;
-}
-
-* {
-    font-family: 'Mitra', 'Vazirmatn', Tahoma, Arial, sans-serif;
-}
-
-.text-latin {
-    font-family: 'Roboto', 'Segoe UI', Arial, sans-serif;
-}
-    @font-face {
-        font-family: 'Mitra';
-        src: url('https://cdn.fontcdn.ir/Font/Persian/Mitra/Mitra.eot');
-        src: url('https://cdn.fontcdn.ir/Font/Persian/Mitra/Mitra.eot?#iefix') format('embedded-opentype'),
-             url('https://cdn.fontcdn.ir/Font/Persian/Mitra/Mitra.woff2') format('woff2'),
-             url('https://cdn.fontcdn.ir/Font/Persian/Mitra/Mitra.woff') format('woff'),
-             url('https://cdn.fontcdn.ir/Font/Persian/Mitra/Mitra.ttf') format('truetype');
-        font-weight: normal;
-        font-style: normal;
-        font-display: swap;
-    }
-    
-    * {
-        font-family: 'Mitra', 'Vazirmatn', -apple-system, BlinkMacSystemFont, sans-serif;
-    }
-    
-    .text-latin {
-        font-family: 'Roboto', 'Roboto Mono', 'Courier New', monospace;
-    }
-    
-    /* Large font setting */
-    .large-font {
-        font-size: 18px;
-    }
-    
-    .large-font .drug-name-compact,
-    .large-font .selected-drug-name-compact,
-    .large-font .result-value-enhanced,
-    .large-font .dose-input-wrapper input {
-        font-size: 1.2em;
-    }
-    
-    .large-font .drug-name-english,
-    .large-font .selected-drug-desc-compact,
-    .large-font .result-label-enhanced,
-    .large-font .result-unit-enhanced {
-        font-size: 0.9em;
-    }
     
     /* ============================================
        COMPLETE REMOVAL OF QUICK ACTIONS - ABSOLUTE
