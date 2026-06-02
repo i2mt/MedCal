@@ -501,7 +501,7 @@ const drugDatabase = {
         ampouleOptions: [
             { strength: 4, unit: 'mg', volume: 4, label: '4 mg in 4 mL' },
             { strength: 5, unit: 'mg', volume: 10, label: '5 mg in 10 mL' },
-            { strength: 10, unit: 'mg', volume: 10, label: '10 mg in 10 mL' }
+            { strength: 10, unit: 'mg', volume: 10, label: '10mg in 10mL' }
         ],
         defaultSolutionVolumes: { 
             syringe: [10, 20, 50], 
