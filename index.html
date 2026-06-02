@@ -8,257 +8,42 @@
     <title>MedCalc Pro | دستیار محاسبات دارویی</title>
     <meta name="description" content="محاسبه گر هوشمند تزریق دارو برای پرستاران و پزشکان">
     <link rel="manifest" href="manifest.json">
+
+    <!-- Vazirmatn (correct CDN) + Roboto for Latin/numeric text -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&family=Roboto:wght@400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
 
-<!-- Vazirmatn: best Persian web font, also renders Latin beautifully.
-     The @vazirmatn/mathn package path was incorrect — use fonts.googleapis.com instead. -->
-<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&family=Roboto:wght@400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <!-- Font Awesome icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-<!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
     <style>
-    
-    /* ============================================
-       COMPLETE REMOVAL OF QUICK ACTIONS - ABSOLUTE
-       ============================================ */
-    .quick-actions-enhanced,
-    .quick-actions,
-    .action-btn-enhanced,
-    .action-btn,
-    #saveCalculation,
-    #shareCalculation,
-    #resetCalculator,
-    #manualResetBtn,
-    #closeManualBtn2,
-    .quick-actions-enhanced *,
-    .quick-actions * {
-        display: none !important;
-        visibility: hidden !important;
-        opacity: 0 !important;
-        height: 0 !important;
-        width: 0 !important;
-        padding: 0 !important;
-        margin: 0 !important;
-        border: none !important;
-        position: absolute !important;
-        left: -9999px !important;
-        pointer-events: none !important;
-    }
-    
-    /* ===============================
-       FIX METHOD BUTTON TEXT COLOR
-       =============================== */
-    .method-btn-compact.active {
-        background: var(--gradient-primary) !important;
-        border-color: transparent !important;
-        color: white !important;
-        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4) !important;
-        transform: translateY(-2px);
-        font-weight: 700;
-    }
-    
-    .method-btn-compact.active i,
-    .method-btn-compact.active span {
-        color: white !important;
-    }
-    
-    .dark-mode .method-btn-compact.active {
-        background: var(--gradient-primary) !important;
-        color: white !important;
-    }
-    
-    .dark-mode .method-btn-compact.active i,
-    .dark-mode .method-btn-compact.active span {
-        color: white !important;
-    }
-    
-    /* ===============================
-       FIX VOLUME BUTTONS TEXT COLOR
-       =============================== */
-    .volume-preset-btn.active {
-        background: var(--gradient-primary) !important;
-        border-color: transparent !important;
-        color: white !important;
-        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3) !important;
-    }
-    
-    .volume-preset-btn.active .number,
-    .volume-preset-btn.active .unit-text,
-    .volume-preset-btn.active .custom-text {
-        color: white !important;
-    }
-    
-    .dark-mode .volume-preset-btn.active {
-        background: var(--gradient-primary) !important;
-        color: white !important;
-        border-color: transparent !important;
-    }
-    
-    .dark-mode .volume-preset-btn.active .number,
-    .dark-mode .volume-preset-btn.active .unit-text,
-    .dark-mode .volume-preset-btn.active .custom-text {
-        color: white !important;
-    }
-    
-    /* ===============================
-       MOBILE FIXES
-       =============================== */
-    @media (max-width: 768px) {
-        /* Drug Sidebar - Fixed height */
-        .drug-sidebar {
-            flex: 0 0 160px !important;
-            height: 160px !important;
-            min-height: 160px !important;
-            max-height: 160px !important;
-            padding: 0 !important;
-            margin: 0 !important;
-            background: var(--surface) !important;
-            border-bottom: 1px solid var(--border) !important;
-            border-radius: 0 !important;
-            display: flex !important;
-            flex-direction: column !important;
-            overflow: visible !important;
-            z-index: 50 !important;
+        /* Local Mitra font fallback */
+        @font-face {
+            font-family: 'Mitra';
+            src: url('fonts/Mitra.eot');
+            src: url('fonts/Mitra.eot?#iefix') format('embedded-opentype'),
+                 url('fonts/Mitra.woff2') format('woff2'),
+                 url('fonts/Mitra.woff') format('woff'),
+                 url('fonts/Mitra.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
         }
-        
-        .drug-quick-select {
-            display: flex !important;
-            flex-direction: column !important;
-            height: 100% !important;
-            width: 100% !important;
-            padding: 8px !important;
-            gap: 8px !important;
-        }
-        
-        .drug-quick-select h3 {
-            display: none !important;
-        }
-        
-        /* Drug search */
-        .drug-search-container {
-            flex-shrink: 0 !important;
-            height: 36px !important;
-            margin: 0 !important;
-            position: relative !important;
-        }
-        
-        .drug-search-container input {
-            width: 100% !important;
-            height: 36px !important;
-            padding: 0 36px 0 12px !important;
-            font-size: 14px !important;
-            border-radius: 8px !important;
-            border: 2px solid var(--border) !important;
-            background: var(--surface-elevated) !important;
-        }
-        
-        /* Drug scroll container */
-        .drug-scroll-container {
-            flex: 1 !important;
-            min-height: 0 !important;
-            overflow-x: auto !important;
-            overflow-y: hidden !important;
-            -webkit-overflow-scrolling: touch !important;
-            padding: 4px 0 !important;
-            margin: 0 -4px !important;
-        }
-        
-        /* Drug grid */
-        .drug-grid-compact {
-            display: flex !important;
-            flex-direction: row !important;
-            gap: 8px !important;
-            padding: 0 4px !important;
-            height: 100% !important;
-            align-items: center !important;
-            flex-wrap: nowrap !important;
-            min-width: min-content !important;
-        }
-        
-        /* Drug items */
-        .drug-item-compact {
-            flex: 0 0 90px !important;
-            width: 90px !important;
-            height: 90px !important;
-            padding: 10px 6px !important;
-            margin: 0 !important;
-            border-radius: 10px !important;
-            background: var(--surface-elevated) !important;
-            border: 2px solid var(--border) !important;
-            cursor: pointer !important;
-            display: flex !important;
-            flex-direction: column !important;
-            align-items: center !important;
-            justify-content: center !important;
-            transition: all 0.2s ease !important;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05) !important;
-            position: relative !important;
-        }
-        
-        .drug-icon-small {
-            width: 32px !important;
-            height: 32px !important;
-            border-radius: 8px !important;
-            font-size: 16px !important;
-            margin-bottom: 6px !important;
-        }
-        
-        .drug-name-compact {
-            font-size: 11px !important;
-            font-weight: 700 !important;
-            line-height: 1.2 !important;
-            margin-bottom: 2px !important;
-        }
-        
-        .drug-name-english {
-            font-size: 9px !important;
-        }
-        
-        /* MANUAL CALCULATION BUTTON - SAME SIZE AS DRUG ITEMS */
-        #openManualMobile {
-            flex: 0 0 90px !important;
-            width: 90px !important;
-            height: 90px !important;
-            padding: 10px 6px !important;
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%) !important;
-            color: white !important;
-            border: none !important;
-            border-radius: 10px !important;
-            display: flex !important;
-            flex-direction: column !important;
-            align-items: center !important;
-            justify-content: center !important;
-            gap: 4px !important;
-            font-size: 11px !important;
-            font-weight: 700 !important;
-            cursor: pointer !important;
-            box-shadow: 0 2px 4px rgba(240, 147, 251, 0.3) !important;
-            transition: all 0.2s ease !important;
-            order: 9999 !important;
-        }
-        
-        #openManualMobile i {
-            font-size: 18px !important;
-            color: white !important;
-            margin-bottom: 4px !important;
-        }
-        
-        #openManualMobile span {
-            font-size: 11px !important;
-            font-weight: 700 !important;
-            text-align: center;
-            line-height: 1.2;
-            color: white !important;
-        }
-        
-        /* Hide desktop manual button in mobile */
-        #openManual {
-            display: none !important;
-        }
-        
-        /* COMPLETE REMOVAL OF QUICK ACTIONS IN MOBILE */
+
+        /* Large font setting */
+        .large-font { font-size: 18px; }
+        .large-font .drug-name-compact,
+        .large-font .selected-drug-name-compact,
+        .large-font .result-value-enhanced,
+        .large-font .dose-input-wrapper input { font-size: 1.2em; }
+        .large-font .drug-name-english,
+        .large-font .selected-drug-desc-compact,
+        .large-font .result-label-enhanced,
+        .large-font .result-unit-enhanced { font-size: 0.9em; }
+
+        /* ── COMPLETE REMOVAL OF QUICK ACTIONS ── */
         .quick-actions-enhanced,
         .quick-actions,
         .action-btn-enhanced,
@@ -267,7 +52,9 @@
         #shareCalculation,
         #resetCalculator,
         #manualResetBtn,
-        #closeManualBtn2 {
+        #closeManualBtn2,
+        .quick-actions-enhanced *,
+        .quick-actions * {
             display: none !important;
             visibility: hidden !important;
             opacity: 0 !important;
@@ -275,11 +62,30 @@
             width: 0 !important;
             padding: 0 !important;
             margin: 0 !important;
+            border: none !important;
             position: absolute !important;
             left: -9999px !important;
+            pointer-events: none !important;
         }
-    }
-</style>
+
+        /* ── Active button colour overrides (insurance against specificity fights) ── */
+        .method-btn-compact.active {
+            background: var(--gradient-primary) !important;
+            border-color: transparent !important;
+            color: white !important;
+        }
+        .method-btn-compact.active i,
+        .method-btn-compact.active span { color: white !important; }
+
+        .volume-preset-btn.active {
+            background: var(--gradient-primary) !important;
+            border-color: transparent !important;
+            color: white !important;
+        }
+        .volume-preset-btn.active .number,
+        .volume-preset-btn.active .unit-text,
+        .volume-preset-btn.active .custom-text { color: white !important; }
+    </style>
 </head>
 <body>
     <!-- Header -->
@@ -295,7 +101,6 @@
                 </div>
             </div>
             <div class="header-actions">
-                <!-- Desktop actions -->
                 <button class="icon-btn" id="themeToggle">
                     <i class="fas fa-moon"></i>
                 </button>
@@ -326,7 +131,7 @@
                             </div>
                             <div class="drug-scroll-container">
                                 <div class="drug-grid-compact" id="drugGrid">
-                                    <!-- Drug cards will be loaded here by JavaScript -->
+                                    <!-- Drug cards loaded by JS -->
                                 </div>
                             </div>
                             <button class="manual-entry-btn gradient" id="openManual">
@@ -346,17 +151,15 @@
                             <div class="selected-drug-info-compact">
                                 <div class="selected-drug-name-compact" id="selectedDrugName">هپارین</div>
                                 <div class="selected-drug-desc-compact" id="selectedDrugDesc">
-                                    <span class="text-latin">Heparin</span>
-                                    <span class="text-mixed"> - </span>
-                                    <span class="text-latin">Anticoagulant</span>
+                                    <span class="latin-inline">Heparin</span>
+                                    <span> - </span>
+                                    <span class="latin-inline">Anticoagulant</span>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Manual Calculation Section -->
-                        <div class="manual-calculation-section" id="manualSection" style="display: none;">
-                            <!-- Content will be loaded dynamically by JavaScript -->
-                        </div>
+                        <div class="manual-calculation-section" id="manualSection" style="display: none;"></div>
 
                         <!-- Calculator Controls -->
                         <div class="calculator-controls-grid" id="calculatorControls">
@@ -365,10 +168,10 @@
                                 <label><i class="fas fa-infinity"></i> روش تزریق</label>
                                 <div class="method-selector-compact">
                                     <button class="method-btn-compact gradient active" data-method="syringe">
-                                        <i class="fas fa-syringe"></i> پمپ سرنگ
+                                        <i class="fas fa-syringe"></i> <span>پمپ سرنگ</span>
                                     </button>
                                     <button class="method-btn-compact gradient" data-method="infusion">
-                                        <i class="fas fa-pump-medical"></i> پمپ انفوزیون
+                                        <i class="fas fa-pump-medical"></i> <span>پمپ انفوزیون</span>
                                     </button>
                                 </div>
                             </div>
@@ -380,12 +183,12 @@
                                     <div class="volume-presets" id="volumeOptions"></div>
                                     <div class="volume-custom-input" id="customVolumeContainer" style="display: none;">
                                         <input type="number" id="customVolume" placeholder="حجم دلخواه" min="1" max="5000">
-                                        <span class="text-mixed">سی‌سی</span>
+                                        <span>سی‌سی</span>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- Ampoules with Button Selector -->
+                            <!-- Ampoules -->
                             <div class="control-group">
                                 <label><i class="fas fa-syringe"></i> تعداد آمپول</label>
                                 <div class="ampoule-control-enhanced">
@@ -401,13 +204,9 @@
                                     </button>
                                 </div>
                                 <div class="ampoule-info-enhanced" id="ampouleInfo">
-                                    <span class="text-mixed">هر آمپول:</span>
-                                    <span class="text-latin">5000 units in 1 ml</span>
+                                    <span>هر آمپول: </span><span class="latin-inline">5000 units in 1 ml</span>
                                 </div>
-                                <!-- Ampoule Type Buttons -->
-                                <div class="ampoule-type-buttons" id="ampouleTypeButtons" style="display: none; margin-top: 10px;">
-                                    <!-- Will be populated dynamically -->
-                                </div>
+                                <div class="ampoule-type-buttons" id="ampouleTypeButtons" style="display: none; margin-top: 10px;"></div>
                             </div>
 
                             <!-- Desired Dose -->
@@ -433,7 +232,7 @@
                                     </div>
                                     <div class="weight-input-section">
                                         <input type="number" id="patientWeight" placeholder="0" min="0" step="0.1" inputmode="decimal" disabled>
-                                        <span class="weight-unit text-latin">kg</span>
+                                        <span class="weight-unit latin-inline">kg</span>
                                     </div>
                                 </div>
                             </div>
@@ -521,7 +320,6 @@
             <div class="tab-pane" id="convertersTab">
                 <div class="converters-container">
                     <h2><i class="fas fa-exchange-alt"></i> مبدل‌های دارویی</h2>
-                    
                     <div class="converter-grid">
                         <!-- Electrolyte Converter -->
                         <div class="converter-card gradient">
@@ -550,9 +348,7 @@
                                 <button class="converter-btn gradient" onclick="convertElectrolyte()">
                                     <i class="fas fa-sync-alt"></i> تبدیل
                                 </button>
-                                <div class="converter-result" id="electrolyteResult">
-                                    نتیجه محاسبه
-                                </div>
+                                <div class="converter-result" id="electrolyteResult">نتیجه محاسبه</div>
                             </div>
                         </div>
 
@@ -574,9 +370,7 @@
                                 <button class="converter-btn gradient" onclick="convertPercentage()">
                                     <i class="fas fa-sync-alt"></i> تبدیل
                                 </button>
-                                <div class="converter-result" id="percentageResult">
-                                    نتیجه محاسبه
-                                </div>
+                                <div class="converter-result" id="percentageResult">نتیجه محاسبه</div>
                             </div>
                         </div>
 
@@ -612,9 +406,7 @@
                                 <button class="converter-btn gradient" onclick="convertUnits()">
                                     <i class="fas fa-sync-alt"></i> تبدیل
                                 </button>
-                                <div class="converter-result" id="unitResult">
-                                    نتیجه محاسبه
-                                </div>
+                                <div class="converter-result" id="unitResult">نتیجه محاسبه</div>
                             </div>
                         </div>
 
@@ -645,9 +437,7 @@
                                 <button class="converter-btn gradient" onclick="calculateDripRate()">
                                     <i class="fas fa-calculator"></i> محاسبه
                                 </button>
-                                <div class="converter-result" id="dripResult">
-                                    نتیجه محاسبه
-                                </div>
+                                <div class="converter-result" id="dripResult">نتیجه محاسبه</div>
                             </div>
                         </div>
                     </div>
@@ -658,15 +448,11 @@
             <div class="tab-pane" id="drugsTab">
                 <div class="drugs-container">
                     <h2><i class="fas fa-pills"></i> بانک اطلاعات دارویی</h2>
-                    
                     <div class="drugs-search">
                         <input type="text" id="librarySearch" placeholder="جستجوی دارو در بانک اطلاعات...">
                         <i class="fas fa-search"></i>
                     </div>
-                    
-                    <div class="drugs-library" id="drugLibrary">
-                        <!-- Drug cards will be loaded here by JavaScript -->
-                    </div>
+                    <div class="drugs-library" id="drugLibrary"></div>
                 </div>
             </div>
 
@@ -674,7 +460,6 @@
             <div class="tab-pane" id="toolsTab">
                 <div class="tools-container">
                     <h2><i class="fas fa-tools"></i> ابزارهای جانبی</h2>
-                    
                     <div class="tools-grid">
                         <!-- BMI Calculator -->
                         <div class="tool-card gradient">
@@ -694,13 +479,11 @@
                                 <button class="tool-btn gradient" onclick="calculateBMI()">
                                     <i class="fas fa-calculator"></i> محاسبه BMI
                                 </button>
-                                <div class="tool-result" id="bmiResult">
-                                    نتیجه محاسبه
-                                </div>
+                                <div class="tool-result" id="bmiResult">نتیجه محاسبه</div>
                             </div>
                         </div>
 
-                        <!-- Body Surface Area -->
+                        <!-- BSA -->
                         <div class="tool-card gradient">
                             <div class="tool-header">
                                 <i class="fas fa-ruler-combined"></i>
@@ -726,13 +509,11 @@
                                 <button class="tool-btn gradient" onclick="calculateBSA()">
                                     <i class="fas fa-calculator"></i> محاسبه BSA
                                 </button>
-                                <div class="tool-result" id="bsaResult">
-                                    نتیجه محاسبه
-                                </div>
+                                <div class="tool-result" id="bsaResult">نتیجه محاسبه</div>
                             </div>
                         </div>
 
-                        <!-- Ideal Body Weight -->
+                        <!-- IBW -->
                         <div class="tool-card gradient">
                             <div class="tool-header">
                                 <i class="fas fa-user-md"></i>
@@ -761,13 +542,11 @@
                                 <button class="tool-btn gradient" onclick="calculateIBW()">
                                     <i class="fas fa-calculator"></i> محاسبه وزن ایده‌آل
                                 </button>
-                                <div class="tool-result" id="ibwResult">
-                                    نتیجه محاسبه
-                                </div>
+                                <div class="tool-result" id="ibwResult">نتیجه محاسبه</div>
                             </div>
                         </div>
 
-                        <!-- Creatinine Clearance -->
+                        <!-- CrCl -->
                         <div class="tool-card gradient">
                             <div class="tool-header">
                                 <i class="fas fa-kidneys"></i>
@@ -796,9 +575,7 @@
                                 <button class="tool-btn gradient" onclick="calculateCrCl()">
                                     <i class="fas fa-calculator"></i> محاسبه CrCl
                                 </button>
-                                <div class="tool-result" id="crclResult">
-                                    نتیجه محاسبه
-                                </div>
+                                <div class="tool-result" id="crclResult">نتیجه محاسبه</div>
                             </div>
                         </div>
 
@@ -811,15 +588,11 @@
                             <div class="tool-body">
                                 <div class="input-group">
                                     <label>داروی اول:</label>
-                                    <select id="compatDrug1">
-                                        <option value="">انتخاب دارو</option>
-                                    </select>
+                                    <select id="compatDrug1"><option value="">انتخاب دارو</option></select>
                                 </div>
                                 <div class="input-group">
                                     <label>داروی دوم:</label>
-                                    <select id="compatDrug2">
-                                        <option value="">انتخاب دارو</option>
-                                    </select>
+                                    <select id="compatDrug2"><option value="">انتخاب دارو</option></select>
                                 </div>
                                 <div class="input-group">
                                     <label>محلول:</label>
@@ -833,9 +606,7 @@
                                 <button class="tool-btn gradient" onclick="checkCompatibility()">
                                     <i class="fas fa-search"></i> بررسی سازگاری
                                 </button>
-                                <div class="tool-result" id="compatResult">
-                                    نتیجه بررسی
-                                </div>
+                                <div class="tool-result" id="compatResult">نتیجه بررسی</div>
                             </div>
                         </div>
 
@@ -861,9 +632,7 @@
                                 <button class="tool-btn gradient" onclick="calculateDose()">
                                     <i class="fas fa-calculator"></i> محاسبه حجم
                                 </button>
-                                <div class="tool-result" id="doseResult">
-                                    نتیجه محاسبه
-                                </div>
+                                <div class="tool-result" id="doseResult">نتیجه محاسبه</div>
                             </div>
                         </div>
                     </div>
@@ -917,7 +686,6 @@
                         </label>
                     </div>
                 </div>
-                
                 <div class="settings-group">
                     <h4><i class="fas fa-bell"></i> اعلان‌ها</h4>
                     <div class="setting-item">
@@ -935,7 +703,6 @@
                         </label>
                     </div>
                 </div>
-                
                 <div class="settings-group">
                     <h4><i class="fas fa-database"></i> داده‌ها</h4>
                     <div class="setting-item">
@@ -952,11 +719,10 @@
                         <i class="fas fa-download"></i> خروجی گرفتن
                     </button>
                 </div>
-                
                 <div class="settings-group">
                     <h4><i class="fas fa-info-circle"></i> درباره</h4>
                     <div class="about-info">
-                        <p><strong>نسخه:</strong> 2.0.1</p>
+                        <p><strong>نسخه:</strong> <span>2.0.1</span></p>
                         <p><strong>تعداد داروها:</strong> <span id="drugCount">11</span></p>
                         <p><strong>آخرین به‌روزرسانی:</strong> <span id="lastUpdate">1402/10/15</span></p>
                     </div>
@@ -976,9 +742,7 @@
                 <button class="modal-close" id="closeHistory">&times;</button>
             </div>
             <div class="modal-body">
-                <div class="history-list" id="historyList">
-                    <!-- History items will be loaded here by JavaScript -->
-                </div>
+                <div class="history-list" id="historyList"></div>
             </div>
         </div>
     </div>
@@ -987,7 +751,7 @@
     <script src="drugDatabase.js"></script>
     <script src="converters.js"></script>
     <script src="script.js"></script>
-    
+
     <!-- PWA Registration -->
     <script>
         if ('serviceWorker' in navigator) {
