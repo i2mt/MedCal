@@ -1049,20 +1049,25 @@ function openManualCalculation() {
     const manualSection = DOM.manualSection;
     const calculatorControls = DOM.calculatorControls;
     const selectedDrugHeader = document.querySelector('.selected-drug-compact');
-    const drugSidebar = document.querySelector('.drug-sidebar');
+    const calculateBtn = document.getElementById('calculateBtn');
 
     if (manualSection && calculatorControls) {
         if (calculatorControls) calculatorControls.style.display = 'none';
         if (selectedDrugHeader) selectedDrugHeader.style.display = 'none';
+        if (calculateBtn) calculateBtn.style.display = 'none';
+        // Clear and rebuild each time so state is fresh
+        createManualCalculationContent();
         manualSection.style.display = 'flex';
         manualSection.style.flexDirection = 'column';
-        manualSection.style.height = '100%';
-        if (!manualSection.querySelector('.manual-controls')) createManualCalculationContent();
+        manualSection.style.height = 'auto';
         ['resultsSection', 'guideSection', 'warningsSection', 'compatibilitySection'].forEach(id => {
             const section = document.getElementById(id);
             if (section) section.style.display = 'none';
         });
-        if (drugSidebar && window.innerWidth < 768) drugSidebar.style.display = 'none';
+        // Scroll to manual section
+        setTimeout(() => {
+            manualSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 100);
     }
 }
 
@@ -1075,86 +1080,108 @@ function createManualCalculationContent() {
             <button class="icon-btn" id="closeManualBtn"><i class="fas fa-times"></i></button>
         </div>
         <div class="manual-controls">
+
+            <!-- Drug Name (optional) -->
             <div class="control-group">
                 <label><i class="fas fa-pills"></i> نام دارو (اختیاری)</label>
-                <input type="text" id="manualDrugName" placeholder="نام دارو را وارد کنید" style="text-align: right; direction: rtl;">
+                <input type="text" id="manualDrugName" class="manual-drug-name-input" placeholder="نام دارو را وارد کنید" autocomplete="off">
             </div>
+
+            <!-- Infusion Method -->
             <div class="control-group">
                 <label><i class="fas fa-infinity"></i> روش تزریق</label>
                 <div class="method-selector-compact">
-                    <button class="method-btn-compact active" data-method="syringe"><i class="fas fa-syringe"></i> <span>پمپ سرنگ</span></button>
-                    <button class="method-btn-compact" data-method="infusion"><i class="fas fa-pump-medical"></i> <span>پمپ انفوزیون</span></button>
+                    <button class="method-btn-compact active" data-method="syringe">
+                        <i class="fas fa-syringe"></i> <span>پمپ سرنگ</span>
+                    </button>
+                    <button class="method-btn-compact" data-method="infusion">
+                        <i class="fas fa-pump-medical"></i> <span>پمپ انفوزیون</span>
+                    </button>
                 </div>
             </div>
-            <div class="manual-inputs-grid">
-                <div class="control-group">
-                    <label><i class="fas fa-vial"></i> قدرت آمپول</label>
-                    <div class="manual-input-with-unit">
-                        <input type="number" id="manualStrength" placeholder="0" step="0.01" min="0.01" value="5000" inputmode="decimal" style="text-align: center;">
-                        <select id="manualStrengthUnit">
-                            <option value="units">واحد</option>
-                            <option value="mg">میلی‌گرم</option>
-                            <option value="mcg">میکروگرم</option>
-                            <option value="g">گرم</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="control-group">
-                    <label><i class="fas fa-vial"></i> حجم آمپول</label>
-                    <div class="manual-input-with-unit">
-                        <input type="number" id="manualVialVolume" placeholder="0" step="0.1" min="0.1" value="1" inputmode="decimal" style="text-align: center;">
-                        <span class="unit">میلی‌لیتر</span>
-                    </div>
-                </div>
-                <div class="control-group">
-                    <label><i class="fas fa-syringe"></i> تعداد آمپول</label>
-                    <div class="ampoule-control-enhanced">
-                        <button class="ampoule-btn-enhanced" id="manualDecreaseAmpoule"><i class="fas fa-minus"></i></button>
-                        <div class="ampoule-count-enhanced"><span id="manualAmpouleCount">1</span><small>عدد</small></div>
-                        <button class="ampoule-btn-enhanced" id="manualIncreaseAmpoule"><i class="fas fa-plus"></i></button>
-                    </div>
-                </div>
-                <div class="control-group">
-                    <label><i class="fas fa-flask"></i> حجم محلول</label>
-                    <div class="manual-input-with-unit">
-                        <input type="number" id="manualSolutionVolume" placeholder="0" step="1" min="1" value="50" inputmode="numeric" style="text-align: center;">
-                        <span class="unit">سی‌سی</span>
-                    </div>
-                </div>
-                <div class="control-group">
-                    <label><i class="fas fa-file-medical-alt"></i> دوز درخواستی</label>
-                    <div class="dose-input-enhanced">
-                        <div class="dose-input-wrapper">
-                            <input type="number" id="manualDesiredDose" placeholder="0" step="0.01" min="0.01" value="1000" inputmode="decimal" style="text-align: center;">
-                            <select class="dose-unit-enhanced" id="manualDoseUnit" style="position:static;transform:none;background:none;color:var(--text-secondary);padding:4px;">
-                                <option value="units/hour">واحد/ساعت</option>
-                                <option value="mg/hour">mg/hour</option>
-                                <option value="mcg/hour">mcg/hour</option>
-                                <option value="mg/min">mg/min</option>
-                                <option value="mcg/min">mcg/min</option>
-                                <option value="mcg/kg/min">mcg/kg/min</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-                <div class="control-group">
-                    <label><i class="fas fa-weight-scale"></i> وزن بیمار (اختیاری)</label>
-                    <div class="manual-input-with-unit">
-                        <input type="number" id="manualPatientWeight" placeholder="0" step="0.1" min="1" value="70" inputmode="decimal" style="text-align: center;">
-                        <span class="unit latin-inline">kg</span>
-                    </div>
+
+            <!-- Ampoule Strength -->
+            <div class="control-group">
+                <label><i class="fas fa-vial"></i> قدرت آمپول</label>
+                <div class="manual-input-row">
+                    <input type="number" id="manualStrength" placeholder="5000" step="0.01" min="0.01" value="5000" inputmode="decimal">
+                    <select id="manualStrengthUnit">
+                        <option value="units">واحد</option>
+                        <option value="mg">mg</option>
+                        <option value="mcg">mcg</option>
+                        <option value="g">g</option>
+                    </select>
+                    <span class="manual-unit-label">/ آمپول</span>
                 </div>
             </div>
+
+            <!-- Vial Volume -->
+            <div class="control-group">
+                <label><i class="fas fa-vial"></i> حجم آمپول</label>
+                <div class="manual-input-row">
+                    <input type="number" id="manualVialVolume" placeholder="1" step="0.1" min="0.1" value="1" inputmode="decimal">
+                    <span class="manual-unit-label">mL</span>
+                </div>
+            </div>
+
+            <!-- Ampoule Count -->
+            <div class="control-group">
+                <label><i class="fas fa-syringe"></i> تعداد آمپول</label>
+                <div class="manual-ampoule-control ampoule-control-enhanced">
+                    <button class="ampoule-btn-enhanced" id="manualDecreaseAmpoule"><i class="fas fa-minus"></i></button>
+                    <div class="ampoule-count-enhanced"><span id="manualAmpouleCount">1</span><small> عدد</small></div>
+                    <button class="ampoule-btn-enhanced" id="manualIncreaseAmpoule"><i class="fas fa-plus"></i></button>
+                </div>
+            </div>
+
+            <!-- Solution Volume -->
+            <div class="control-group">
+                <label><i class="fas fa-flask"></i> حجم محلول</label>
+                <div class="manual-input-row">
+                    <input type="number" id="manualSolutionVolume" placeholder="50" step="1" min="1" value="50" inputmode="numeric">
+                    <span class="manual-unit-label">cc</span>
+                </div>
+            </div>
+
+            <!-- Desired Dose -->
+            <div class="control-group">
+                <label><i class="fas fa-file-medical-alt"></i> دوز درخواستی</label>
+                <div class="manual-dose-row">
+                    <input type="number" id="manualDesiredDose" placeholder="1000" step="0.01" min="0.01" value="1000" inputmode="decimal">
+                    <select id="manualDoseUnit">
+                        <option value="units/hour">units/hr</option>
+                        <option value="mg/hour">mg/hr</option>
+                        <option value="mcg/hour">mcg/hr</option>
+                        <option value="mg/min">mg/min</option>
+                        <option value="mcg/min">mcg/min</option>
+                        <option value="mcg/kg/min">mcg/kg/min</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Patient Weight (optional) -->
+            <div class="control-group">
+                <label><i class="fas fa-weight-scale"></i> وزن بیمار (اختیاری — برای دوزهای /kg)</label>
+                <div class="manual-input-row">
+                    <input type="number" id="manualPatientWeight" placeholder="70" step="0.1" min="1" value="70" inputmode="decimal">
+                    <span class="manual-unit-label">kg</span>
+                </div>
+            </div>
+
+            <!-- Calculate Button -->
             <button class="calculate-btn-enhanced" id="manualCalculateBtn">
-                <i class="fas fa-calculator"></i><span>محاسبه سرعت پمپ</span>
+                <i class="fas fa-calculator"></i>
+                <span>محاسبه سرعت پمپ</span>
             </button>
-            <div class="manual-results" id="manualResults" style="display: none; margin-top: 20px;">
+
+            <!-- Results -->
+            <div class="manual-results" id="manualResults" style="display: none;">
                 <h4><i class="fas fa-chart-line"></i> نتایج محاسبه دستی</h4>
-                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
+                <div class="manual-results-grid">
                     <div class="result-item-enhanced">
                         <div class="result-label-enhanced">غلظت محلول</div>
                         <div class="result-value-enhanced" id="manualConcentration">0</div>
-                        <div class="result-unit-enhanced" id="manualConcentrationUnit">واحد/سی‌سی</div>
+                        <div class="result-unit-enhanced" id="manualConcentrationUnit">واحد/cc</div>
                     </div>
                     <div class="result-item-enhanced highlight">
                         <div class="result-label-enhanced">سرعت پمپ</div>
@@ -1163,6 +1190,7 @@ function createManualCalculationContent() {
                     </div>
                 </div>
             </div>
+
         </div>
     `;
     setupManualCalculationFunctionality();
@@ -1186,10 +1214,12 @@ function setupManualCalculationFunctionality() {
     document.getElementById('manualCalculateBtn').addEventListener('click', calculateManualInfusion);
     document.getElementById('closeManualBtn').addEventListener('click', () => {
         document.getElementById('manualSection').style.display = 'none';
-        document.getElementById('calculatorControls').style.display = 'grid';
-        document.querySelector('.selected-drug-compact').style.display = 'flex';
-        const drugSidebar = document.querySelector('.drug-sidebar');
-        if (drugSidebar && window.innerWidth < 768) drugSidebar.removeAttribute('style');
+        const controls = document.getElementById('calculatorControls');
+        if (controls) controls.style.display = 'grid';
+        const drugHeader = document.querySelector('.selected-drug-compact');
+        if (drugHeader) drugHeader.style.display = 'flex';
+        const calcBtn = document.getElementById('calculateBtn');
+        if (calcBtn) calcBtn.style.display = 'flex';
     });
 }
 
