@@ -65,45 +65,46 @@
 }
 
 /* ===============================
-   DARK MODE — richer surface hierarchy, not flat black
+   DARK MODE — warm slate, easy on the eyes
    =============================== */
 .dark-mode {
-    /* Accent colours — slightly brighter so they pop on dark backgrounds */
-    --primary: #818cf8;          /* indigo-400: more vibrant than #667eea on dark */
-    --primary-dark: #6366f1;
-    --primary-light: rgba(129, 140, 248, 0.15);
-    --secondary: #d946ef;
+    /* Accent colours — softer teal-blue palette, less eye-straining than indigo */
+    --primary: #60a5fa;          /* blue-400: softer and warmer on dark */
+    --primary-dark: #3b82f6;
+    --primary-light: rgba(96, 165, 250, 0.15);
+    --secondary: #c084fc;        /* softer purple */
     --danger: #f87171;
-    --warning: #fb923c;
+    --warning: #fbbf24;          /* amber-400 — warmer yellow, easier than orange */
     --success: #34d399;
     --info: #38bdf8;
 
-    /* Backgrounds: layered blue-grey, not pure black */
-    --bg-primary:        #0f1117;   /* deepest — page background */
-    --bg-secondary:      #161b27;
-    --surface:           #1a2035;   /* cards, panels */
-    --surface-elevated:  #212840;   /* raised elements inside cards */
+    /* Backgrounds: warm-tinted dark slate, not cold blue-black */
+    --bg-primary:        #111827;   /* gray-900 — warm dark, not blue */
+    --bg-secondary:      #1f2937;   /* gray-800 */
+    --surface:           #1f2937;   /* cards, panels */
+    --surface-elevated:  #374151;   /* gray-700 — clearly raised elements */
 
-    /* Text: warm white hierarchy — all pass WCAG AA on dark surfaces */
-    --text-primary:   #f0f4ff;      /* near-white, slight blue tint — on #1a2035 = 13:1 */
-    --text-secondary: #bdc8e8;      /* raised from #a8b4d0 — labels, descriptions */
-    --text-tertiary:  #8896b8;      /* raised from #5c6a8a — hints, sub-labels, units */
+    /* Text: warm white hierarchy with strong contrast */
+    --text-primary:   #f9fafb;      /* gray-50 — clean white, not blue-tinted */
+    --text-secondary: #d1d5db;      /* gray-300 — very readable labels */
+    --text-tertiary:  #9ca3af;      /* gray-400 — hints, sub-labels */
 
-    /* Borders: subtle but visible */
-    --border:       #2e3a55;
-    --border-light: #253047;
+    /* Borders: visible but not glaring */
+    --border:       #374151;        /* gray-700 */
+    --border-light: #2d3748;
 
-    /* Shadows: coloured so they feel less flat */
-    --shadow:    0 4px 15px rgba(0, 0, 0, 0.5);
-    --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.6);
-    --shadow-xl: 0 20px 50px rgba(0, 0, 0, 0.7);
-    --shadow-inset: inset 0 2px 4px rgba(0, 0, 0, 0.4);
+    /* Shadows: deeper for more depth */
+    --shadow:    0 4px 15px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.55);
+    --shadow-xl: 0 20px 50px rgba(0, 0, 0, 0.65);
+    --shadow-inset: inset 0 2px 4px rgba(0, 0, 0, 0.3);
 
-    /* Primary gradient in dark mode: brighter indigo → violet */
-    --gradient-primary: linear-gradient(135deg, #818cf8 0%, #a855f7 100%);
+    /* Primary gradient in dark mode: warm blue → teal */
+    --gradient-primary: linear-gradient(135deg, #60a5fa 0%, #34d399 100%);
+    --gradient-secondary: linear-gradient(135deg, #c084fc 0%, #f472b6 100%);
 }
 
-/* ── Dark mode: deep surfaces with blue-grey tint ── */
+/* ── Dark mode: warm slate surfaces ── */
 .dark-mode body,
 .dark-mode .app-container,
 .dark-mode .main-content,
@@ -178,7 +179,7 @@
     background: var(--surface) !important;
 }
 
-/* Gradient text: keep gradient on dark (now uses brighter dark-mode gradient) */
+/* Gradient text: updated for warm blue-teal dark mode gradient */
 .dark-mode .gradient-text,
 .dark-mode .selected-drug-name-compact,
 .dark-mode .converters-container h2,
@@ -1025,7 +1026,8 @@ select {
 .method-btn-compact {
     flex: 1;
     padding: 10px 12px;
-    background: var(--surface);
+    /* Override .gradient class — inactive buttons should NOT have gradient bg */
+    background: var(--surface-elevated) !important;
     border: 2px solid var(--border);
     border-radius: 8px;
     cursor: pointer;
@@ -1036,7 +1038,7 @@ select {
     gap: 8px;
     font-size: 14px;
     font-weight: 600;
-    color: var(--text-secondary) !important;
+    color: var(--text-primary) !important;
     text-align: center;
     min-height: 44px;
     direction: rtl;
@@ -1046,11 +1048,11 @@ select {
 .method-btn-compact:hover {
     border-color: var(--primary);
     color: var(--primary) !important;
-    background: var(--primary-light);
+    background: var(--primary-light) !important;
 }
 
 .method-btn-compact.active {
-    background: var(--gradient-primary);
+    background: var(--gradient-primary) !important;
     border-color: transparent;
     color: white !important;
     box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
@@ -1063,27 +1065,29 @@ select {
 
 .method-btn-compact i {
     font-size: 16px;
+    color: inherit;
 }
 
 .method-btn-compact span {
     direction: rtl;
     text-align: center;
+    color: inherit;
 }
 
 .dark-mode .method-btn-compact {
-    background: var(--surface-elevated);
+    background: var(--surface-elevated) !important;
     border-color: var(--border);
-    color: var(--text-secondary) !important;
+    color: var(--text-primary) !important;
 }
 
 .dark-mode .method-btn-compact:hover {
     border-color: var(--primary);
     color: var(--primary) !important;
-    background: var(--surface);
+    background: var(--primary-light) !important;
 }
 
 .dark-mode .method-btn-compact.active {
-    background: var(--gradient-primary);
+    background: var(--gradient-primary) !important;
     border-color: transparent;
     color: white !important;
 }
@@ -1207,7 +1211,7 @@ select {
     min-width: 80px;
     min-height: 44px;
     padding: 8px 12px;
-    background: var(--surface);
+    background: var(--surface-elevated) !important;
     border: 2px solid var(--border);
     border-radius: 8px;
     cursor: pointer;
@@ -1218,7 +1222,7 @@ select {
     gap: 6px;
     font-size: 13px;
     font-weight: 600;
-    color: var(--text-secondary) !important;
+    color: var(--text-primary) !important;
     text-align: center;
     /* Ampoule labels are like "5 mg in 1 mL" — keep LTR */
     direction: ltr !important;
@@ -1240,9 +1244,9 @@ select {
 }
 
 .dark-mode .ampoule-type-btn {
-    background: var(--surface-elevated);
+    background: var(--surface-elevated) !important;
     border-color: var(--border);
-    color: var(--text-secondary) !important;
+    color: var(--text-primary) !important;
 }
 
 .dark-mode .ampoule-type-btn:hover {
@@ -2968,4 +2972,456 @@ select {
 input[type="text"]::placeholder,
 input[type="search"]::placeholder {
     text-align: right;
+}
+
+/* ===============================
+   MANUAL CALCULATION — COMPLETELY REBUILT
+   =============================== */
+.manual-calculation-section {
+    display: none;
+    flex-direction: column;
+    gap: 0;
+    animation: slideInDown 0.25s ease;
+}
+
+@keyframes slideInDown {
+    from { opacity: 0; transform: translateY(-12px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.manual-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 16px;
+    background: var(--gradient-secondary);
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
+    margin-bottom: 0;
+    border-bottom: none;
+    direction: rtl;
+}
+
+.manual-header h3 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: white;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.manual-header h3 i { color: white; }
+
+#closeManualBtn {
+    background: rgba(255,255,255,0.2);
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 8px;
+    color: white;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 16px;
+    transition: var(--transition);
+    flex-shrink: 0;
+}
+
+#closeManualBtn:hover {
+    background: rgba(255,255,255,0.35);
+}
+
+.manual-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-top: none;
+    border-radius: 0 0 var(--radius-md) var(--radius-md);
+}
+
+/* All manual control-groups use single column layout for clarity */
+.manual-controls .control-group {
+    background: var(--surface-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 12px;
+}
+
+.manual-controls .control-group label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+    direction: rtl;
+}
+
+.manual-controls .control-group label i {
+    color: var(--primary);
+    font-size: 13px;
+}
+
+/* Input + unit label row */
+.manual-input-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    direction: ltr;
+}
+
+.manual-input-row input {
+    flex: 1;
+    padding: 10px 12px;
+    background: var(--surface);
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    font-size: 16px;
+    font-family: var(--font-mono);
+    color: var(--text-primary);
+    text-align: center;
+    transition: var(--transition);
+    min-width: 0;
+}
+
+.manual-input-row input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--primary-light);
+}
+
+.manual-input-row select {
+    padding: 10px 28px 10px 10px;
+    background: var(--surface);
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    font-size: 13px;
+    color: var(--text-primary);
+    font-family: var(--font-persian);
+    flex-shrink: 0;
+    max-width: 130px;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.manual-input-row select:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+.manual-unit-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    flex-shrink: 0;
+    font-family: var(--font-latin);
+    background: var(--surface-elevated);
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+}
+
+/* Dose row: input + dropdown side-by-side */
+.manual-dose-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    direction: ltr;
+}
+
+.manual-dose-row input {
+    flex: 1;
+    padding: 10px 12px;
+    background: var(--surface);
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    font-size: 16px;
+    font-family: var(--font-mono);
+    color: var(--text-primary);
+    text-align: center;
+    transition: var(--transition);
+    min-width: 0;
+}
+
+.manual-dose-row input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--primary-light);
+}
+
+.manual-dose-row select {
+    padding: 10px 28px 10px 8px;
+    background: var(--surface);
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    font-size: 12px;
+    color: var(--text-primary);
+    font-family: var(--font-latin);
+    flex-shrink: 0;
+    max-width: 140px;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.manual-dose-row select:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+/* Ampoule counter inside manual */
+.manual-ampoule-control {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    background: var(--surface);
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    padding: 6px 10px;
+}
+
+.manual-ampoule-control .ampoule-btn-enhanced {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    min-height: 40px;
+}
+
+/* Results area */
+.manual-results {
+    background: var(--surface-elevated);
+    border: 2px solid var(--primary);
+    border-radius: var(--radius-md);
+    padding: 14px;
+    direction: rtl;
+    margin-top: 4px;
+}
+
+.manual-results h4 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--primary);
+    margin-bottom: 12px;
+    font-size: 14px;
+    font-weight: 700;
+    direction: rtl;
+}
+
+.manual-results-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+/* Drug name text input */
+.manual-drug-name-input {
+    width: 100%;
+    padding: 10px 12px;
+    background: var(--surface);
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    font-size: 15px;
+    color: var(--text-primary);
+    font-family: var(--font-persian);
+    direction: rtl;
+    text-align: right;
+    transition: var(--transition);
+}
+
+.manual-drug-name-input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--primary-light);
+}
+
+/* Dark mode fixes for manual section */
+.dark-mode .manual-controls {
+    background: var(--surface);
+    border-color: var(--border);
+}
+
+.dark-mode .manual-controls .control-group {
+    background: var(--bg-secondary);
+    border-color: var(--border);
+}
+
+.dark-mode .manual-input-row input,
+.dark-mode .manual-input-row select,
+.dark-mode .manual-dose-row input,
+.dark-mode .manual-dose-row select,
+.dark-mode .manual-drug-name-input {
+    background: var(--bg-primary);
+    border-color: var(--border);
+    color: var(--text-primary);
+}
+
+.dark-mode .manual-unit-label {
+    background: var(--surface);
+    border-color: var(--border);
+    color: var(--text-secondary);
+}
+
+.dark-mode .manual-ampoule-control {
+    background: var(--bg-primary);
+    border-color: var(--border);
+}
+
+.dark-mode .manual-results {
+    background: var(--bg-secondary);
+    border-color: var(--primary);
+}
+
+/* ===============================
+   MOBILE BOTTOM PADDING FIX
+   Ensure scrollable content doesn't hide behind tab bar
+   =============================== */
+@media (max-width: 768px) {
+    .calculator-main {
+        padding-bottom: calc(24px + var(--safe-bottom)) !important;
+    }
+
+    #convertersTab .converters-container,
+    #drugsTab .drugs-container,
+    #toolsTab .tools-container {
+        padding-bottom: calc(20px + var(--safe-bottom)) !important;
+    }
+
+    /* Manual calculation on mobile — full column, not grid */
+    .manual-results-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+    }
+
+    .manual-controls {
+        gap: 8px;
+        padding: 10px;
+    }
+
+    .manual-controls .control-group {
+        padding: 10px;
+    }
+}
+
+/* ===============================
+   GLOBAL READABILITY FIXES
+   Ensure all labels readable in both modes
+   =============================== */
+
+/* Ensure control-group labels are always readable */
+.control-group label,
+.input-group label {
+    color: var(--text-secondary);
+}
+
+/* Ensure weight toggle label is readable in light mode */
+.weight-toggle-enhanced .toggle-label {
+    color: var(--text-primary);
+}
+
+/* Ensure ampoule info text is readable */
+.ampoule-info-enhanced {
+    color: var(--text-secondary);
+}
+
+/* Ensure all inactive button text is dark enough in light mode */
+.volume-preset-btn {
+    color: var(--text-primary);
+}
+
+.volume-preset-btn .number {
+    font-weight: 700;
+    color: var(--primary);
+    font-family: var(--font-latin);
+    font-variant-numeric: tabular-nums;
+}
+
+.volume-preset-btn .unit-text {
+    font-size: 11px;
+    color: var(--text-secondary);
+    font-family: var(--font-latin);
+}
+
+/* Dark mode: override text-secondary references that were too dim */
+.dark-mode .control-group label,
+.dark-mode .input-group label {
+    color: var(--text-secondary) !important;
+}
+
+.dark-mode .weight-toggle-enhanced .toggle-label,
+.dark-mode .weight-toggle-enhanced .weight-unit {
+    color: var(--text-primary) !important;
+}
+
+.dark-mode .setting-item span {
+    color: var(--text-primary) !important;
+}
+
+.dark-mode .ampoule-info-enhanced {
+    color: var(--text-secondary) !important;
+}
+
+.dark-mode .volume-preset-btn {
+    background: var(--surface-elevated) !important;
+    border-color: var(--border) !important;
+    color: var(--text-primary) !important;
+}
+
+.dark-mode .volume-preset-btn .number {
+    color: var(--primary) !important;
+}
+
+.dark-mode .volume-preset-btn .unit-text {
+    color: var(--text-secondary) !important;
+}
+
+/* Tab bar inactive labels — visible in both modes */
+.tab-item {
+    color: var(--text-tertiary);
+}
+
+.dark-mode .tab-item {
+    color: var(--text-secondary) !important;
+}
+
+.dark-mode .tab-item.active {
+    color: white !important;
+}
+
+/* Result label in light mode */
+.result-label-enhanced {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+    direction: rtl;
+    text-align: center;
+}
+
+.dark-mode .result-label-enhanced {
+    color: var(--text-secondary) !important;
+}
+
+/* Result unit in light mode */
+.result-unit-enhanced {
+    font-size: 12px;
+    color: var(--text-secondary);
+    unicode-bidi: plaintext;
+    text-align: center;
+    font-family: var(--font-latin);
+}
+
+.dark-mode .result-unit-enhanced {
+    color: var(--text-secondary) !important;
+}
+
+/* Highlighted result card label/unit should always be white */
+.result-item-enhanced.highlight .result-label-enhanced,
+.result-item-enhanced.highlight .result-unit-enhanced {
+    color: rgba(255,255,255,0.85) !important;
 }
