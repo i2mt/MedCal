@@ -3515,14 +3515,28 @@ input[type="search"]::placeholder {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.1em;
-    /* Ensure emoji renders at correct size in the icon containers */
-}
-
-.drug-icon-small .drug-emoji-icon {
     font-size: 18px;
 }
 
-.selected-drug-icon-compact .drug-emoji-icon {
-    font-size: 24px;
+.drug-icon-small .drug-emoji-icon { font-size: 18px; }
+.selected-drug-icon-compact .drug-emoji-icon { font-size: 24px; }
+
+/* SVG icon for drugs (e.g. pantoprazole stomach) */
+.drug-svg-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    color: inherit;
 }
+
+.drug-svg-icon svg {
+    width: 1.2em;
+    height: 1.2em;
+    fill: currentColor;
+    display: block;
+}
+
+.drug-icon-small .drug-svg-icon svg { width: 20px; height: 20px; }
+.selected-drug-icon-compact .drug-svg-icon svg { width: 26px; height: 26px; }
