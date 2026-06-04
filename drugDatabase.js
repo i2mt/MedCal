@@ -337,7 +337,7 @@ const drugDatabase = {
         persianName: 'پنتوپرازول',
         englishName: 'Pantoprazole Sodium',
         alternativeNames: ['پروتونیکس', 'Protonix', 'Pantoloc'],
-        icon: 'svg:<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor'><path d='M12 2C9.5 2 7.5 3.5 6.5 5.5 5.5 5 4.5 5 3.5 5.5 2 6.5 2 8.5 2.5 10c.5 1.5.5 3 0 4.5C2 16.5 2.5 19 4.5 20.5 6 21.5 7.5 22 9 22c1 0 2-.5 3-1 1 .5 2 1 3 1 1.5 0 3-.5 4.5-1.5 2-1.5 2.5-4 1.5-6-.5-1.5-.5-3 0-4.5C21.5 8.5 22 6.5 20.5 5.5c-1-.5-2-.5-3 0C16.5 3.5 14.5 2 12 2z'/></svg>',
+        icon: 'fas fa-tablets',
         color: '#5ac8fa',
         category: 'PPI',
         defaultAmpoules: 2,
