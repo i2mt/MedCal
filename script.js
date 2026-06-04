@@ -154,6 +154,19 @@ const PersianNumbers = {
 // ============================================
 // SIMPLE INPUT HANDLING
 // ============================================
+// Helper: render drug icon (supports fa classes, emoji: prefix, svg: prefix)
+function renderDrugIcon(iconStr, extraStyle) {
+    if (!iconStr) return '<i class="fas fa-pills"></i>';
+    if (iconStr.startsWith('svg:')) {
+        const svg = iconStr.slice(4);
+        return `<span class="drug-svg-icon" style="${extraStyle || ''}">${svg}</span>`;
+    }
+    if (iconStr.startsWith('emoji:')) {
+        return `<span class="drug-emoji-icon" style="${extraStyle || ''}">${iconStr.slice(6)}</span>`;
+    }
+    return `<i class="${iconStr}" style="${extraStyle || ''}"></i>`;
+}
+
 function setupSimpleInputHandling() {
     document.querySelectorAll('input[type="text"], input[type="number"], input[type="tel"], textarea').forEach(input => {
         input.style.textAlign = 'center';
@@ -587,7 +600,7 @@ function loadDrugGrid() {
         card.className = 'drug-item-compact';
         card.dataset.drugId = id;
         card.innerHTML = `
-            <div class="drug-icon-small">${drug.icon.startsWith('emoji:') ? '<span class="drug-emoji-icon">' + drug.icon.slice(6) + '</span>' : '<i class="' + drug.icon + '"></i>'}</div>
+            <div class="drug-icon-small">${renderDrugIcon(drug.icon)}</div>
             <div class="drug-name-compact">${drug.persianName}</div>
             <div class="drug-name-english">${drug.englishName}</div>
         `;
@@ -611,7 +624,7 @@ function selectDrug(drugId) {
         <span class="latin-inline">${drug.englishName}</span>
         <span> (</span><span class="latin-inline">${drug.category}</span><span>)</span>
     `;
-    DOM.selectedDrugIcon.innerHTML = drug.icon.startsWith('emoji:') ? `<span class="drug-emoji-icon" style="font-size:1.5rem;">${drug.icon.slice(6)}</span>` : `<i class="${drug.icon}"></i>`;
+    DOM.selectedDrugIcon.innerHTML = renderDrugIcon(drug.icon, 'font-size:1.5rem;');
     DOM.selectedDrugIcon.style.background = `linear-gradient(135deg, ${drug.color}, ${drug.color}99)`;
 
     updateAmpouleTypeSelector(drug);
@@ -1450,7 +1463,7 @@ function loadDrugLibrary() {
                     <div class="drug-library-title">${drug.persianName}</div>
                     <div class="drug-library-english">${drug.englishName}</div>
                 </div>
-                <div style="color: ${drug.color}; font-size: 1.5rem;">${drug.icon.startsWith('emoji:') ? '<span>' + drug.icon.slice(6) + '</span>' : '<i class="' + drug.icon + '"></i>'}</div>
+                <div style="color: ${drug.color}; font-size: 1.5rem;">${renderDrugIcon(drug.icon)}</div>
             </div>
             <div class="drug-library-body">
                 <div class="drug-library-info">
