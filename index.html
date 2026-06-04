@@ -285,44 +285,162 @@
                 <div class="converters-container">
                     <h2><i class="fas fa-exchange-alt"></i> مبدل‌های دارویی</h2>
                     <div class="converter-grid">
-                        <div class="converter-card gradient">
-                            <div class="converter-header"><i class="fas fa-bolt"></i><h3>مبدل الکترولیت</h3></div>
+
+                        <!-- Electrolyte Converter -->
+                        <div class="converter-card">
+                            <div class="converter-header">
+                                <i class="fas fa-bolt"></i>
+                                <div class="converter-header-text">
+                                    <h3>مبدل الکترولیت</h3>
+                                    <span class="converter-subtitle">mEq ↔ میلی‌گرم</span>
+                                </div>
+                            </div>
                             <div class="converter-body">
-                                <div class="input-group"><label>عنصر:</label><select id="electrolyteElement"><option value="sodium">سدیم (Na)</option><option value="potassium">پتاسیم (K)</option><option value="calcium">کلسیم (Ca)</option><option value="magnesium">منیزیم (Mg)</option></select></div>
-                                <div class="input-group"><label>مقدار:</label><input type="number" id="electrolyteValue" placeholder="0" step="0.1"><select id="electrolyteFrom"><option value="mEq">mEq</option><option value="mg">میلی‌گرم</option></select></div>
-                                <button class="converter-btn gradient" onclick="convertElectrolyte()"><i class="fas fa-sync-alt"></i> تبدیل</button>
-                                <div class="converter-result" id="electrolyteResult">نتیجه محاسبه</div>
+                                <div class="input-row-2col">
+                                    <div class="input-group">
+                                        <label>عنصر</label>
+                                        <select id="electrolyteElement">
+                                            <option value="sodium">سدیم — Na</option>
+                                            <option value="potassium">پتاسیم — K</option>
+                                            <option value="calcium">کلسیم — Ca</option>
+                                            <option value="magnesium">منیزیم — Mg</option>
+                                        </select>
+                                    </div>
+                                    <div class="input-group">
+                                        <label>واحد ورودی</label>
+                                        <select id="electrolyteFrom">
+                                            <option value="mEq">mEq</option>
+                                            <option value="mg">میلی‌گرم</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="input-group">
+                                    <label>مقدار</label>
+                                    <input type="number" id="electrolyteValue" placeholder="0" step="0.1" inputmode="decimal">
+                                </div>
+                                <button class="converter-btn" onclick="convertElectrolyte()">
+                                    <i class="fas fa-sync-alt"></i> تبدیل
+                                </button>
+                                <div class="converter-result" id="electrolyteResult">نتیجه اینجا نمایش داده می‌شود</div>
                             </div>
                         </div>
-                        <div class="converter-card gradient">
-                            <div class="converter-header"><i class="fas fa-percentage"></i><h3>مبدل درصدی</h3></div>
+
+                        <!-- Percentage Converter -->
+                        <div class="converter-card">
+                            <div class="converter-header">
+                                <i class="fas fa-percent"></i>
+                                <div class="converter-header-text">
+                                    <h3>مبدل درصدی</h3>
+                                    <span class="converter-subtitle">٪ → گرم / میلی‌گرم</span>
+                                </div>
+                            </div>
                             <div class="converter-body">
-                                <div class="input-group"><label>درصد محلول:</label><input type="number" id="percentageValue" placeholder="0" step="0.1"></div>
-                                <div class="input-group"><label>حجم (میلی‌لیتر):</label><input type="number" id="percentageVolume" value="100" step="1"></div>
-                                <button class="converter-btn gradient" onclick="convertPercentage()"><i class="fas fa-sync-alt"></i> تبدیل</button>
-                                <div class="converter-result" id="percentageResult">نتیجه محاسبه</div>
+                                <div class="input-row-2col">
+                                    <div class="input-group">
+                                        <label>درصد محلول</label>
+                                        <div class="input-with-unit">
+                                            <input type="number" id="percentageValue" placeholder="0" step="0.1" inputmode="decimal">
+                                            <span class="input-unit">%</span>
+                                        </div>
+                                    </div>
+                                    <div class="input-group">
+                                        <label>حجم</label>
+                                        <div class="input-with-unit">
+                                            <input type="number" id="percentageVolume" value="100" step="1" inputmode="numeric">
+                                            <span class="input-unit">mL</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button class="converter-btn" onclick="convertPercentage()">
+                                    <i class="fas fa-sync-alt"></i> تبدیل
+                                </button>
+                                <div class="converter-result" id="percentageResult">نتیجه اینجا نمایش داده می‌شود</div>
                             </div>
                         </div>
-                        <div class="converter-card gradient">
-                            <div class="converter-header"><i class="fas fa-balance-scale"></i><h3>مبدل واحد</h3></div>
+
+                        <!-- Unit Converter -->
+                        <div class="converter-card">
+                            <div class="converter-header">
+                                <i class="fas fa-balance-scale"></i>
+                                <div class="converter-header-text">
+                                    <h3>مبدل واحد دارو</h3>
+                                    <span class="converter-subtitle">mcg / mg / g / units</span>
+                                </div>
+                            </div>
                             <div class="converter-body">
-                                <div class="input-group"><label>از واحد:</label><select id="unitFrom"><option value="mcg">میکروگرم (mcg)</option><option value="mg">میلی‌گرم (mg)</option><option value="g">گرم (g)</option><option value="units">واحد (units)</option></select></div>
-                                <div class="input-group"><label>به واحد:</label><select id="unitTo"><option value="mg">میلی‌گرم (mg)</option><option value="mcg">میکروگرم (mcg)</option><option value="g">گرم (g)</option><option value="units">واحد (units)</option></select></div>
-                                <div class="input-group"><label>مقدار:</label><input type="number" id="unitValue" placeholder="0" step="0.01"></div>
-                                <button class="converter-btn gradient" onclick="convertUnits()"><i class="fas fa-sync-alt"></i> تبدیل</button>
-                                <div class="converter-result" id="unitResult">نتیجه محاسبه</div>
+                                <div class="input-row-2col">
+                                    <div class="input-group">
+                                        <label>از واحد</label>
+                                        <select id="unitFrom">
+                                            <option value="mcg">mcg</option>
+                                            <option value="mg">mg</option>
+                                            <option value="g">g</option>
+                                            <option value="units">units</option>
+                                        </select>
+                                    </div>
+                                    <div class="input-group">
+                                        <label>به واحد</label>
+                                        <select id="unitTo">
+                                            <option value="mg">mg</option>
+                                            <option value="mcg">mcg</option>
+                                            <option value="g">g</option>
+                                            <option value="units">units</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="input-group">
+                                    <label>مقدار</label>
+                                    <input type="number" id="unitValue" placeholder="0" step="0.01" inputmode="decimal">
+                                </div>
+                                <button class="converter-btn" onclick="convertUnits()">
+                                    <i class="fas fa-sync-alt"></i> تبدیل
+                                </button>
+                                <div class="converter-result" id="unitResult">نتیجه اینجا نمایش داده می‌شود</div>
                             </div>
                         </div>
-                        <div class="converter-card gradient">
-                            <div class="converter-header"><i class="fas fa-tint"></i><h3>ماشین حساب دراپ</h3></div>
+
+                        <!-- Drip Rate -->
+                        <div class="converter-card">
+                            <div class="converter-header">
+                                <i class="fas fa-tint"></i>
+                                <div class="converter-header-text">
+                                    <h3>محاسبه نرخ قطره</h3>
+                                    <span class="converter-subtitle">drops/min</span>
+                                </div>
+                            </div>
                             <div class="converter-body">
-                                <div class="input-group"><label>حجم (میلی‌لیتر):</label><input type="number" id="dripVolume" placeholder="0" step="1"></div>
-                                <div class="input-group"><label>زمان (ساعت):</label><input type="number" id="dripTime" placeholder="0" step="0.1"></div>
-                                <div class="input-group"><label>فاکتور قطره:</label><select id="dripFactor"><option value="10">10 قطره/میلی‌لیتر (ماکرو)</option><option value="15">15 قطره/میلی‌لیتر</option><option value="20">20 قطره/میلی‌لیتر (مایکرو)</option><option value="60">60 قطره/میلی‌لیتر (میکروست)</option></select></div>
-                                <button class="converter-btn gradient" onclick="calculateDripRate()"><i class="fas fa-calculator"></i> محاسبه</button>
-                                <div class="converter-result" id="dripResult">نتیجه محاسبه</div>
+                                <div class="input-row-2col">
+                                    <div class="input-group">
+                                        <label>حجم</label>
+                                        <div class="input-with-unit">
+                                            <input type="number" id="dripVolume" placeholder="0" step="1" inputmode="numeric">
+                                            <span class="input-unit">mL</span>
+                                        </div>
+                                    </div>
+                                    <div class="input-group">
+                                        <label>زمان</label>
+                                        <div class="input-with-unit">
+                                            <input type="number" id="dripTime" placeholder="0" step="0.1" inputmode="decimal">
+                                            <span class="input-unit">hr</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="input-group">
+                                    <label>فاکتور قطره</label>
+                                    <select id="dripFactor">
+                                        <option value="10">10 gtt/mL — ماکرو</option>
+                                        <option value="15">15 gtt/mL</option>
+                                        <option value="20">20 gtt/mL — مایکرو</option>
+                                        <option value="60">60 gtt/mL — میکروست</option>
+                                    </select>
+                                </div>
+                                <button class="converter-btn" onclick="calculateDripRate()">
+                                    <i class="fas fa-calculator"></i> محاسبه
+                                </button>
+                                <div class="converter-result" id="dripResult">نتیجه اینجا نمایش داده می‌شود</div>
                             </div>
                         </div>
+
                     </div>
                 </div>
             </div>
@@ -345,66 +463,247 @@
                 <div class="tools-container">
                     <h2><i class="fas fa-tools"></i> ابزارهای جانبی</h2>
                     <div class="tools-grid">
-                        <div class="tool-card gradient">
-                            <div class="tool-header"><i class="fas fa-weight-scale"></i><h3>ماشین حساب BMI</h3></div>
+
+                        <!-- BMI -->
+                        <div class="tool-card">
+                            <div class="tool-header">
+                                <i class="fas fa-weight-scale"></i>
+                                <div class="tool-header-text">
+                                    <h3>شاخص توده بدنی</h3>
+                                    <span class="tool-subtitle">Body Mass Index — BMI</span>
+                                </div>
+                            </div>
                             <div class="tool-body">
-                                <div class="input-group"><label>وزن (کیلوگرم):</label><input type="number" id="bmiWeight" placeholder="0" step="0.1"></div>
-                                <div class="input-group"><label>قد (سانتی‌متر):</label><input type="number" id="bmiHeight" placeholder="0" step="0.1"></div>
-                                <button class="tool-btn gradient" onclick="calculateBMI()"><i class="fas fa-calculator"></i> محاسبه BMI</button>
-                                <div class="tool-result" id="bmiResult">نتیجه محاسبه</div>
+                                <div class="input-row-2col">
+                                    <div class="input-group">
+                                        <label>وزن</label>
+                                        <div class="input-with-unit">
+                                            <input type="number" id="bmiWeight" placeholder="0" step="0.1" inputmode="decimal">
+                                            <span class="input-unit">kg</span>
+                                        </div>
+                                    </div>
+                                    <div class="input-group">
+                                        <label>قد</label>
+                                        <div class="input-with-unit">
+                                            <input type="number" id="bmiHeight" placeholder="0" step="0.1" inputmode="decimal">
+                                            <span class="input-unit">cm</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button class="tool-btn" onclick="calculateBMI()">
+                                    <i class="fas fa-calculator"></i> محاسبه BMI
+                                </button>
+                                <div class="tool-result" id="bmiResult">نتیجه اینجا نمایش داده می‌شود</div>
                             </div>
                         </div>
-                        <div class="tool-card gradient">
-                            <div class="tool-header"><i class="fas fa-ruler-combined"></i><h3>سطح بدن (BSA)</h3></div>
+
+                        <!-- BSA -->
+                        <div class="tool-card">
+                            <div class="tool-header">
+                                <i class="fas fa-ruler-combined"></i>
+                                <div class="tool-header-text">
+                                    <h3>سطح بدن</h3>
+                                    <span class="tool-subtitle">Body Surface Area — BSA</span>
+                                </div>
+                            </div>
                             <div class="tool-body">
-                                <div class="input-group"><label>وزن (کیلوگرم):</label><input type="number" id="bsaWeight" placeholder="0" step="0.1"></div>
-                                <div class="input-group"><label>قد (سانتی‌متر):</label><input type="number" id="bsaHeight" placeholder="0" step="0.1"></div>
-                                <div class="input-group"><label>فرمول:</label><select id="bsaFormula"><option value="mosteller">Mosteller</option><option value="dubois">DuBois</option><option value="haycock">Haycock</option></select></div>
-                                <button class="tool-btn gradient" onclick="calculateBSA()"><i class="fas fa-calculator"></i> محاسبه BSA</button>
-                                <div class="tool-result" id="bsaResult">نتیجه محاسبه</div>
+                                <div class="input-row-2col">
+                                    <div class="input-group">
+                                        <label>وزن</label>
+                                        <div class="input-with-unit">
+                                            <input type="number" id="bsaWeight" placeholder="0" step="0.1" inputmode="decimal">
+                                            <span class="input-unit">kg</span>
+                                        </div>
+                                    </div>
+                                    <div class="input-group">
+                                        <label>قد</label>
+                                        <div class="input-with-unit">
+                                            <input type="number" id="bsaHeight" placeholder="0" step="0.1" inputmode="decimal">
+                                            <span class="input-unit">cm</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="input-group">
+                                    <label>فرمول</label>
+                                    <select id="bsaFormula">
+                                        <option value="mosteller">Mosteller</option>
+                                        <option value="dubois">DuBois &amp; DuBois</option>
+                                        <option value="haycock">Haycock</option>
+                                    </select>
+                                </div>
+                                <button class="tool-btn" onclick="calculateBSA()">
+                                    <i class="fas fa-calculator"></i> محاسبه BSA
+                                </button>
+                                <div class="tool-result" id="bsaResult">نتیجه اینجا نمایش داده می‌شود</div>
                             </div>
                         </div>
-                        <div class="tool-card gradient">
-                            <div class="tool-header"><i class="fas fa-user-md"></i><h3>وزن ایده‌آل بدن</h3></div>
+
+                        <!-- IBW -->
+                        <div class="tool-card">
+                            <div class="tool-header">
+                                <i class="fas fa-person"></i>
+                                <div class="tool-header-text">
+                                    <h3>وزن ایده‌آل</h3>
+                                    <span class="tool-subtitle">Ideal Body Weight — IBW</span>
+                                </div>
+                            </div>
                             <div class="tool-body">
-                                <div class="input-group"><label>قد (سانتی‌متر):</label><input type="number" id="ibwHeight" placeholder="0" step="0.1"></div>
-                                <div class="input-group"><label>جنسیت:</label><select id="ibwGender"><option value="male">مرد</option><option value="female">زن</option></select></div>
-                                <div class="input-group"><label>فرمول:</label><select id="ibwFormula"><option value="devine">Devine</option><option value="robinson">Robinson</option><option value="miller">Miller</option></select></div>
-                                <button class="tool-btn gradient" onclick="calculateIBW()"><i class="fas fa-calculator"></i> محاسبه وزن ایده‌آل</button>
-                                <div class="tool-result" id="ibwResult">نتیجه محاسبه</div>
+                                <div class="input-row-2col">
+                                    <div class="input-group">
+                                        <label>قد</label>
+                                        <div class="input-with-unit">
+                                            <input type="number" id="ibwHeight" placeholder="0" step="0.1" inputmode="decimal">
+                                            <span class="input-unit">cm</span>
+                                        </div>
+                                    </div>
+                                    <div class="input-group">
+                                        <label>جنسیت</label>
+                                        <select id="ibwGender">
+                                            <option value="male">مرد</option>
+                                            <option value="female">زن</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="input-group">
+                                    <label>فرمول</label>
+                                    <select id="ibwFormula">
+                                        <option value="devine">Devine</option>
+                                        <option value="robinson">Robinson</option>
+                                        <option value="miller">Miller</option>
+                                    </select>
+                                </div>
+                                <button class="tool-btn" onclick="calculateIBW()">
+                                    <i class="fas fa-calculator"></i> محاسبه
+                                </button>
+                                <div class="tool-result" id="ibwResult">نتیجه اینجا نمایش داده می‌شود</div>
                             </div>
                         </div>
-                        <div class="tool-card gradient">
-                            <div class="tool-header"><i class="fas fa-kidneys"></i><h3>کلیرانس کراتینین</h3></div>
+
+                        <!-- CrCl -->
+                        <div class="tool-card">
+                            <div class="tool-header">
+                                <i class="fas fa-kidneys"></i>
+                                <div class="tool-header-text">
+                                    <h3>کلیرانس کراتینین</h3>
+                                    <span class="tool-subtitle">Cockcroft-Gault — CrCl</span>
+                                </div>
+                            </div>
                             <div class="tool-body">
-                                <div class="input-group"><label>سن (سال):</label><input type="number" id="crclAge" placeholder="0" step="1"></div>
-                                <div class="input-group"><label>وزن (کیلوگرم):</label><input type="number" id="crclWeight" placeholder="0" step="0.1"></div>
-                                <div class="input-group"><label>کراتینین (mg/dL):</label><input type="number" id="crclValue" placeholder="0" step="0.01"></div>
-                                <div class="input-group"><label>جنسیت:</label><select id="crclGender"><option value="male">مرد</option><option value="female">زن</option></select></div>
-                                <button class="tool-btn gradient" onclick="calculateCrCl()"><i class="fas fa-calculator"></i> محاسبه CrCl</button>
-                                <div class="tool-result" id="crclResult">نتیجه محاسبه</div>
+                                <div class="input-row-2col">
+                                    <div class="input-group">
+                                        <label>سن</label>
+                                        <div class="input-with-unit">
+                                            <input type="number" id="crclAge" placeholder="0" step="1" inputmode="numeric">
+                                            <span class="input-unit">yr</span>
+                                        </div>
+                                    </div>
+                                    <div class="input-group">
+                                        <label>وزن</label>
+                                        <div class="input-with-unit">
+                                            <input type="number" id="crclWeight" placeholder="0" step="0.1" inputmode="decimal">
+                                            <span class="input-unit">kg</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="input-row-2col">
+                                    <div class="input-group">
+                                        <label>کراتینین</label>
+                                        <div class="input-with-unit">
+                                            <input type="number" id="crclValue" placeholder="0" step="0.01" inputmode="decimal">
+                                            <span class="input-unit">mg/dL</span>
+                                        </div>
+                                    </div>
+                                    <div class="input-group">
+                                        <label>جنسیت</label>
+                                        <select id="crclGender">
+                                            <option value="male">مرد</option>
+                                            <option value="female">زن</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <button class="tool-btn" onclick="calculateCrCl()">
+                                    <i class="fas fa-calculator"></i> محاسبه CrCl
+                                </button>
+                                <div class="tool-result" id="crclResult">نتیجه اینجا نمایش داده می‌شود</div>
                             </div>
                         </div>
-                        <div class="tool-card gradient">
-                            <div class="tool-header"><i class="fas fa-check-double"></i><h3>بررسی سازگاری</h3></div>
+
+                        <!-- Compatibility -->
+                        <div class="tool-card">
+                            <div class="tool-header">
+                                <i class="fas fa-vials"></i>
+                                <div class="tool-header-text">
+                                    <h3>سازگاری Y-Site</h3>
+                                    <span class="tool-subtitle">Drug Compatibility Check</span>
+                                </div>
+                            </div>
                             <div class="tool-body">
-                                <div class="input-group"><label>داروی اول:</label><select id="compatDrug1"><option value="">انتخاب دارو</option></select></div>
-                                <div class="input-group"><label>داروی دوم:</label><select id="compatDrug2"><option value="">انتخاب دارو</option></select></div>
-                                <div class="input-group"><label>محلول:</label><select id="compatSolution"><option value="NS">N/S</option><option value="D5W">D5W</option><option value="DS">D/S</option><option value="RL">Ringer Lactate</option></select></div>
-                                <button class="tool-btn gradient" onclick="checkCompatibility()"><i class="fas fa-search"></i> بررسی سازگاری</button>
-                                <div class="tool-result" id="compatResult">نتیجه بررسی</div>
+                                <div class="input-row-2col">
+                                    <div class="input-group">
+                                        <label>داروی اول</label>
+                                        <select id="compatDrug1"><option value="">انتخاب کنید</option></select>
+                                    </div>
+                                    <div class="input-group">
+                                        <label>داروی دوم</label>
+                                        <select id="compatDrug2"><option value="">انتخاب کنید</option></select>
+                                    </div>
+                                </div>
+                                <div class="input-group">
+                                    <label>محلول</label>
+                                    <select id="compatSolution">
+                                        <option value="NS">Normal Saline — N/S</option>
+                                        <option value="D5W">Dextrose 5% — D5W</option>
+                                        <option value="DS">Dextrose Saline — D/S</option>
+                                        <option value="RL">Ringer Lactate — RL</option>
+                                    </select>
+                                </div>
+                                <button class="tool-btn" onclick="checkCompatibility()">
+                                    <i class="fas fa-search"></i> بررسی سازگاری
+                                </button>
+                                <div class="tool-result" id="compatResult">نتیجه اینجا نمایش داده می‌شود</div>
                             </div>
                         </div>
-                        <div class="tool-card gradient">
-                            <div class="tool-header"><i class="fas fa-capsules"></i><h3>ماشین حساب دوز</h3></div>
+
+                        <!-- Dose Calculator -->
+                        <div class="tool-card">
+                            <div class="tool-header">
+                                <i class="fas fa-syringe"></i>
+                                <div class="tool-header-text">
+                                    <h3>ماشین حساب دوز</h3>
+                                    <span class="tool-subtitle">Volume to Administer</span>
+                                </div>
+                            </div>
                             <div class="tool-body">
-                                <div class="input-group"><label>دوز مورد نیاز (mg):</label><input type="number" id="doseNeeded" placeholder="0" step="0.1"></div>
-                                <div class="input-group"><label>غلظت موجود (mg/ml):</label><input type="number" id="doseConcentration" placeholder="0" step="0.01"></div>
-                                <div class="input-group"><label>حجم ویال (ml):</label><input type="number" id="doseVialVolume" placeholder="0" step="0.1"></div>
-                                <button class="tool-btn gradient" onclick="calculateDose()"><i class="fas fa-calculator"></i> محاسبه حجم</button>
-                                <div class="tool-result" id="doseResult">نتیجه محاسبه</div>
+                                <div class="input-row-2col">
+                                    <div class="input-group">
+                                        <label>دوز مورد نیاز</label>
+                                        <div class="input-with-unit">
+                                            <input type="number" id="doseNeeded" placeholder="0" step="0.1" inputmode="decimal">
+                                            <span class="input-unit">mg</span>
+                                        </div>
+                                    </div>
+                                    <div class="input-group">
+                                        <label>غلظت</label>
+                                        <div class="input-with-unit">
+                                            <input type="number" id="doseConcentration" placeholder="0" step="0.01" inputmode="decimal">
+                                            <span class="input-unit">mg/mL</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="input-group">
+                                    <label>حجم ویال</label>
+                                    <div class="input-with-unit">
+                                        <input type="number" id="doseVialVolume" placeholder="0" step="0.1" inputmode="decimal">
+                                        <span class="input-unit">mL</span>
+                                    </div>
+                                </div>
+                                <button class="tool-btn" onclick="calculateDose()">
+                                    <i class="fas fa-calculator"></i> محاسبه حجم
+                                </button>
+                                <div class="tool-result" id="doseResult">نتیجه اینجا نمایش داده می‌شود</div>
                             </div>
                         </div>
+
                     </div>
                 </div>
             </div>
@@ -481,13 +780,11 @@
                         <div class="about-row"><span>آخرین به‌روزرسانی</span><span id="lastUpdate">—</span></div>
                     </div>
                     <button class="setting-btn gradient" id="checkUpdateBtn"><i class="fas fa-sync-alt"></i> بررسی به‌روزرسانی</button>
-                </div>
-
-                <!-- Credits -->
-                <div class="settings-credits">
-                    <i class="fas fa-code"></i>
-                    <span>Designed &amp; developed by</span>
-                    <strong>Mohammad Mahdi Taghavi</strong>
+                    <div class="settings-credits">
+                        <i class="fas fa-code"></i>
+                        <span>Designed &amp; developed by</span>
+                        <strong>Mohammad Mahdi Taghavi</strong>
+                    </div>
                 </div>
 
             </div>
