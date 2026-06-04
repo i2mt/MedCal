@@ -128,7 +128,7 @@
 .dark-mode .drug-library-header,
 .dark-mode .modal-header,
 .dark-mode .control-group,
-.dark-mode .result-item-enhanced,
+.dark-mode .result-item-enhanced:not(.highlight),
 .dark-mode .selected-drug-compact,
 .dark-mode .surface-elevated {
     background: var(--surface-elevated) !important;
@@ -204,6 +204,10 @@
 
 /* Result values: number colour in dark */
 .dark-mode .result-value-enhanced { color: var(--text-primary) !important; }
+.dark-mode .result-item-enhanced.highlight {
+    background: var(--gradient-primary) !important;
+    border-color: transparent !important;
+}
 .dark-mode .result-item-enhanced.highlight .result-value-enhanced { color: white !important; }
 
 /* Ampoule +/- */
@@ -823,6 +827,10 @@ select {
     display: flex;
     flex-direction: column;
     border-right: 1px solid var(--border);
+    /* Critical: must be constrained so drug-scroll-container can scroll */
+    height: 100%;
+    overflow: hidden;
+    box-sizing: border-box;
 }
 
 .drug-search-container {
@@ -2476,34 +2484,36 @@ select {
         min-height: 0; /* critical for flex child to scroll */
     }
 
-    /* ── Calculate Button — fixed above tab bar on mobile ── */
+    /* ── Calculate Button — fixed above tab bar, flush with it ── */
     .calculate-btn-sticky-wrap {
         position: fixed !important;
         bottom: calc(56px + var(--safe-bottom)) !important;
         left: 0 !important;
         right: 0 !important;
         z-index: 200 !important;
-        padding: 10px 14px 8px !important;
-        /* Frosted glass: transparent top fades into surface colour */
-        background: linear-gradient(
-            to bottom,
-            transparent 0%,
-            rgba(248, 250, 252, 0.75) 30%,
-            rgba(248, 250, 252, 0.95) 100%
-        ) !important;
-        backdrop-filter: blur(10px) !important;
-        -webkit-backdrop-filter: blur(10px) !important;
+        /* No border, no box — just button + a subtle fade above it */
+        padding: 0 14px 10px !important;
+        background: none !important;
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+        box-shadow: none !important;
         /* Only show on calculator tab */
         display: none;
     }
 
-    .dark-mode .calculate-btn-sticky-wrap {
-        background: linear-gradient(
-            to bottom,
-            transparent 0%,
-            rgba(17, 24, 39, 0.75) 30%,
-            rgba(17, 24, 39, 0.95) 100%
-        ) !important;
+    /* Pseudo-element provides the fade WITHOUT creating a visible container border */
+    .calculate-btn-sticky-wrap::before {
+        content: '';
+        position: absolute;
+        bottom: 100%;
+        left: 0; right: 0;
+        height: 40px;
+        background: linear-gradient(to bottom, transparent 0%, var(--bg-page, #f8fafc) 100%);
+        pointer-events: none;
+    }
+
+    .dark-mode .calculate-btn-sticky-wrap::before {
+        background: linear-gradient(to bottom, transparent 0%, #111827 100%);
     }
 
     /* Show only when calculator tab is active */
@@ -2517,7 +2527,7 @@ select {
         box-shadow: 0 4px 20px rgba(102, 126, 234, 0.5) !important;
     }
 
-    /* Hide the wrapper when manual section is open */
+    /* Hide when manual section is open */
     #manualSection:not([style*="display: none"]) ~ .calculate-btn-sticky-wrap,
     #manualSection[style="display: flex;"] ~ .calculate-btn-sticky-wrap {
         display: none !important;
@@ -4209,6 +4219,8 @@ input[type="search"]::placeholder {
     padding: 2px 8px;
     border-radius: 20px;
     flex-shrink: 0;
+    direction: ltr !important;
+    unicode-bidi: isolate;
 }
 
 /* About section — compact rows */
@@ -4250,25 +4262,28 @@ input[type="search"]::placeholder {
     justify-content: center;
     flex-wrap: wrap;
     gap: 4px;
-    padding: 14px 0 20px;   /* generous bottom so it's never clipped */
+    /* Part of the about group — not at the very bottom */
+    padding: 10px 12px;
     font-size: 11px;
-    color: var(--text-tertiary);
+    color: var(--text-secondary);
     direction: ltr;
     font-family: var(--font-latin);
-    border-top: 1px solid var(--border-light);
-    margin-top: 6px;
+    background: var(--surface-elevated);
+    border-radius: 8px;
+    margin-top: 8px;
     text-align: center;
     line-height: 1.6;
+    border: 1px solid var(--border);
 }
 
 .settings-credits i {
-    font-size: 10px;
-    color: var(--text-tertiary);
+    font-size: 11px;
+    color: var(--primary);
 }
 
 .settings-credits strong {
-    font-weight: 600;
-    color: var(--text-secondary);   /* slightly brighter so it's readable */
+    font-weight: 700;
+    color: var(--text-primary);
     letter-spacing: 0.2px;
 }
 
@@ -4320,4 +4335,100 @@ input[type="search"]::placeholder {
     background: var(--primary-light) !important;
     border-color: var(--primary) !important;
     color: var(--primary) !important;
+}
+
+/* ===============================
+   CONVERTER & TOOL CARD — NEW ELEMENTS
+   =============================== */
+
+/* Header with subtitle */
+.converter-header-text,
+.tool-header-text {
+    flex: 1;
+    min-width: 0;
+}
+
+.converter-header-text h3,
+.tool-header-text h3 {
+    margin: 0 0 1px;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.converter-subtitle,
+.tool-subtitle {
+    display: block;
+    font-size: 10px;
+    color: var(--text-tertiary);
+    font-family: var(--font-latin);
+    direction: ltr;
+    text-align: right;
+    font-weight: 500;
+    letter-spacing: 0.2px;
+}
+
+/* 2-column input row */
+.input-row-2col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.input-row-2col .input-group {
+    margin-bottom: 0;
+}
+
+/* Input with inline unit badge */
+.input-with-unit {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-with-unit input {
+    width: 100%;
+    padding-left: 42px !important;  /* room for unit badge */
+}
+
+.input-unit {
+    position: absolute;
+    left: 8px;
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text-tertiary);
+    font-family: var(--font-latin);
+    pointer-events: none;
+    white-space: nowrap;
+    letter-spacing: 0.3px;
+    background: var(--surface-elevated);
+    padding: 2px 5px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+}
+
+/* Dark mode */
+.dark-mode .converter-header-text h3,
+.dark-mode .tool-header-text h3 {
+    color: var(--text-primary) !important;
+}
+
+.dark-mode .converter-subtitle,
+.dark-mode .tool-subtitle {
+    color: var(--text-tertiary) !important;
+}
+
+.dark-mode .input-unit {
+    background: var(--surface) !important;
+    border-color: var(--border) !important;
+    color: var(--text-tertiary) !important;
+}
+
+/* Mobile: 2col inputs stay 2col — they're compact enough */
+@media (max-width: 480px) {
+    .input-row-2col {
+        grid-template-columns: 1fr 1fr;
+        gap: 6px;
+    }
 }
