@@ -1,71 +1,42 @@
-const CACHE_NAME = 'medcal-v1';
-
-const APP_FILES = [
-    '/',
-    '/index.html',
-    '/style.css',
-    '/script.js',
-    '/converters.js',
-    '/drugDatabase.js',
-    '/manifest.json'
+// Service Worker for MedCalc Pro PWA
+const CACHE_NAME = 'medcalc-pro-v2.1.0';
+const urlsToCache = [
+    './',
+    './index.html',
+    './style.css',
+    './script.js',
+    './converters.js',
+    './drugDatabase.js',
+    './manifest.json',
+    './icons/icon-192.png',
+    './icons/icon-512.png',
+    './icons/apple-touch-icon.png',
+    'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css',
+    'https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&family=Roboto:wght@400;500;700&family=Roboto+Mono:wght@400;500&display=swap'
 ];
 
-// Install
 self.addEventListener('install', event => {
-    console.log('Service Worker installing...');
-
-    self.skipWaiting();
-
     event.waitUntil(
-        caches.open(CACHE_NAME)
-            .then(cache => cache.addAll(APP_FILES))
+        caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache))
     );
+    self.skipWaiting();
 });
 
-// Activate
 self.addEventListener('activate', event => {
-    console.log('Service Worker activating...');
-
     event.waitUntil(
         caches.keys().then(cacheNames =>
             Promise.all(
-                cacheNames.map(cacheName => {
-                    if (cacheName !== CACHE_NAME) {
-                        console.log('Deleting old cache:', cacheName);
-                        return caches.delete(cacheName);
-                    }
-                })
+                cacheNames
+                    .filter(name => name !== CACHE_NAME)
+                    .map(name => caches.delete(name))
             )
         )
     );
-
     self.clients.claim();
 });
 
-// Fetch
 self.addEventListener('fetch', event => {
-
-    if (event.request.method !== 'GET') {
-        return;
-    }
-
     event.respondWith(
-        fetch(event.request)
-            .then(networkResponse => {
-
-                // Save fresh copy to cache
-                const responseClone = networkResponse.clone();
-
-                caches.open(CACHE_NAME)
-                    .then(cache => {
-                        cache.put(event.request, responseClone);
-                    });
-
-                return networkResponse;
-            })
-            .catch(() => {
-                // Offline → serve cached version
-                return caches.match(event.request);
-            })
+        caches.match(event.request).then(response => response || fetch(event.request))
     );
 });
