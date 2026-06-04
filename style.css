@@ -3425,3 +3425,104 @@ input[type="search"]::placeholder {
 .result-item-enhanced.highlight .result-unit-enhanced {
     color: rgba(255,255,255,0.85) !important;
 }
+
+
+/* ===============================
+   INFUSION METHOD BUTTON — DEFINITIVE FIX
+   Problem: JS sets inline color:white on active buttons; when deselected
+   the inline style remains and overrides CSS. Fix: CSS !important on
+   inactive state, and JS now clears inline styles (see script.js).
+   =============================== */
+
+/* Light mode inactive — dark readable text */
+.method-btn-compact:not(.active) {
+    background: var(--surface-elevated) !important;
+    border: 2px solid var(--border) !important;
+    color: var(--text-primary) !important;
+}
+
+.method-btn-compact:not(.active) i,
+.method-btn-compact:not(.active) span {
+    color: var(--text-primary) !important;
+}
+
+.method-btn-compact:not(.active):hover {
+    border-color: var(--primary) !important;
+    color: var(--primary) !important;
+    background: var(--primary-light) !important;
+}
+
+.method-btn-compact:not(.active):hover i,
+.method-btn-compact:not(.active):hover span {
+    color: var(--primary) !important;
+}
+
+/* Dark mode: make borders clearly visible on unselected buttons */
+.dark-mode .method-btn-compact:not(.active) {
+    background: var(--surface-elevated) !important;
+    border: 2px solid #4b5563 !important;  /* gray-600: clearly visible on gray-700 */
+    color: var(--text-primary) !important;
+}
+
+.dark-mode .method-btn-compact:not(.active) i,
+.dark-mode .method-btn-compact:not(.active) span {
+    color: var(--text-primary) !important;
+}
+
+.dark-mode .method-btn-compact:not(.active):hover {
+    border-color: var(--primary) !important;
+    color: var(--primary) !important;
+    background: var(--primary-light) !important;
+}
+
+/* Active stays white gradient in both modes */
+.method-btn-compact.active {
+    background: var(--gradient-primary) !important;
+    border-color: transparent !important;
+    color: white !important;
+}
+
+.method-btn-compact.active i,
+.method-btn-compact.active span {
+    color: white !important;
+}
+
+/* ── Same fix for ampoule-type-btn ── */
+.ampoule-type-btn:not(.active) {
+    background: var(--surface-elevated) !important;
+    border: 2px solid var(--border) !important;
+    color: var(--text-primary) !important;
+}
+
+.dark-mode .ampoule-type-btn:not(.active) {
+    background: var(--surface-elevated) !important;
+    border: 2px solid #4b5563 !important;
+    color: var(--text-primary) !important;
+}
+
+/* ── Same fix for volume-preset-btn ── */
+.dark-mode .volume-preset-btn:not(.active) {
+    background: var(--surface-elevated) !important;
+    border: 2px solid #4b5563 !important;
+}
+
+/* ===============================
+   STOMACH EMOJI ICON FOR PANTOPRAZOLE
+   =============================== */
+.drug-emoji-icon {
+    font-style: normal;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1em;
+    /* Ensure emoji renders at correct size in the icon containers */
+}
+
+.drug-icon-small .drug-emoji-icon {
+    font-size: 18px;
+}
+
+.selected-drug-icon-compact .drug-emoji-icon {
+    font-size: 24px;
+}
