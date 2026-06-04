@@ -337,7 +337,7 @@ const drugDatabase = {
         persianName: 'پنتوپرازول',
         englishName: 'Pantoprazole Sodium',
         alternativeNames: ['پروتونیکس', 'Protonix', 'Pantoloc'],
-        icon: 'fas fa-stomach',
+        icon: 'emoji:🫁',
         color: '#5ac8fa',
         category: 'PPI',
         defaultAmpoules: 2,
