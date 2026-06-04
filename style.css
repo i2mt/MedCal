@@ -233,9 +233,11 @@
     border-right-color: var(--primary) !important;
 }
 
-/* Toggle sliders */
-.dark-mode .toggle-slider-enhanced,
-.dark-mode .slider { background: var(--border) !important; }
+/* Toggle sliders — unchecked state only */
+.dark-mode .toggle-slider-enhanced { background: var(--border) !important; }
+.dark-mode .slider { background: #374151; }   /* unchecked: gray-700 */
+/* checked state must NOT be overridden — let input:checked + .slider rule win */
+.dark-mode .switch input:checked + .slider { background: var(--primary) !important; }
 
 /* English sub-labels */
 .dark-mode .drug-name-english,
@@ -1688,24 +1690,25 @@ select {
 }
 
 /* ===============================
-   CONVERTERS / DRUGS / TOOLS TABS
+   CONVERTERS / DRUGS / TOOLS TABS — REDESIGNED
    =============================== */
 .converters-container,
 .drugs-container,
 .tools-container {
-    padding: 12px;
+    padding: 12px 12px 20px;
     max-width: 1400px;
     margin: 0 auto;
 }
 
+/* Section heading */
 .converters-container h2,
 .drugs-container h2,
 .tools-container h2 {
     display: flex;
     align-items: center;
     gap: 10px;
-    margin-bottom: 12px;
-    font-size: 20px;
+    margin-bottom: 14px;
+    font-size: 18px;
     background: var(--gradient-primary);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -1713,22 +1716,19 @@ select {
     direction: rtl;
 }
 
+/* Grids */
 .converter-grid,
 .tools-grid {
     display: grid;
-    grid-template-columns: repeat(1, 1fr);
-    gap: 12px;
+    grid-template-columns: 1fr;
+    gap: 10px;
 }
 
-.drugs-library {
-    display: grid;
-    grid-template-columns: repeat(1, 1fr);
-    gap: 12px;
-}
+.drugs-library { display: flex; flex-direction: column; gap: 12px; }
 
+/* ── Card shell ── */
 .converter-card,
-.tool-card,
-.drug-library-card {
+.tool-card {
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: var(--radius-lg);
@@ -1738,141 +1738,185 @@ select {
 }
 
 .converter-card:hover,
-.tool-card:hover,
-.drug-library-card:hover {
+.tool-card:hover {
     border-color: var(--primary);
-    transform: translateY(-4px);
-    box-shadow: var(--shadow-xl);
+    box-shadow: var(--shadow-lg);
 }
 
+/* ── Card header — icon + title + colored left bar ── */
 .converter-header,
-.tool-header,
-.drug-library-header {
-    background: var(--surface-elevated);
-    padding: 12px;
+.tool-header {
+    padding: 10px 14px;
     border-bottom: 1px solid var(--border);
     display: flex;
     align-items: center;
     gap: 10px;
     direction: rtl;
+    position: relative;
+    background: var(--surface-elevated);
+}
+
+/* Colored accent bar on the right (RTL) */
+.converter-header::after,
+.tool-header::after {
+    content: '';
+    position: absolute;
+    right: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: var(--gradient-primary);
+    border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+}
+
+/* Icon badge */
+.converter-header i:first-child,
+.tool-header i:first-child {
+    width: 34px;
+    height: 34px;
+    background: var(--primary-light);
+    color: var(--primary);
+    border-radius: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    flex-shrink: 0;
 }
 
 .converter-header h3,
-.tool-header h3,
-.drug-library-title {
-    font-size: 1rem;
-    font-weight: 600;
-    color: var(--primary);
+.tool-header h3 {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-primary);
     direction: rtl;
-    text-align: right;
+    margin: 0;
 }
 
-.drug-library-english {
-    font-size: 12px;
-    color: var(--text-tertiary);
-    direction: ltr;
-    unicode-bidi: isolate;
-    font-family: var(--font-latin);
-    display: block;
-}
-
+/* ── Card body — compact layout ── */
 .converter-body,
-.tool-body,
-.drug-library-body {
-    padding: 12px;
+.tool-body {
+    padding: 12px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
 }
 
+/* Input groups: label inline above, input below */
 .input-group {
     margin-bottom: 8px;
 }
 
 .input-group label {
     display: block;
-    margin-bottom: 6px;
+    margin-bottom: 4px;
     font-weight: 600;
     color: var(--text-secondary);
     direction: rtl;
     text-align: right;
-    font-size: 14px;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+/* Two-column input+select rows */
+.input-group.inline {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 6px;
+    align-items: end;
+}
+
+.input-group.inline label {
+    grid-column: 1 / -1;
 }
 
 .input-group input,
 .input-group select {
     width: 100%;
-    padding: 10px;
-    background: var(--surface-elevated);
-    border: 2px solid var(--border);
-    border-radius: var(--radius-md);
-    font-size: 15px;
+    padding: 9px 10px;
+    background: var(--bg-primary, var(--surface-elevated));
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font-size: 16px; /* ≥16px prevents iOS zoom */
     color: var(--text-primary);
     transition: var(--transition);
-    /* All inputs in converter cards are numeric */
     font-family: var(--font-persian);
+    box-sizing: border-box;
+}
+
+.input-group input[type="number"] {
+    direction: ltr;
+    text-align: center;
+    font-family: var(--font-mono);
 }
 
 .input-group input:focus,
 .input-group select:focus {
     outline: none;
     border-color: var(--primary);
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    box-shadow: 0 0 0 3px var(--primary-light);
 }
 
-/* Converter numeric inputs */
-.converter-body input[type="number"],
-.tool-body input[type="number"] {
-    direction: ltr;
-    text-align: center;
-    font-family: var(--font-mono);
-    font-size: 16px; /* ≥16px prevents iOS zoom */
-}
-
+/* ── Calculate / Convert button — compact ── */
 .converter-btn,
-.tool-btn,
-.drug-library-btn {
+.tool-btn {
     width: 100%;
-    padding: 12px;
+    padding: 10px 14px;
     background: var(--gradient-primary);
     color: white;
     border: none;
-    border-radius: var(--radius-md);
-    font-size: 0.95rem;
-    font-weight: 600;
+    border-radius: 9px;
+    font-size: 13px;
+    font-weight: 700;
     cursor: pointer;
     transition: var(--transition);
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 0.5rem;
-    margin: 12px 0;
+    gap: 6px;
+    margin: 8px 0 10px;
     direction: rtl;
     min-height: 44px;
     font-family: var(--font-persian);
+    box-shadow: 0 4px 14px rgba(102, 126, 234, 0.3);
 }
 
 .converter-btn:hover,
-.tool-btn:hover,
-.drug-library-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+.tool-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(102, 126, 234, 0.45);
 }
 
+.converter-btn:active,
+.tool-btn:active {
+    transform: translateY(0);
+}
+
+/* ── Result box — prominent, no min-height clutter ── */
 .converter-result,
 .tool-result {
-    background: var(--surface-elevated);
-    border: 2px solid var(--border);
-    border-radius: var(--radius-md);
-    padding: 12px;
+    background: var(--primary-light);
+    border: 1.5px solid var(--primary);
+    border-radius: 9px;
+    padding: 10px 14px;
     text-align: center;
-    font-weight: 600;
+    font-weight: 700;
     color: var(--primary);
-    min-height: 50px;
+    font-size: 15px;
     display: flex;
     align-items: center;
     justify-content: center;
-    /* Results mix Persian labels with Latin values */
     unicode-bidi: plaintext;
     flex-direction: column;
-    gap: 4px;
+    gap: 2px;
+    min-height: 44px;
+    font-family: var(--font-latin);
+    letter-spacing: 0.3px;
+}
+
+/* When result holds default placeholder text */
+.converter-result:not(:empty),
+.tool-result:not(:empty) {
+    color: var(--primary);
 }
 
 /* Drug search in library */
@@ -2035,8 +2079,8 @@ select {
 .switch {
     position: relative;
     display: inline-block;
-    width: 60px;
-    height: 30px;
+    width: 44px;
+    height: 24px;
     flex-shrink: 0;
 }
 
@@ -2061,13 +2105,14 @@ select {
 .switch .slider:before {
     position: absolute;
     content: "";
-    height: 22px;
-    width: 22px;
-    right: 4px;
-    bottom: 4px;
+    height: 18px;
+    width: 18px;
+    right: 3px;
+    bottom: 3px;
     background: white;
     border-radius: 50%;
     transition: var(--transition);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.25);
 }
 
 .switch input:checked + .slider {
@@ -2075,7 +2120,7 @@ select {
 }
 
 .switch input:checked + .slider:before {
-    transform: translateX(-30px);
+    transform: translateX(-20px);
 }
 
 .setting-btn {
@@ -3670,21 +3715,34 @@ input[type="search"]::placeholder {
    =============================== */
 .calculate-btn-sticky-wrap {
     position: sticky;
-    bottom: 16px;
-    z-index: 50;
-    padding: 0 0 4px;
-    /* Let the button have a subtle backdrop blur so it looks good over content */
+    /* Sit exactly above the fixed tab bar (56px) + safe area */
+    bottom: calc(56px + var(--safe-bottom));
+    z-index: 100;
+    /* Semi-transparent backdrop so user can see content scrolling under */
+    background: linear-gradient(
+        to bottom,
+        transparent 0%,
+        rgba(var(--surface-rgb, 248 250 252) / 0.72) 35%,
+        rgba(var(--surface-rgb, 248 250 252) / 0.92) 100%
+    );
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    padding: 10px 0 6px;
+    margin: 0 -4px;   /* bleed to card edges */
+}
+
+.dark-mode .calculate-btn-sticky-wrap {
+    background: linear-gradient(
+        to bottom,
+        transparent 0%,
+        rgba(17 24 39 / 0.72) 35%,
+        rgba(17 24 39 / 0.92) 100%
+    );
 }
 
 .calculate-btn-sticky-wrap .calculate-btn-enhanced {
     width: 100%;
-    box-shadow: 0 6px 24px rgba(102, 126, 234, 0.45);
-}
-
-/* When results are showing, unstick (it's already below the fold anyway) */
-.results-visible .calculate-btn-sticky-wrap {
-    position: relative;
-    bottom: auto;
+    box-shadow: 0 6px 24px rgba(102, 126, 234, 0.5);
 }
 
 /* ===============================
@@ -4161,16 +4219,18 @@ input[type="search"]::placeholder {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 6px;
-    padding: 14px 0 2px;
+    gap: 5px;
+    padding: 10px 0 0;
     font-size: 11px;
     color: var(--text-tertiary);
-    direction: rtl;
+    direction: ltr;
     font-family: var(--font-latin);
+    border-top: 1px solid var(--border-light);
+    margin-top: 2px;
 }
 
 .settings-credits i {
-    font-size: 11px;
+    font-size: 10px;
     color: var(--text-tertiary);
 }
 
