@@ -3540,3 +3540,664 @@ input[type="search"]::placeholder {
 
 .drug-icon-small .drug-svg-icon svg { width: 20px; height: 20px; }
 .selected-drug-icon-compact .drug-svg-icon svg { width: 26px; height: 26px; }
+
+
+/* ===============================
+   PWA INSTALL BANNER
+   =============================== */
+.pwa-banner {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 9999;
+    background: var(--gradient-primary);
+    color: white;
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+    direction: rtl;
+    animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+    from { transform: translateY(-100%); opacity: 0; }
+    to   { transform: translateY(0);    opacity: 1; }
+}
+
+.pwa-banner-content {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+    min-width: 0;
+}
+
+.pwa-banner-icon {
+    width: 38px;
+    height: 38px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+.pwa-banner-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.pwa-banner-text strong {
+    font-size: 13px;
+    font-weight: 700;
+    color: white;
+}
+
+.pwa-banner-text span {
+    font-size: 11px;
+    color: rgba(255,255,255,0.85);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.pwa-banner-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+}
+
+.pwa-btn-install {
+    background: white;
+    color: var(--primary);
+    border: none;
+    border-radius: 8px;
+    padding: 7px 14px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: var(--font-persian);
+    transition: var(--transition);
+}
+
+.pwa-btn-install:hover { background: rgba(255,255,255,0.9); }
+
+.pwa-btn-later {
+    background: rgba(255,255,255,0.15);
+    color: white;
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 8px;
+    padding: 7px 10px;
+    font-size: 11px;
+    cursor: pointer;
+    font-family: var(--font-persian);
+    transition: var(--transition);
+}
+
+.pwa-btn-later:hover { background: rgba(255,255,255,0.25); }
+
+.pwa-btn-dismiss {
+    background: transparent;
+    color: rgba(255,255,255,0.7);
+    border: none;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-radius: 50%;
+    font-size: 14px;
+    transition: var(--transition);
+}
+
+.pwa-btn-dismiss:hover {
+    background: rgba(255,255,255,0.15);
+    color: white;
+}
+
+/* ===============================
+   STICKY CALCULATE BUTTON
+   =============================== */
+.calculate-btn-sticky-wrap {
+    position: sticky;
+    bottom: 16px;
+    z-index: 50;
+    padding: 0 0 4px;
+    /* Let the button have a subtle backdrop blur so it looks good over content */
+}
+
+.calculate-btn-sticky-wrap .calculate-btn-enhanced {
+    width: 100%;
+    box-shadow: 0 6px 24px rgba(102, 126, 234, 0.45);
+}
+
+/* When results are showing, unstick (it's already below the fold anyway) */
+.results-visible .calculate-btn-sticky-wrap {
+    position: relative;
+    bottom: auto;
+}
+
+/* ===============================
+   RESULTS HEADER ROW (copy button)
+   =============================== */
+.results-header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    direction: rtl;
+}
+
+.results-header-row h3 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.copy-result-btn {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background: var(--surface-elevated);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 6px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: var(--transition);
+    font-family: var(--font-persian);
+}
+
+.copy-result-btn:hover {
+    background: var(--primary-light);
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+.copy-result-btn i { font-size: 13px; }
+
+.dark-mode .copy-result-btn {
+    background: var(--surface-elevated);
+    border-color: var(--border);
+    color: var(--text-secondary);
+}
+
+/* ===============================
+   DRUG QUICK REFERENCE CARDS
+   =============================== */
+.drugs-container h2 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+#drugLibrary {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding-bottom: 20px;
+}
+
+.qref-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    transition: var(--transition);
+    box-shadow: var(--shadow);
+}
+
+.qref-card:hover {
+    box-shadow: var(--shadow-lg);
+    border-color: var(--primary);
+}
+
+.qref-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 14px 12px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    direction: rtl;
+    position: relative;
+}
+
+/* Colored left border accent */
+.qref-header::before {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: var(--drug-color, var(--primary));
+    border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+}
+
+.qref-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 20px;
+    flex-shrink: 0;
+}
+
+.qref-title-block {
+    flex: 1;
+    min-width: 0;
+    direction: rtl;
+}
+
+.qref-name {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 2px;
+}
+
+.qref-english {
+    font-size: 12px;
+    color: var(--text-secondary);
+    font-family: var(--font-latin);
+    margin-bottom: 4px;
+}
+
+.qref-category {
+    display: inline-block;
+    background: var(--primary-light);
+    color: var(--primary);
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-family: var(--font-latin);
+}
+
+.qref-calc-btn {
+    width: 38px;
+    height: 38px;
+    background: var(--gradient-primary);
+    border: none;
+    border-radius: 10px;
+    color: white;
+    font-size: 15px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: var(--transition);
+    box-shadow: 0 4px 12px rgba(102,126,234,0.3);
+}
+
+.qref-calc-btn:hover {
+    transform: scale(1.08);
+    box-shadow: 0 6px 18px rgba(102,126,234,0.45);
+}
+
+.qref-body {
+    padding: 12px 14px;
+    direction: rtl;
+}
+
+.qref-chips {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.qref-chip {
+    background: var(--surface-elevated);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 8px 10px;
+    direction: rtl;
+}
+
+.qref-chip-label {
+    display: block;
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text-tertiary);
+    margin-bottom: 3px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.qref-chip-value {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-primary);
+    font-family: var(--font-latin);
+    direction: ltr;
+    text-align: right;
+}
+
+/* Chip accent colors */
+.qref-chip.dose { border-right: 3px solid var(--primary); }
+.qref-chip.conc { border-right: 3px solid var(--warning); }
+.qref-chip.sol  { border-right: 3px solid var(--success); }
+.qref-chip.amp  { border-right: 3px solid var(--secondary); }
+
+.qref-expand-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: var(--surface-elevated);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: var(--transition);
+    font-family: var(--font-persian);
+    direction: rtl;
+}
+
+.qref-expand-btn:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+    background: var(--primary-light);
+}
+
+.qref-expand-btn i {
+    transition: transform 0.25s ease;
+    font-size: 11px;
+}
+
+.qref-details {
+    margin-top: 10px;
+    border-top: 1px solid var(--border);
+    padding-top: 10px;
+}
+
+.qref-compat-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.qref-compat-col { direction: rtl; }
+
+.qref-compat-title {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+
+.qref-compat-col.compatible .qref-compat-title { color: var(--success); }
+.qref-compat-col.incompatible .qref-compat-title { color: var(--danger); }
+
+.qref-compat-item {
+    font-size: 11px;
+    color: var(--text-secondary);
+    padding: 3px 0;
+    border-bottom: 1px solid var(--border-light);
+    line-height: 1.4;
+}
+
+.qref-compat-item:last-child { border-bottom: none; }
+.qref-compat-item.muted { color: var(--text-tertiary); font-style: italic; }
+
+.qref-warnings { margin-top: 8px; }
+
+.qref-warnings-title {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--warning);
+    margin-bottom: 6px;
+}
+
+.qref-warning-item {
+    font-size: 11px;
+    color: var(--text-secondary);
+    padding: 4px 8px;
+    background: rgba(251, 191, 36, 0.08);
+    border-right: 2px solid var(--warning);
+    border-radius: 0 6px 6px 0;
+    margin-bottom: 4px;
+    direction: rtl;
+    line-height: 1.5;
+}
+
+/* Dark mode quick ref */
+.dark-mode .qref-card {
+    background: var(--surface);
+    border-color: var(--border);
+}
+
+.dark-mode .qref-header {
+    background: var(--surface);
+    border-color: var(--border);
+}
+
+.dark-mode .qref-chip {
+    background: var(--bg-secondary);
+    border-color: var(--border);
+}
+
+.dark-mode .qref-expand-btn {
+    background: var(--bg-secondary);
+    border-color: var(--border);
+    color: var(--text-secondary);
+}
+
+/* ===============================
+   SETTINGS MODAL — COMPACT
+   =============================== */
+.modal-body {
+    padding: 12px 16px 16px !important;
+    overflow-y: auto;
+}
+
+.settings-group {
+    margin-bottom: 14px !important;
+    padding-bottom: 14px !important;
+    border-bottom: 1px solid var(--border);
+}
+
+.settings-group:last-of-type {
+    margin-bottom: 0 !important;
+    border-bottom: none;
+}
+
+.settings-group h4 {
+    font-size: 12px !important;
+    font-weight: 700 !important;
+    color: var(--text-tertiary) !important;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px !important;
+    margin-top: 0 !important;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.setting-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 7px 0 !important;
+    border-bottom: 1px solid var(--border-light);
+    min-height: unset !important;
+}
+
+.setting-item:last-of-type { border-bottom: none; }
+
+.setting-item span {
+    font-size: 13px !important;
+    color: var(--text-primary);
+}
+
+/* Two-column button row */
+.settings-btn-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.setting-btn {
+    padding: 8px 10px !important;
+    font-size: 11px !important;
+    border-radius: 8px !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    min-height: unset !important;
+}
+
+/* Contact button */
+.setting-contact-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: linear-gradient(135deg, #0088cc, #00aaff);
+    color: white;
+    border-radius: 10px;
+    padding: 10px 14px;
+    text-decoration: none;
+    direction: rtl;
+    transition: var(--transition);
+}
+
+.setting-contact-btn:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+.setting-contact-btn .fab.fa-telegram {
+    font-size: 22px;
+    flex-shrink: 0;
+}
+
+.setting-contact-btn span:first-of-type {
+    flex: 1;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: var(--font-persian);
+}
+
+.contact-handle {
+    font-size: 12px;
+    font-family: var(--font-latin);
+    opacity: 0.85;
+    background: rgba(255,255,255,0.15);
+    padding: 2px 8px;
+    border-radius: 20px;
+    flex-shrink: 0;
+}
+
+/* About section — compact rows */
+.about-info {
+    background: var(--surface-elevated) !important;
+    border-radius: 10px !important;
+    overflow: hidden;
+    margin-bottom: 8px !important;
+    padding: 0 !important;
+}
+
+.about-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 7px 12px;
+    border-bottom: 1px solid var(--border-light);
+    direction: rtl;
+    font-size: 12px;
+}
+
+.about-row:last-child { border-bottom: none; }
+
+.about-row span:first-child {
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.about-row span:last-child {
+    color: var(--text-primary);
+    font-weight: 600;
+    font-family: var(--font-latin);
+}
+
+/* Credits / byline */
+.settings-credits {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 14px 0 2px;
+    font-size: 11px;
+    color: var(--text-tertiary);
+    direction: rtl;
+    font-family: var(--font-latin);
+}
+
+.settings-credits i {
+    font-size: 11px;
+    color: var(--text-tertiary);
+}
+
+.settings-credits strong {
+    font-weight: 600;
+    color: var(--text-tertiary);
+    letter-spacing: 0.2px;
+}
+
+/* ===============================
+   MOBILE TWEAKS FOR NEW ELEMENTS
+   =============================== */
+@media (max-width: 768px) {
+    .qref-chips {
+        grid-template-columns: 1fr 1fr;
+        gap: 6px;
+    }
+
+    .pwa-banner {
+        padding: 8px 10px;
+        gap: 8px;
+    }
+
+    .pwa-banner-text span { display: none; }
+
+    .results-header-row h3 { font-size: 14px; }
+
+    .copy-result-btn span { display: none; }
+    .copy-result-btn { padding: 6px 10px; }
+}
