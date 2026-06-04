@@ -14,6 +14,7 @@ const AppState = {
     currentTab: 'calculator',
     calculationsToday: 0,
     customVolume: false,
+    pwaInstallPrompt: null,
     settings: {
         darkMode: false,
         largeFont: false,
@@ -22,6 +23,57 @@ const AppState = {
         saveHistory: true
     }
 };
+
+// ============================================
+// PWA INSTALL BANNER
+// ============================================
+(function setupPWABanner() {
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        AppState.pwaInstallPrompt = e;
+        const dismissed = localStorage.getItem('pwaBannerDismissed');
+        const remindAfter = localStorage.getItem('pwaBannerRemindAfter');
+        if (dismissed === 'true') return;
+        if (remindAfter && Date.now() < parseInt(remindAfter)) return;
+        setTimeout(() => {
+            const banner = document.getElementById('pwaBanner');
+            if (banner) banner.style.display = 'flex';
+        }, 2500);
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const installBtn = document.getElementById('pwaInstallBtn');
+        const laterBtn   = document.getElementById('pwaLaterBtn');
+        const dismissBtn = document.getElementById('pwaDismissBtn');
+        const banner     = document.getElementById('pwaBanner');
+
+        if (installBtn) installBtn.addEventListener('click', async () => {
+            if (!AppState.pwaInstallPrompt) return;
+            AppState.pwaInstallPrompt.prompt();
+            const { outcome } = await AppState.pwaInstallPrompt.userChoice;
+            AppState.pwaInstallPrompt = null;
+            if (banner) banner.style.display = 'none';
+            if (outcome === 'accepted') localStorage.setItem('pwaBannerDismissed', 'true');
+        });
+
+        if (laterBtn) laterBtn.addEventListener('click', () => {
+            if (banner) banner.style.display = 'none';
+            // Remind in 24 hours
+            localStorage.setItem('pwaBannerRemindAfter', Date.now() + 86400000);
+        });
+
+        if (dismissBtn) dismissBtn.addEventListener('click', () => {
+            if (banner) banner.style.display = 'none';
+            localStorage.setItem('pwaBannerDismissed', 'true');
+        });
+    });
+
+    window.addEventListener('appinstalled', () => {
+        const banner = document.getElementById('pwaBanner');
+        if (banner) banner.style.display = 'none';
+        localStorage.setItem('pwaBannerDismissed', 'true');
+    });
+})();
 
 // ============================================
 // BIDIRECTIONAL TEXT SUPPORT
@@ -993,6 +1045,26 @@ function setupEventListeners() {
 
     if (DOM.calculateBtn) DOM.calculateBtn.addEventListener('click', calculateInfusion);
 
+    // Copy result button
+    const copyResultBtn = document.getElementById('copyResultBtn');
+    if (copyResultBtn) copyResultBtn.addEventListener('click', () => {
+        const drug = drugDatabase[AppState.selectedDrug];
+        const pumpRate = document.getElementById('pumpRateResult')?.textContent;
+        const concentration = document.getElementById('concentrationResult')?.textContent;
+        const concentrationUnit = document.getElementById('concentrationUnit')?.textContent;
+        const dose = AppState.desiredDose;
+        const unit = drug?.standardUnit || '';
+        const text = `MedCalc Pro\n${drug?.persianName || ''} (${drug?.englishName || ''})\nدوز: ${dose} ${unit}\nغلظت: ${concentration} ${concentrationUnit}\nسرعت پمپ: ${pumpRate} cc/hr`;
+        if (navigator.clipboard) {
+            navigator.clipboard.writeText(text).then(() => showToast('کپی شد', 'نتیجه در کلیپ‌بورد کپی شد', 'success'));
+        } else {
+            const ta = document.createElement('textarea');
+            ta.value = text; document.body.appendChild(ta); ta.select();
+            document.execCommand('copy'); document.body.removeChild(ta);
+            showToast('کپی شد', 'نتیجه در کلیپ‌بورد کپی شد', 'success');
+        }
+    });
+
     if (DOM.doctorOrder) {
         DOM.doctorOrder.addEventListener('input', () => clearResults());
         DOM.doctorOrder.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); calculateInfusion(); } });
@@ -1442,69 +1514,91 @@ function initCompatibilityDropdowns() {
 }
 
 // ============================================
-// DRUG LIBRARY
+// DRUG QUICK REFERENCE (rebuilt)
 // ============================================
 function loadDrugLibrary() {
     const container = document.getElementById('drugLibrary');
     if (!container || container.children.length > 0) return;
+
     Object.values(drugDatabase).forEach(drug => {
+        const doseRange = drug.typicalDoseRange
+            ? `${drug.typicalDoseRange.min}–${drug.typicalDoseRange.max} ${drug.typicalDoseRange.unit}`
+            : '--';
+        const maxConc = drug.maxSafeConcentration || '--';
+        const solutions = drug.solutionType.join(' / ');
+        const ampouleLabel = drug.ampouleOptions[0].label;
+        const compatible = (drug.ySiteCompatibilities?.compatible || []).slice(0, 5);
+        const incompatible = (drug.ySiteCompatibilities?.incompatible || []).slice(0, 5);
+
         const card = document.createElement('div');
-        card.className = 'drug-library-card';
+        card.className = 'qref-card';
         card.innerHTML = `
-            <div class="drug-library-header">
-                <div>
-                    <div class="drug-library-title">${drug.persianName}</div>
-                    <div class="drug-library-english">${drug.englishName}</div>
+            <div class="qref-header" style="--drug-color:${drug.color}">
+                <div class="qref-icon" style="background: linear-gradient(135deg, ${drug.color}, ${drug.color}99)">
+                    ${renderDrugIcon(drug.icon)}
                 </div>
-                <div style="color: ${drug.color}; font-size: 1.5rem;">${renderDrugIcon(drug.icon)}</div>
+                <div class="qref-title-block">
+                    <div class="qref-name">${drug.persianName}</div>
+                    <div class="qref-english">${drug.englishName}</div>
+                    <span class="qref-category">${drug.category}</span>
+                </div>
+                <button class="qref-calc-btn" onclick="selectDrug('${drug.id}'); switchTab('calculator')" title="محاسبه">
+                    <i class="fas fa-calculator"></i>
+                </button>
             </div>
-            <div class="drug-library-body">
-                <div class="drug-library-info">
-                    <div class="drug-library-row"><span class="drug-library-label">دسته:</span><span class="drug-library-value">${drug.category || '--'}</span></div>
-                    <div class="drug-library-row"><span class="drug-library-label">دوز معمول:</span><span class="drug-library-value">${drug.typicalDoseRange ? `${drug.typicalDoseRange.min}–${drug.typicalDoseRange.max} ${drug.typicalDoseRange.unit}` : '--'}</span></div>
-                    <div class="drug-library-row"><span class="drug-library-label">محلول:</span><span class="drug-library-value">${drug.solutionType.join(', ')}</span></div>
-                    <div class="drug-library-row"><span class="drug-library-label">آمپول:</span><span class="drug-library-value">${drug.ampouleOptions[0].label}</span></div>
+            <div class="qref-body">
+                <div class="qref-chips">
+                    <div class="qref-chip dose">
+                        <span class="qref-chip-label">دوز معمول</span>
+                        <span class="qref-chip-value">${doseRange}</span>
+                    </div>
+                    <div class="qref-chip conc">
+                        <span class="qref-chip-label">حداکثر غلظت</span>
+                        <span class="qref-chip-value">${maxConc}</span>
+                    </div>
+                    <div class="qref-chip sol">
+                        <span class="qref-chip-label">محلول‌ها</span>
+                        <span class="qref-chip-value">${solutions}</span>
+                    </div>
+                    <div class="qref-chip amp">
+                        <span class="qref-chip-label">آمپول</span>
+                        <span class="qref-chip-value">${ampouleLabel}</span>
+                    </div>
                 </div>
-                <div class="drug-library-actions">
-                    <button class="drug-library-btn" onclick="selectDrug('${drug.id}'); switchTab('calculator')"><i class="fas fa-calculator"></i> محاسبه</button>
-                    <button class="drug-library-btn secondary expand-btn" data-drug-id="${drug.id}"><i class="fas fa-info-circle"></i> جزئیات</button>
+                <button class="qref-expand-btn" data-drug-id="${drug.id}">
+                    <i class="fas fa-chevron-down"></i>
+                    <span>سازگاری Y-Site و هشدارها</span>
+                </button>
+                <div class="qref-details" id="qref-details-${drug.id}" style="display:none">
+                    <div class="qref-compat-grid">
+                        <div class="qref-compat-col compatible">
+                            <div class="qref-compat-title"><i class="fas fa-check-circle"></i> سازگار</div>
+                            ${compatible.length ? compatible.map(d => `<div class="qref-compat-item">${d}</div>`).join('') : '<div class="qref-compat-item muted">اطلاعات موجود نیست</div>'}
+                        </div>
+                        <div class="qref-compat-col incompatible">
+                            <div class="qref-compat-title"><i class="fas fa-times-circle"></i> ناسازگار</div>
+                            ${incompatible.length ? incompatible.map(d => `<div class="qref-compat-item">${d}</div>`).join('') : '<div class="qref-compat-item muted">اطلاعات موجود نیست</div>'}
+                        </div>
+                    </div>
+                    ${drug.cautions && drug.cautions.length ? `
+                    <div class="qref-warnings">
+                        <div class="qref-warnings-title"><i class="fas fa-exclamation-triangle"></i> هشدارها</div>
+                        ${drug.cautions.slice(0, 3).map(c => `<div class="qref-warning-item">${c}</div>`).join('')}
+                    </div>` : ''}
                 </div>
-                <div class="drug-library-details" id="details-${drug.id}"></div>
             </div>
         `;
-        container.appendChild(card);
-        card.querySelector('.expand-btn').addEventListener('click', function(e) { e.stopPropagation(); toggleDrugDetails(drug.id, card); });
-    });
-}
 
-function toggleDrugDetails(drugId, card) {
-    const detailsContainer = card.querySelector('.drug-library-details');
-    const expandBtn = card.querySelector('.expand-btn');
-    if (card.classList.contains('expanded')) {
-        card.classList.remove('expanded');
-        detailsContainer.innerHTML = '';
-        expandBtn.innerHTML = '<i class="fas fa-info-circle"></i> جزئیات';
-        return;
-    }
-    document.querySelectorAll('.drug-library-card.expanded').forEach(c => {
-        c.classList.remove('expanded');
-        c.querySelector('.drug-library-details').innerHTML = '';
-        c.querySelector('.expand-btn').innerHTML = '<i class="fas fa-info-circle"></i> جزئیات';
+        container.appendChild(card);
+
+        card.querySelector('.qref-expand-btn').addEventListener('click', function() {
+            const details = document.getElementById(`qref-details-${drug.id}`);
+            const icon = this.querySelector('i');
+            const isOpen = details.style.display !== 'none';
+            details.style.display = isOpen ? 'none' : 'block';
+            icon.style.transform = isOpen ? '' : 'rotate(180deg)';
+        });
     });
-    card.classList.add('expanded');
-    expandBtn.innerHTML = '<i class="fas fa-times"></i> بستن';
-    const drug = drugDatabase[drugId];
-    detailsContainer.innerHTML = `
-        <div style="padding: 12px; border-top: 1px solid var(--border);">
-            <div style="display:grid;gap:8px;margin-bottom:12px;">
-                <div class="drug-library-row"><span class="drug-library-label">نام انگلیسی:</span><span class="drug-library-value">${drug.englishName}</span></div>
-                <div class="drug-library-row"><span class="drug-library-label">دسته:</span><span class="drug-library-value">${drug.category}</span></div>
-                <div class="drug-library-row"><span class="drug-library-label">آمپول:</span><span class="drug-library-value">${drug.ampouleOptions[0].label}</span></div>
-                <div class="drug-library-row"><span class="drug-library-label">دوز:</span><span class="drug-library-value">${drug.typicalDoseRange ? `${drug.typicalDoseRange.min}–${drug.typicalDoseRange.max} ${drug.typicalDoseRange.unit}` : '--'}</span></div>
-                <div class="drug-library-row"><span class="drug-library-label">محلول:</span><span class="drug-library-value">${drug.solutionType.join(', ')}</span></div>
-            </div>
-        </div>
-    `;
 }
 
 // ============================================
