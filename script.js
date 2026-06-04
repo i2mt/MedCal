@@ -154,17 +154,10 @@ const PersianNumbers = {
 // ============================================
 // SIMPLE INPUT HANDLING
 // ============================================
-// Helper: render drug icon (supports fa classes, emoji: prefix, svg: prefix)
+// Helper: render drug icon (supports fa classes only)
 function renderDrugIcon(iconStr, extraStyle) {
     if (!iconStr) return '<i class="fas fa-pills"></i>';
-    if (iconStr.startsWith('svg:')) {
-        const svg = iconStr.slice(4);
-        return `<span class="drug-svg-icon" style="${extraStyle || ''}">${svg}</span>`;
-    }
-    if (iconStr.startsWith('emoji:')) {
-        return `<span class="drug-emoji-icon" style="${extraStyle || ''}">${iconStr.slice(6)}</span>`;
-    }
-    return `<i class="${iconStr}" style="${extraStyle || ''}"></i>`;
+    return `<i class="${iconStr}"${extraStyle ? ' style="' + extraStyle + '"' : ''}></i>`;
 }
 
 function setupSimpleInputHandling() {
