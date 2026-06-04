@@ -185,9 +185,6 @@
 .dark-mode .converters-container h2,
 .dark-mode .drugs-container h2,
 .dark-mode .tools-container h2,
-.dark-mode .converter-header h3,
-.dark-mode .tool-header h3,
-.dark-mode .drug-library-title,
 .dark-mode .modal-header h3,
 .dark-mode .logo-text h1,
 .dark-mode .history-drug {
@@ -195,6 +192,14 @@
     -webkit-background-clip: text !important;
     -webkit-text-fill-color: transparent !important;
     background-clip: text !important;
+}
+
+/* Converter/tool headers: plain primary color, not gradient clip (icon badge needs color: inherit) */
+.dark-mode .converter-header h3,
+.dark-mode .tool-header h3 {
+    color: var(--text-primary) !important;
+    background: none !important;
+    -webkit-text-fill-color: unset !important;
 }
 
 /* Result values: number colour in dark */
@@ -2466,9 +2471,56 @@ select {
         overscroll-behavior: contain;
         display: flex !important;
         flex-direction: column !important;
-        /* Add bottom padding so last card isn't hidden behind anything */
-        padding-bottom: 20px !important;
+        /* Bottom padding = tab bar + calculate button bar height */
+        padding-bottom: 80px !important;
         min-height: 0; /* critical for flex child to scroll */
+    }
+
+    /* ── Calculate Button — fixed above tab bar on mobile ── */
+    .calculate-btn-sticky-wrap {
+        position: fixed !important;
+        bottom: calc(56px + var(--safe-bottom)) !important;
+        left: 0 !important;
+        right: 0 !important;
+        z-index: 200 !important;
+        padding: 10px 14px 8px !important;
+        /* Frosted glass: transparent top fades into surface colour */
+        background: linear-gradient(
+            to bottom,
+            transparent 0%,
+            rgba(248, 250, 252, 0.75) 30%,
+            rgba(248, 250, 252, 0.95) 100%
+        ) !important;
+        backdrop-filter: blur(10px) !important;
+        -webkit-backdrop-filter: blur(10px) !important;
+        /* Only show on calculator tab */
+        display: none;
+    }
+
+    .dark-mode .calculate-btn-sticky-wrap {
+        background: linear-gradient(
+            to bottom,
+            transparent 0%,
+            rgba(17, 24, 39, 0.75) 30%,
+            rgba(17, 24, 39, 0.95) 100%
+        ) !important;
+    }
+
+    /* Show only when calculator tab is active */
+    #calculatorTab.active ~ * .calculate-btn-sticky-wrap,
+    #calculatorTab .calculate-btn-sticky-wrap {
+        display: block !important;
+    }
+
+    .calculate-btn-sticky-wrap .calculate-btn-enhanced {
+        width: 100% !important;
+        box-shadow: 0 4px 20px rgba(102, 126, 234, 0.5) !important;
+    }
+
+    /* Hide the wrapper when manual section is open */
+    #manualSection:not([style*="display: none"]) ~ .calculate-btn-sticky-wrap,
+    #manualSection[style="display: flex;"] ~ .calculate-btn-sticky-wrap {
+        display: none !important;
     }
 
     /* ── Selected Drug Header — tighter ── */
@@ -2643,33 +2695,31 @@ select {
         gap: 10px !important;
     }
 
+    /* Converter / Tool cards on mobile — use new design, minimal overrides */
     .converter-header,
-    .tool-header,
-    .drug-library-header { padding: 10px !important; }
+    .tool-header { padding: 10px 12px !important; }
     .converter-header h3,
-    .tool-header h3,
-    .drug-library-title { font-size: 14px !important; }
-    .converter-body, .tool-body, .drug-library-body { padding: 10px !important; }
-
-    .input-group { margin-bottom: 8px !important; }
-    .input-group label { font-size: 13px !important; margin-bottom: 4px !important; }
-    .input-group input, .input-group select { padding: 10px !important; font-size: 15px !important; }
-
-    .converter-btn, .tool-btn, .drug-library-btn {
-        padding: 12px !important;
-        font-size: 14px !important;
-        margin: 8px 0 !important;
+    .tool-header h3 { font-size: 13px !important; }
+    .converter-body, .tool-body { padding: 10px 12px !important; }
+    .input-group { margin-bottom: 7px !important; }
+    .input-group label { font-size: 11px !important; }
+    .input-group input, .input-group select {
+        padding: 9px 10px !important;
+        font-size: 16px !important;  /* iOS: must be ≥16 to prevent zoom */
+    }
+    .converter-btn, .tool-btn {
+        padding: 10px 14px !important;
+        font-size: 13px !important;
+        margin: 6px 0 8px !important;
         min-height: 44px !important;
     }
-
     .converter-result, .tool-result {
-        padding: 10px !important;
-        min-height: 48px !important;
+        padding: 10px 14px !important;
+        min-height: 44px !important;
         font-size: 14px !important;
     }
-
     .drugs-search { margin-bottom: 10px !important; }
-    .drugs-search input { padding: 10px 36px 10px 10px !important; font-size: 14px !important; }
+    .drugs-search input { padding: 10px 36px 10px 10px !important; font-size: 16px !important; }
 
     /* Modals on mobile */
     .modal { padding: 10px; }
@@ -2749,15 +2799,13 @@ select {
         margin-bottom: var(--spacing-lg);
     }
 
-    .converter-header, .tool-header, .drug-library-header { padding: var(--spacing-md); }
-    .converter-header h3, .tool-header h3, .drug-library-title { font-size: 1.1rem; }
-    .converter-body, .tool-body, .drug-library-body { padding: var(--spacing-md); }
-
-    .input-group { margin-bottom: var(--spacing-sm); }
-    .input-group label { margin-bottom: 0.5rem; }
-    .input-group input, .input-group select { padding: 0.75rem; font-size: 1rem; }
-
-    .converter-btn, .tool-btn, .drug-library-btn { padding: 0.85rem; margin: var(--spacing-md) 0; }
+    .converter-header, .tool-header { padding: 12px 14px; }
+    .converter-header h3, .tool-header h3 { font-size: 14px; }
+    .converter-body, .tool-body { padding: 14px; }
+    .input-group { margin-bottom: 10px; }
+    .input-group label { margin-bottom: 4px; font-size: 12px; }
+    .input-group input, .input-group select { padding: 10px; font-size: 15px; }
+    .converter-btn, .tool-btn { padding: 10px 14px; margin: 8px 0 10px; }
     .converter-result, .tool-result { padding: var(--spacing-md); min-height: 60px; }
 
     .drugs-search { margin-bottom: var(--spacing-lg); }
@@ -3713,36 +3761,16 @@ input[type="search"]::placeholder {
 /* ===============================
    STICKY CALCULATE BUTTON
    =============================== */
+/* Desktop: sticky within scroll container */
 .calculate-btn-sticky-wrap {
-    position: sticky;
-    /* Sit exactly above the fixed tab bar (56px) + safe area */
-    bottom: calc(56px + var(--safe-bottom));
-    z-index: 100;
-    /* Semi-transparent backdrop so user can see content scrolling under */
-    background: linear-gradient(
-        to bottom,
-        transparent 0%,
-        rgba(var(--surface-rgb, 248 250 252) / 0.72) 35%,
-        rgba(var(--surface-rgb, 248 250 252) / 0.92) 100%
-    );
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    padding: 10px 0 6px;
-    margin: 0 -4px;   /* bleed to card edges */
-}
-
-.dark-mode .calculate-btn-sticky-wrap {
-    background: linear-gradient(
-        to bottom,
-        transparent 0%,
-        rgba(17 24 39 / 0.72) 35%,
-        rgba(17 24 39 / 0.92) 100%
-    );
+    position: relative;
+    z-index: 10;
+    padding: 4px 0 0;
 }
 
 .calculate-btn-sticky-wrap .calculate-btn-enhanced {
     width: 100%;
-    box-shadow: 0 6px 24px rgba(102, 126, 234, 0.5);
+    box-shadow: 0 6px 24px rgba(102, 126, 234, 0.45);
 }
 
 /* ===============================
@@ -4078,8 +4106,9 @@ input[type="search"]::placeholder {
    SETTINGS MODAL — COMPACT
    =============================== */
 .modal-body {
-    padding: 12px 16px 16px !important;
+    padding: 12px 16px 0 !important;
     overflow-y: auto;
+    /* Let content define its own bottom spacing */
 }
 
 .settings-group {
@@ -4219,14 +4248,17 @@ input[type="search"]::placeholder {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 5px;
-    padding: 10px 0 0;
+    flex-wrap: wrap;
+    gap: 4px;
+    padding: 14px 0 20px;   /* generous bottom so it's never clipped */
     font-size: 11px;
     color: var(--text-tertiary);
     direction: ltr;
     font-family: var(--font-latin);
     border-top: 1px solid var(--border-light);
-    margin-top: 2px;
+    margin-top: 6px;
+    text-align: center;
+    line-height: 1.6;
 }
 
 .settings-credits i {
@@ -4236,7 +4268,7 @@ input[type="search"]::placeholder {
 
 .settings-credits strong {
     font-weight: 600;
-    color: var(--text-tertiary);
+    color: var(--text-secondary);   /* slightly brighter so it's readable */
     letter-spacing: 0.2px;
 }
 
@@ -4260,4 +4292,32 @@ input[type="search"]::placeholder {
 
     .copy-result-btn span { display: none; }
     .copy-result-btn { padding: 6px 10px; }
+}
+
+
+/* ── Converter/Tool icon badge — dark mode ── */
+.dark-mode .converter-header i:first-child,
+.dark-mode .tool-header i:first-child {
+    background: var(--primary-light) !important;
+    color: var(--primary) !important;
+}
+
+/* ── Converter/Tool card dark mode ── */
+.dark-mode .converter-card,
+.dark-mode .tool-card {
+    background: var(--surface) !important;
+    border-color: var(--border) !important;
+}
+
+.dark-mode .converter-body,
+.dark-mode .tool-body {
+    background: var(--surface) !important;
+}
+
+/* ── Result box in dark mode ── */
+.dark-mode .converter-result,
+.dark-mode .tool-result {
+    background: var(--primary-light) !important;
+    border-color: var(--primary) !important;
+    color: var(--primary) !important;
 }
