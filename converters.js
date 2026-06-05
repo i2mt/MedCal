@@ -2,22 +2,27 @@
 // CONVERTER FUNCTIONS
 // ============================================
 
-// Electrolyte Converter
+// Electrolyte Converter with Sodium Bicarbonate support
 function convertElectrolyte() {
     const element = document.getElementById('electrolyteElement').value;
     const value = parseFloat(document.getElementById('electrolyteValue').value);
     const fromUnit = document.getElementById('electrolyteFrom').value;
+    const resultDiv = document.getElementById('electrolyteResult');
     
     if (!value || isNaN(value)) {
-        document.getElementById('electrolyteResult').textContent = 'مقدار را وارد کنید';
+        showToast('خطا', 'مقدار را وارد کنید', 'error');
+        resultDiv.innerHTML = '';
+        resultDiv.style.display = 'none';
         return;
     }
     
+    // Factors: mEq to mg for each element/compound
     const factors = {
         sodium: { mEqToMg: 23, mgTomEq: 0.0435 },
         potassium: { mEqToMg: 39, mgTomEq: 0.0256 },
         calcium: { mEqToMg: 20, mgTomEq: 0.05 },
-        magnesium: { mEqToMg: 12, mgTomEq: 0.0833 }
+        magnesium: { mEqToMg: 12, mgTomEq: 0.0833 },
+        sodium_bicarbonate: { mEqToMg: 84, mgTomEq: 0.0119 }  // NaHCO3 MW = 84
     };
     
     const factor = factors[element];
@@ -33,31 +38,35 @@ function convertElectrolyte() {
         formula = `${value} mg × ${factor.mgTomEq} =`;
     }
     
-    document.getElementById('electrolyteResult').innerHTML = `
+    resultDiv.innerHTML = `
         ${formula}<br>
         <strong>${result.toFixed(2)} ${unit}</strong>
     `;
+    resultDiv.style.display = 'block';
 }
 
 // Percentage Converter
 function convertPercentage() {
     const percentage = parseFloat(document.getElementById('percentageValue').value);
     const volume = parseFloat(document.getElementById('percentageVolume').value);
+    const resultDiv = document.getElementById('percentageResult');
     
     if (!percentage || !volume || isNaN(percentage) || isNaN(volume)) {
-        document.getElementById('percentageResult').textContent = 'مقادیر را وارد کنید';
+        showToast('خطا', 'مقادیر را وارد کنید', 'error');
+        resultDiv.innerHTML = '';
+        resultDiv.style.display = 'none';
         return;
     }
     
-    // 1% = 10 mg/ml
     const mgPerMl = percentage * 10;
     const totalMg = mgPerMl * volume;
     
-    document.getElementById('percentageResult').innerHTML = `
+    resultDiv.innerHTML = `
         ${percentage}% محلول:<br>
         <strong>${mgPerMl.toFixed(2)} mg/ml</strong><br>
         ${totalMg.toFixed(2)} mg in ${volume} ml
     `;
+    resultDiv.style.display = 'block';
 }
 
 // Unit Converter
@@ -65,13 +74,15 @@ function convertUnits() {
     const fromUnit = document.getElementById('unitFrom').value;
     const toUnit = document.getElementById('unitTo').value;
     const value = parseFloat(document.getElementById('unitValue').value);
+    const resultDiv = document.getElementById('unitResult');
     
     if (!value || isNaN(value)) {
-        document.getElementById('unitResult').textContent = 'مقدار را وارد کنید';
+        showToast('خطا', 'مقدار را وارد کنید', 'error');
+        resultDiv.innerHTML = '';
+        resultDiv.style.display = 'none';
         return;
     }
     
-    // Conversion factors
     const conversions = {
         mcg: { mg: 0.001, g: 0.000001, units: null },
         mg: { mcg: 1000, g: 0.001, units: null },
@@ -80,18 +91,21 @@ function convertUnits() {
     };
     
     if (fromUnit === toUnit) {
-        document.getElementById('unitResult').textContent = `${value} ${fromUnit}`;
+        resultDiv.innerHTML = `${value} ${fromUnit}`;
+        resultDiv.style.display = 'block';
         return;
     }
     
     if (conversions[fromUnit] && conversions[fromUnit][toUnit] !== null) {
         const result = value * conversions[fromUnit][toUnit];
-        document.getElementById('unitResult').innerHTML = `
+        resultDiv.innerHTML = `
             ${value} ${fromUnit} = <br>
             <strong>${result.toFixed(4)} ${toUnit}</strong>
         `;
+        resultDiv.style.display = 'block';
     } else {
-        document.getElementById('unitResult').textContent = 'تبدیل برای این واحدها تعریف نشده است';
+        resultDiv.innerHTML = 'تبدیل برای این واحدها تعریف نشده است';
+        resultDiv.style.display = 'block';
     }
 }
 
@@ -100,39 +114,48 @@ function calculateDripRate() {
     const volume = parseFloat(document.getElementById('dripVolume').value);
     const time = parseFloat(document.getElementById('dripTime').value);
     const dropFactor = parseFloat(document.getElementById('dripFactor').value);
+    const resultDiv = document.getElementById('dripResult');
     
     if (!volume || !time || isNaN(volume) || isNaN(time)) {
-        document.getElementById('dripResult').textContent = 'مقادیر را وارد کنید';
+        showToast('خطا', 'مقادیر را وارد کنید', 'error');
+        resultDiv.innerHTML = '';
+        resultDiv.style.display = 'none';
         return;
     }
     
     if (time === 0) {
-        document.getElementById('dripResult').textContent = 'زمان نمی‌تواند صفر باشد';
+        resultDiv.innerHTML = 'زمان نمی‌تواند صفر باشد';
+        resultDiv.style.display = 'block';
         return;
     }
     
     const mlPerHour = volume / time;
     const dropsPerMin = (mlPerHour * dropFactor) / 60;
     
-    document.getElementById('dripResult').innerHTML = `
+    resultDiv.innerHTML = `
         سرعت تزریق:<br>
         <strong>${mlPerHour.toFixed(1)} ml/ساعت</strong><br>
         <strong>${dropsPerMin.toFixed(1)} drops/min</strong>
     `;
+    resultDiv.style.display = 'block';
 }
 
 // BMI Calculator
 function calculateBMI() {
     const weight = parseFloat(document.getElementById('bmiWeight').value);
     const height = parseFloat(document.getElementById('bmiHeight').value);
+    const resultDiv = document.getElementById('bmiResult');
     
     if (!weight || !height || isNaN(weight) || isNaN(height)) {
-        document.getElementById('bmiResult').textContent = 'مقادیر را وارد کنید';
+        showToast('خطا', 'مقادیر را وارد کنید', 'error');
+        resultDiv.innerHTML = '';
+        resultDiv.style.display = 'none';
         return;
     }
     
     if (height === 0) {
-        document.getElementById('bmiResult').textContent = 'قد نمی‌تواند صفر باشد';
+        resultDiv.innerHTML = 'قد نمی‌تواند صفر باشد';
+        resultDiv.style.display = 'block';
         return;
     }
     
@@ -140,7 +163,6 @@ function calculateBMI() {
     const bmi = weight / (heightM * heightM);
     
     let category, color, interpretation;
-    
     if (bmi < 18.5) {
         category = 'کم‌وزن';
         color = '#f59e0b';
@@ -170,12 +192,13 @@ function calculateBMI() {
     const idealMin = 18.5 * (heightM * heightM);
     const idealMax = 24.9 * (heightM * heightM);
     
-    document.getElementById('bmiResult').innerHTML = `
+    resultDiv.innerHTML = `
         BMI: <strong style="color: ${color}">${bmi.toFixed(1)}</strong><br>
         وضعیت: <strong>${category}</strong><br>
         ${interpretation}<br>
         وزن ایده‌آل: ${idealMin.toFixed(1)} تا ${idealMax.toFixed(1)} کیلوگرم
     `;
+    resultDiv.style.display = 'block';
 }
 
 // Body Surface Area Calculator
@@ -183,40 +206,41 @@ function calculateBSA() {
     const weight = parseFloat(document.getElementById('bsaWeight').value);
     const height = parseFloat(document.getElementById('bsaHeight').value);
     const formula = document.getElementById('bsaFormula').value;
+    const resultDiv = document.getElementById('bsaResult');
     
     if (!weight || !height || isNaN(weight) || isNaN(height)) {
-        document.getElementById('bsaResult').textContent = 'مقادیر را وارد کنید';
+        showToast('خطا', 'مقادیر را وارد کنید', 'error');
+        resultDiv.innerHTML = '';
+        resultDiv.style.display = 'none';
         return;
     }
     
     if (height === 0) {
-        document.getElementById('bsaResult').textContent = 'قد نمی‌تواند صفر باشد';
+        resultDiv.innerHTML = 'قد نمی‌تواند صفر باشد';
+        resultDiv.style.display = 'block';
         return;
     }
     
     let bsa;
-    
     switch(formula) {
         case 'mosteller':
-            // Mosteller formula: sqrt(weight * height / 3600)
             bsa = Math.sqrt((weight * height) / 3600);
             break;
         case 'dubois':
-            // DuBois formula: 0.007184 * weight^0.425 * height^0.725
             bsa = 0.007184 * Math.pow(weight, 0.425) * Math.pow(height, 0.725);
             break;
         case 'haycock':
-            // Haycock formula: 0.024265 * weight^0.5378 * height^0.3964
             bsa = 0.024265 * Math.pow(weight, 0.5378) * Math.pow(height, 0.3964);
             break;
         default:
             bsa = Math.sqrt((weight * height) / 3600);
     }
     
-    document.getElementById('bsaResult').innerHTML = `
+    resultDiv.innerHTML = `
         BSA: <strong>${bsa.toFixed(3)} متر مربع</strong><br>
         (با فرمول ${formula})
     `;
+    resultDiv.style.display = 'block';
 }
 
 // Ideal Body Weight Calculator
@@ -224,9 +248,12 @@ function calculateIBW() {
     const height = parseFloat(document.getElementById('ibwHeight').value);
     const gender = document.getElementById('ibwGender').value;
     const formula = document.getElementById('ibwFormula').value;
+    const resultDiv = document.getElementById('ibwResult');
     
     if (!height || isNaN(height)) {
-        document.getElementById('ibwResult').textContent = 'قد را وارد کنید';
+        showToast('خطا', 'قد را وارد کنید', 'error');
+        resultDiv.innerHTML = '';
+        resultDiv.style.display = 'none';
         return;
     }
     
@@ -235,59 +262,47 @@ function calculateIBW() {
     
     switch(formula) {
         case 'devine':
-            // Devine formula
-            if (gender === 'male') {
-                ibw = 50 + 2.3 * (heightInch - 60);
-            } else {
-                ibw = 45.5 + 2.3 * (heightInch - 60);
-            }
+            if (gender === 'male') ibw = 50 + 2.3 * (heightInch - 60);
+            else ibw = 45.5 + 2.3 * (heightInch - 60);
             break;
         case 'robinson':
-            // Robinson formula
-            if (gender === 'male') {
-                ibw = 52 + 1.9 * (heightInch - 60);
-            } else {
-                ibw = 49 + 1.7 * (heightInch - 60);
-            }
+            if (gender === 'male') ibw = 52 + 1.9 * (heightInch - 60);
+            else ibw = 49 + 1.7 * (heightInch - 60);
             break;
         case 'miller':
-            // Miller formula
-            if (gender === 'male') {
-                ibw = 56.2 + 1.41 * (heightInch - 60);
-            } else {
-                ibw = 53.1 + 1.36 * (heightInch - 60);
-            }
+            if (gender === 'male') ibw = 56.2 + 1.41 * (heightInch - 60);
+            else ibw = 53.1 + 1.36 * (heightInch - 60);
             break;
         default:
-            // Devine as default
-            if (gender === 'male') {
-                ibw = 50 + 2.3 * (heightInch - 60);
-            } else {
-                ibw = 45.5 + 2.3 * (heightInch - 60);
-            }
+            if (gender === 'male') ibw = 50 + 2.3 * (heightInch - 60);
+            else ibw = 45.5 + 2.3 * (heightInch - 60);
     }
     
-    // Convert from kg to kg (already in kg)
-    document.getElementById('ibwResult').innerHTML = `
+    resultDiv.innerHTML = `
         وزن ایده‌آل: <strong>${ibw.toFixed(1)} کیلوگرم</strong><br>
         (برای ${gender === 'male' ? 'مرد' : 'زن'}، فرمول ${formula})
     `;
+    resultDiv.style.display = 'block';
 }
 
-// Creatinine Clearance Calculator (Cockcroft-Gault)
+// Creatinine Clearance Calculator
 function calculateCrCl() {
     const age = parseFloat(document.getElementById('crclAge').value);
     const weight = parseFloat(document.getElementById('crclWeight').value);
     const creatinine = parseFloat(document.getElementById('crclValue').value);
     const gender = document.getElementById('crclGender').value;
+    const resultDiv = document.getElementById('crclResult');
     
     if (!age || !weight || !creatinine || isNaN(age) || isNaN(weight) || isNaN(creatinine)) {
-        document.getElementById('crclResult').textContent = 'همه مقادیر را وارد کنید';
+        showToast('خطا', 'همه مقادیر را وارد کنید', 'error');
+        resultDiv.innerHTML = '';
+        resultDiv.style.display = 'none';
         return;
     }
     
     if (creatinine === 0) {
-        document.getElementById('crclResult').textContent = 'کراتینین نمی‌تواند صفر باشد';
+        resultDiv.innerHTML = 'کراتینین نمی‌تواند صفر باشد';
+        resultDiv.style.display = 'block';
         return;
     }
     
@@ -299,23 +314,18 @@ function calculateCrCl() {
     }
     
     let interpretation;
-    if (crcl > 90) {
-        interpretation = 'عملکرد کلیه طبیعی';
-    } else if (crcl > 60) {
-        interpretation = 'اختلال خفیف کلیوی';
-    } else if (crcl > 30) {
-        interpretation = 'اختلال متوسط کلیوی';
-    } else if (crcl > 15) {
-        interpretation = 'اختلال شدید کلیوی';
-    } else {
-        interpretation = 'نارسایی کلیه';
-    }
+    if (crcl > 90) interpretation = 'عملکرد کلیه طبیعی';
+    else if (crcl > 60) interpretation = 'اختلال خفیف کلیوی';
+    else if (crcl > 30) interpretation = 'اختلال متوسط کلیوی';
+    else if (crcl > 15) interpretation = 'اختلال شدید کلیوی';
+    else interpretation = 'نارسایی کلیه';
     
-    document.getElementById('crclResult').innerHTML = `
+    resultDiv.innerHTML = `
         CrCl: <strong>${crcl.toFixed(1)} ml/min</strong><br>
         ${interpretation}<br>
         (فرمول Cockcroft-Gault)
     `;
+    resultDiv.style.display = 'block';
 }
 
 // Compatibility Checker
@@ -323,22 +333,24 @@ function checkCompatibility() {
     const drug1 = document.getElementById('compatDrug1').value;
     const drug2 = document.getElementById('compatDrug2').value;
     const solution = document.getElementById('compatSolution').value;
+    const resultDiv = document.getElementById('compatResult');
     
     if (!drug1 || !drug2) {
-        document.getElementById('compatResult').textContent = 'هر دو دارو را انتخاب کنید';
+        showToast('خطا', 'هر دو دارو را انتخاب کنید', 'error');
+        resultDiv.innerHTML = '';
+        resultDiv.style.display = 'none';
         return;
     }
     
     if (drug1 === drug2) {
-        document.getElementById('compatResult').innerHTML = `
+        resultDiv.innerHTML = `
             <strong style="color: #10b981;">همان دارو است</strong><br>
             سازگاری کامل
         `;
+        resultDiv.style.display = 'block';
         return;
     }
     
-    // This is a simplified compatibility check
-    // In a real app, you would have a comprehensive compatibility database
     const incompatiblePairs = [
         ['heparin', 'amoxicillin'],
         ['heparin', 'phenobarbital'],
@@ -353,17 +365,18 @@ function checkCompatibility() {
     );
     
     if (isIncompatible) {
-        document.getElementById('compatResult').innerHTML = `
+        resultDiv.innerHTML = `
             <strong style="color: #ef4444;">⚠️ ناسازگار</strong><br>
             این داروها نباید از یک Y-Site تزریق شوند
         `;
     } else {
-        document.getElementById('compatResult').innerHTML = `
+        resultDiv.innerHTML = `
             <strong style="color: #10b981;">✓ سازگار</strong><br>
             می‌توان از یک Y-Site تزریق کرد<br>
             (بررسی بیشتر توصیه می‌شود)
         `;
     }
+    resultDiv.style.display = 'block';
 }
 
 // Dose Calculator
@@ -371,15 +384,19 @@ function calculateDose() {
     const needed = parseFloat(document.getElementById('doseNeeded').value);
     const concentration = parseFloat(document.getElementById('doseConcentration').value);
     const vialVolume = parseFloat(document.getElementById('doseVialVolume').value);
+    const resultDiv = document.getElementById('doseResult');
     
     if (!needed || !concentration || !vialVolume || 
         isNaN(needed) || isNaN(concentration) || isNaN(vialVolume)) {
-        document.getElementById('doseResult').textContent = 'همه مقادیر را وارد کنید';
+        showToast('خطا', 'همه مقادیر را وارد کنید', 'error');
+        resultDiv.innerHTML = '';
+        resultDiv.style.display = 'none';
         return;
     }
     
     if (concentration === 0) {
-        document.getElementById('doseResult').textContent = 'غلظت نمی‌تواند صفر باشد';
+        resultDiv.innerHTML = 'غلظت نمی‌تواند صفر باشد';
+        resultDiv.style.display = 'block';
         return;
     }
     
@@ -387,31 +404,29 @@ function calculateDose() {
     const vialsNeeded = Math.ceil(volumeNeeded / vialVolume);
     
     if (volumeNeeded > vialVolume) {
-        document.getElementById('doseResult').innerHTML = `
+        resultDiv.innerHTML = `
             حجم مورد نیاز: <strong>${volumeNeeded.toFixed(2)} ml</strong><br>
             تعداد ویال: <strong>${vialsNeeded} عدد</strong><br>
             <span style="color: #f59e0b;">نکته: نیاز به بیش از یک ویال است</span>
         `;
     } else {
-        document.getElementById('doseResult').innerHTML = `
+        resultDiv.innerHTML = `
             حجم مورد نیاز: <strong>${volumeNeeded.toFixed(2)} ml</strong><br>
             یک ویال کافی است
         `;
     }
+    resultDiv.style.display = 'block';
 }
 
 // Initialize compatibility dropdowns
 function initCompatibilityDropdowns() {
     const drugSelect1 = document.getElementById('compatDrug1');
     const drugSelect2 = document.getElementById('compatDrug2');
-    
     if (!drugSelect1 || !drugSelect2) return;
     
-    // Clear existing options
     drugSelect1.innerHTML = '<option value="">انتخاب دارو</option>';
     drugSelect2.innerHTML = '<option value="">انتخاب دارو</option>';
     
-    // Add drugs to both dropdowns
     Object.entries(drugDatabase).forEach(([id, drug]) => {
         const option1 = document.createElement('option');
         option1.value = id;
@@ -429,33 +444,8 @@ function initCompatibilityDropdowns() {
 document.addEventListener('DOMContentLoaded', () => {
     initCompatibilityDropdowns();
     
-    // Add event listeners to converter inputs
-    const converterInputs = [
-        'electrolyteValue', 'electrolyteFrom', 'electrolyteElement',
-        'percentageValue', 'percentageVolume',
-        'unitValue', 'unitFrom', 'unitTo',
-        'dripVolume', 'dripTime', 'dripFactor',
-        'bmiWeight', 'bmiHeight',
-        'bsaWeight', 'bsaHeight', 'bsaFormula',
-        'ibwHeight', 'ibwGender', 'ibwFormula',
-        'crclAge', 'crclWeight', 'crclValue', 'crclGender',
-        'compatDrug1', 'compatDrug2', 'compatSolution',
-        'doseNeeded', 'doseConcentration', 'doseVialVolume'
-    ];
-    
-    converterInputs.forEach(id => {
-        const element = document.getElementById(id);
-        if (element) {
-            element.addEventListener('change', () => {
-                // Optional: auto-calculate on change
-            });
-        }
-    });
-});
-// Add this at the end of converters.js
-document.addEventListener('DOMContentLoaded', () => {
     // Add Enter key support for all converter inputs
-    document.querySelectorAll('.converter-body input').forEach(input => {
+    document.querySelectorAll('.converter-body input, .tool-body input').forEach(input => {
         input.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
                 e.preventDefault();
