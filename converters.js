@@ -1,15 +1,3 @@
-// Helper: show a result element with animation
-function showResult(id, html) {
-    const el = document.getElementById(id);
-    if (!el) return;
-    el.innerHTML = html;
-    el.classList.remove('result-hidden');
-    // Re-trigger animation
-    el.style.animation = 'none';
-    el.offsetHeight; // force reflow
-    el.style.animation = '';
-}
-
 // ============================================
 // CONVERTER FUNCTIONS
 // ============================================
@@ -21,7 +9,7 @@ function convertElectrolyte() {
     const fromUnit = document.getElementById('electrolyteFrom').value;
     
     if (!value || isNaN(value)) {
-        showResult('electrolyteResult', 'مقدار را وارد کنید');
+        document.getElementById('electrolyteResult').textContent = 'مقدار را وارد کنید';
         return;
     }
     
@@ -45,10 +33,10 @@ function convertElectrolyte() {
         formula = `${value} mg × ${factor.mgTomEq} =`;
     }
     
-    showResult('electrolyteResult', `
+    document.getElementById('electrolyteResult').innerHTML = `
         ${formula}<br>
         <strong>${result.toFixed(2)} ${unit}</strong>
-    `);
+    `;
 }
 
 // Percentage Converter
@@ -57,7 +45,7 @@ function convertPercentage() {
     const volume = parseFloat(document.getElementById('percentageVolume').value);
     
     if (!percentage || !volume || isNaN(percentage) || isNaN(volume)) {
-        showResult('percentageResult', 'مقادیر را وارد کنید');
+        document.getElementById('percentageResult').textContent = 'مقادیر را وارد کنید';
         return;
     }
     
@@ -65,11 +53,11 @@ function convertPercentage() {
     const mgPerMl = percentage * 10;
     const totalMg = mgPerMl * volume;
     
-    showResult('percentageResult', `
+    document.getElementById('percentageResult').innerHTML = `
         ${percentage}% محلول:<br>
         <strong>${mgPerMl.toFixed(2)} mg/ml</strong><br>
         ${totalMg.toFixed(2)} mg in ${volume} ml
-    `);
+    `;
 }
 
 // Unit Converter
@@ -79,7 +67,7 @@ function convertUnits() {
     const value = parseFloat(document.getElementById('unitValue').value);
     
     if (!value || isNaN(value)) {
-        showResult('unitResult', 'مقدار را وارد کنید');
+        document.getElementById('unitResult').textContent = 'مقدار را وارد کنید';
         return;
     }
     
@@ -92,18 +80,18 @@ function convertUnits() {
     };
     
     if (fromUnit === toUnit) {
-        showResult('unitResult', `${value} ${fromUnit}`);
+        document.getElementById('unitResult').textContent = `${value} ${fromUnit}`;
         return;
     }
     
     if (conversions[fromUnit] && conversions[fromUnit][toUnit] !== null) {
         const result = value * conversions[fromUnit][toUnit];
-        showResult('unitResult', `
+        document.getElementById('unitResult').innerHTML = `
             ${value} ${fromUnit} = <br>
             <strong>${result.toFixed(4)} ${toUnit}</strong>
-        `);
+        `;
     } else {
-        showResult('unitResult', 'تبدیل برای این واحدها تعریف نشده است');
+        document.getElementById('unitResult').textContent = 'تبدیل برای این واحدها تعریف نشده است';
     }
 }
 
@@ -114,23 +102,23 @@ function calculateDripRate() {
     const dropFactor = parseFloat(document.getElementById('dripFactor').value);
     
     if (!volume || !time || isNaN(volume) || isNaN(time)) {
-        showResult('dripResult', 'مقادیر را وارد کنید');
+        document.getElementById('dripResult').textContent = 'مقادیر را وارد کنید';
         return;
     }
     
     if (time === 0) {
-        showResult('dripResult', 'زمان نمی‌تواند صفر باشد');
+        document.getElementById('dripResult').textContent = 'زمان نمی‌تواند صفر باشد';
         return;
     }
     
     const mlPerHour = volume / time;
     const dropsPerMin = (mlPerHour * dropFactor) / 60;
     
-    showResult('dripResult', `
+    document.getElementById('dripResult').innerHTML = `
         سرعت تزریق:<br>
         <strong>${mlPerHour.toFixed(1)} ml/ساعت</strong><br>
         <strong>${dropsPerMin.toFixed(1)} drops/min</strong>
-    `);
+    `;
 }
 
 // BMI Calculator
@@ -139,12 +127,12 @@ function calculateBMI() {
     const height = parseFloat(document.getElementById('bmiHeight').value);
     
     if (!weight || !height || isNaN(weight) || isNaN(height)) {
-        showResult('bmiResult', 'مقادیر را وارد کنید');
+        document.getElementById('bmiResult').textContent = 'مقادیر را وارد کنید';
         return;
     }
     
     if (height === 0) {
-        showResult('bmiResult', 'قد نمی‌تواند صفر باشد');
+        document.getElementById('bmiResult').textContent = 'قد نمی‌تواند صفر باشد';
         return;
     }
     
@@ -182,12 +170,12 @@ function calculateBMI() {
     const idealMin = 18.5 * (heightM * heightM);
     const idealMax = 24.9 * (heightM * heightM);
     
-    showResult('bmiResult', `
+    document.getElementById('bmiResult').innerHTML = `
         BMI: <strong style="color: ${color}">${bmi.toFixed(1)}</strong><br>
         وضعیت: <strong>${category}</strong><br>
         ${interpretation}<br>
         وزن ایده‌آل: ${idealMin.toFixed(1)} تا ${idealMax.toFixed(1)} کیلوگرم
-    `);
+    `;
 }
 
 // Body Surface Area Calculator
@@ -197,12 +185,12 @@ function calculateBSA() {
     const formula = document.getElementById('bsaFormula').value;
     
     if (!weight || !height || isNaN(weight) || isNaN(height)) {
-        showResult('bsaResult', 'مقادیر را وارد کنید');
+        document.getElementById('bsaResult').textContent = 'مقادیر را وارد کنید';
         return;
     }
     
     if (height === 0) {
-        showResult('bsaResult', 'قد نمی‌تواند صفر باشد');
+        document.getElementById('bsaResult').textContent = 'قد نمی‌تواند صفر باشد';
         return;
     }
     
@@ -225,10 +213,10 @@ function calculateBSA() {
             bsa = Math.sqrt((weight * height) / 3600);
     }
     
-    showResult('bsaResult', `
+    document.getElementById('bsaResult').innerHTML = `
         BSA: <strong>${bsa.toFixed(3)} متر مربع</strong><br>
         (با فرمول ${formula})
-    `);
+    `;
 }
 
 // Ideal Body Weight Calculator
@@ -238,7 +226,7 @@ function calculateIBW() {
     const formula = document.getElementById('ibwFormula').value;
     
     if (!height || isNaN(height)) {
-        showResult('ibwResult', 'قد را وارد کنید');
+        document.getElementById('ibwResult').textContent = 'قد را وارد کنید';
         return;
     }
     
@@ -280,10 +268,10 @@ function calculateIBW() {
     }
     
     // Convert from kg to kg (already in kg)
-    showResult('ibwResult', `
+    document.getElementById('ibwResult').innerHTML = `
         وزن ایده‌آل: <strong>${ibw.toFixed(1)} کیلوگرم</strong><br>
         (برای ${gender === 'male' ? 'مرد' : 'زن'}، فرمول ${formula})
-    `);
+    `;
 }
 
 // Creatinine Clearance Calculator (Cockcroft-Gault)
@@ -294,12 +282,12 @@ function calculateCrCl() {
     const gender = document.getElementById('crclGender').value;
     
     if (!age || !weight || !creatinine || isNaN(age) || isNaN(weight) || isNaN(creatinine)) {
-        showResult('crclResult', 'همه مقادیر را وارد کنید');
+        document.getElementById('crclResult').textContent = 'همه مقادیر را وارد کنید';
         return;
     }
     
     if (creatinine === 0) {
-        showResult('crclResult', 'کراتینین نمی‌تواند صفر باشد');
+        document.getElementById('crclResult').textContent = 'کراتینین نمی‌تواند صفر باشد';
         return;
     }
     
@@ -323,11 +311,11 @@ function calculateCrCl() {
         interpretation = 'نارسایی کلیه';
     }
     
-    showResult('crclResult', `
+    document.getElementById('crclResult').innerHTML = `
         CrCl: <strong>${crcl.toFixed(1)} ml/min</strong><br>
         ${interpretation}<br>
         (فرمول Cockcroft-Gault)
-    `);
+    `;
 }
 
 // Compatibility Checker
@@ -337,15 +325,15 @@ function checkCompatibility() {
     const solution = document.getElementById('compatSolution').value;
     
     if (!drug1 || !drug2) {
-        showResult('compatResult', 'هر دو دارو را انتخاب کنید');
+        document.getElementById('compatResult').textContent = 'هر دو دارو را انتخاب کنید';
         return;
     }
     
     if (drug1 === drug2) {
-        showResult('compatResult', `
+        document.getElementById('compatResult').innerHTML = `
             <strong style="color: #10b981;">همان دارو است</strong><br>
             سازگاری کامل
-        `);
+        `;
         return;
     }
     
@@ -365,16 +353,16 @@ function checkCompatibility() {
     );
     
     if (isIncompatible) {
-        showResult('compatResult', `
+        document.getElementById('compatResult').innerHTML = `
             <strong style="color: #ef4444;">⚠️ ناسازگار</strong><br>
             این داروها نباید از یک Y-Site تزریق شوند
-        `);
+        `;
     } else {
-        showResult('compatResult', `
+        document.getElementById('compatResult').innerHTML = `
             <strong style="color: #10b981;">✓ سازگار</strong><br>
             می‌توان از یک Y-Site تزریق کرد<br>
             (بررسی بیشتر توصیه می‌شود)
-        `);
+        `;
     }
 }
 
@@ -386,12 +374,12 @@ function calculateDose() {
     
     if (!needed || !concentration || !vialVolume || 
         isNaN(needed) || isNaN(concentration) || isNaN(vialVolume)) {
-        showResult('doseResult', 'همه مقادیر را وارد کنید');
+        document.getElementById('doseResult').textContent = 'همه مقادیر را وارد کنید';
         return;
     }
     
     if (concentration === 0) {
-        showResult('doseResult', 'غلظت نمی‌تواند صفر باشد');
+        document.getElementById('doseResult').textContent = 'غلظت نمی‌تواند صفر باشد';
         return;
     }
     
@@ -399,16 +387,16 @@ function calculateDose() {
     const vialsNeeded = Math.ceil(volumeNeeded / vialVolume);
     
     if (volumeNeeded > vialVolume) {
-        showResult('doseResult', `
+        document.getElementById('doseResult').innerHTML = `
             حجم مورد نیاز: <strong>${volumeNeeded.toFixed(2)} ml</strong><br>
             تعداد ویال: <strong>${vialsNeeded} عدد</strong><br>
             <span style="color: #f59e0b;">نکته: نیاز به بیش از یک ویال است</span>
-        `);
+        `;
     } else {
-        showResult('doseResult', `
+        document.getElementById('doseResult').innerHTML = `
             حجم مورد نیاز: <strong>${volumeNeeded.toFixed(2)} ml</strong><br>
             یک ویال کافی است
-        `);
+        `;
     }
 }
 
