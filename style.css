@@ -4859,3 +4859,10 @@ input[type="search"]::placeholder {
     background: var(--bg-secondary);
     border-color: var(--border);
 }
+/* FINAL OVERRIDE: Force active volume button text to white in dark mode */
+.dark-mode .volume-preset-btn.active .number,
+.dark-mode .volume-preset-btn.active .unit-text,
+.dark-mode .volume-preset-btn.active .custom-text,
+.dark-mode .volume-preset-btn.active span {
+    color: white !important;
+}
