@@ -11,9 +11,6 @@
     <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
     <link rel="icon" type="image/png" sizes="512x512" href="icons/icon-512.png">
-    <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
-    <link rel="icon" type="image/png" sizes="512x512" href="icons/icon-512.png">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -60,19 +57,84 @@
 </head>
 <body>
 
-    <!-- PWA Install Banner -->
-    <div class="pwa-banner" id="pwaBanner" style="display:none;">
-        <div class="pwa-banner-content">
-            <div class="pwa-banner-icon"><i class="fas fa-mobile-alt"></i></div>
-            <div class="pwa-banner-text">
-                <strong>نصب MedCalc Pro</strong>
-                <span>برای دسترسی سریع‌تر، اپ را نصب کنید</span>
+    <!-- Loading Screen -->
+    <div id="loadingScreen" class="loading-screen">
+        <div class="loading-content">
+            <div class="loading-logo">
+                <img src="icons/icon-192.png" alt="MedCalc Pro" class="loading-logo-img" onerror="this.style.display='none';document.querySelector('.loading-logo-icon').style.display='flex'">
+                <div class="loading-logo-icon" style="display:none;"><i class="fas fa-syringe"></i></div>
+            </div>
+            <div class="loading-app-name">MedCalc Pro</div>
+            <div class="loading-tagline">دستیار هوشمند محاسبات دارویی</div>
+            <div class="loading-bar-wrap">
+                <div class="loading-bar" id="loadingBar"></div>
+            </div>
+            <div class="loading-status" id="loadingStatus">در حال بارگذاری پایگاه داده دارویی...</div>
+            <div class="loading-tips" id="loadingTips">
+                <div class="loading-tip active">💊 محاسبه دقیق دوز برای ۱۱ داروی رایج بخش ICU</div>
+                <div class="loading-tip">⚡ مبدل الکترولیت با پشتیبانی از NaHCO₃</div>
+                <div class="loading-tip">📊 محاسبه BMI، BSA، CrCl و وزن ایده‌آل</div>
+                <div class="loading-tip">🔒 کاملاً آفلاین — بدون نیاز به اینترنت</div>
             </div>
         </div>
-        <div class="pwa-banner-actions">
-            <button class="pwa-btn-install" id="pwaInstallBtn">نصب</button>
-            <button class="pwa-btn-later" id="pwaLaterBtn">بعداً</button>
-            <button class="pwa-btn-dismiss" id="pwaDismissBtn"><i class="fas fa-times"></i></button>
+    </div>
+
+    <!-- PWA Install Guide Modal -->
+    <div id="pwaModal" class="pwa-modal" style="display:none;">
+        <div class="pwa-modal-overlay" id="pwaModalOverlay"></div>
+        <div class="pwa-modal-box">
+            <div class="pwa-modal-header">
+                <div class="pwa-modal-icon"><i class="fas fa-download"></i></div>
+                <div class="pwa-modal-title">نصب MedCalc Pro</div>
+                <button class="pwa-modal-close" id="pwaModalClose"><i class="fas fa-times"></i></button>
+            </div>
+
+            <!-- Android Chrome install (native prompt available) -->
+            <div class="pwa-install-section" id="pwaAndroidNative">
+                <p class="pwa-modal-desc">برای دسترسی سریع‌تر و استفاده آفلاین، اپ را روی گوشی خود نصب کنید.</p>
+                <button class="pwa-install-btn" id="pwaInstallBtn">
+                    <i class="fas fa-download"></i> نصب اپلیکیشن
+                </button>
+            </div>
+
+            <!-- iOS Safari manual steps -->
+            <div class="pwa-install-section" id="pwaIOSGuide" style="display:none;">
+                <p class="pwa-modal-desc">برای نصب در آیفون:</p>
+                <div class="pwa-steps">
+                    <div class="pwa-step">
+                        <div class="pwa-step-num">۱</div>
+                        <div class="pwa-step-text">در Safari روی آیکون <strong>اشتراک‌گذاری</strong> <i class="fas fa-share-from-square"></i> در پایین صفحه بزنید</div>
+                    </div>
+                    <div class="pwa-step">
+                        <div class="pwa-step-num">۲</div>
+                        <div class="pwa-step-text">گزینه <strong>«Add to Home Screen»</strong> را انتخاب کنید</div>
+                    </div>
+                    <div class="pwa-step">
+                        <div class="pwa-step-num">۳</div>
+                        <div class="pwa-step-text">روی <strong>«Add»</strong> بزنید — اپ روی صفحه اصلی ظاهر می‌شود</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Generic browser guide -->
+            <div class="pwa-install-section" id="pwaGenericGuide" style="display:none;">
+                <p class="pwa-modal-desc">برای نصب در مرورگر:</p>
+                <div class="pwa-steps">
+                    <div class="pwa-step">
+                        <div class="pwa-step-num">۱</div>
+                        <div class="pwa-step-text">در نوار آدرس روی آیکون <i class="fas fa-ellipsis-v"></i> یا <strong>منو</strong> بزنید</div>
+                    </div>
+                    <div class="pwa-step">
+                        <div class="pwa-step-num">۲</div>
+                        <div class="pwa-step-text">گزینه <strong>«Install App»</strong> یا <strong>«Add to Home Screen»</strong> را بزنید</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pwa-modal-actions">
+                <button class="pwa-btn-later-modal" id="pwaLaterBtn">بعداً یادم بنداز</button>
+                <button class="pwa-btn-never" id="pwaNeverBtn">دیگر نشان نده</button>
+            </div>
         </div>
     </div>
 
@@ -292,22 +354,18 @@
                                 <i class="fas fa-bolt"></i>
                                 <div class="converter-header-text">
                                     <h3>مبدل الکترولیت</h3>
-                                    <span class="converter-subtitle">mEq ↔ mg &amp; NaHCO₃</span>
+                                    <span class="converter-subtitle">mEq ↔ میلی‌گرم</span>
                                 </div>
                             </div>
                             <div class="converter-body">
                                 <div class="input-row-2col">
                                     <div class="input-group">
-                                        <label>عنصر / محلول</label>
+                                        <label>عنصر</label>
                                         <select id="electrolyteElement">
                                             <option value="sodium">سدیم — Na</option>
                                             <option value="potassium">پتاسیم — K</option>
                                             <option value="calcium">کلسیم — Ca</option>
                                             <option value="magnesium">منیزیم — Mg</option>
-                                            <option value="nahco3_7.5_10">NaHCO₃ 7.5% — 10cc</option>
-                                            <option value="nahco3_7.5_50">NaHCO₃ 7.5% — 50cc</option>
-                                            <option value="nahco3_8.4_10">NaHCO₃ 8.4% — 10cc</option>
-                                            <option value="nahco3_8.4_50">NaHCO₃ 8.4% — 50cc</option>
                                         </select>
                                     </div>
                                     <div class="input-group">
@@ -315,7 +373,6 @@
                                         <select id="electrolyteFrom">
                                             <option value="mEq">mEq</option>
                                             <option value="mg">میلی‌گرم</option>
-                                            <option value="mL">میلی‌لیتر</option>
                                         </select>
                                     </div>
                                 </div>
@@ -326,49 +383,7 @@
                                 <button class="converter-btn" onclick="convertElectrolyte()">
                                     <i class="fas fa-sync-alt"></i> تبدیل
                                 </button>
-                                <div class="converter-result result-hidden" id="electrolyteResult"></div>
-                            </div>
-                        </div>
-
-                        <!-- Drip Rate -->
-                        <div class="converter-card">
-                            <div class="converter-header">
-                                <i class="fas fa-tint"></i>
-                                <div class="converter-header-text">
-                                    <h3>محاسبه تعداد قطره</h3>
-                                    <span class="converter-subtitle">Drops per Minute</span>
-                                </div>
-                            </div>
-                            <div class="converter-body">
-                                <div class="input-row-2col">
-                                    <div class="input-group">
-                                        <label>حجم</label>
-                                        <div class="input-with-unit">
-                                            <input type="number" id="dripVolume" placeholder="0" step="1" inputmode="numeric">
-                                            <span class="input-unit">mL</span>
-                                        </div>
-                                    </div>
-                                    <div class="input-group">
-                                        <label>زمان</label>
-                                        <div class="input-with-unit">
-                                            <input type="number" id="dripTime" placeholder="0" step="0.1" inputmode="decimal">
-                                            <span class="input-unit">hr</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="input-group">
-                                    <label>فاکتور قطره</label>
-                                    <select id="dripFactor">
-                                        <option value="10">10 gtt/mL — ماکرو</option>
-                                        <option value="15">15 gtt/mL</option>
-                                        <option value="20">20 gtt/mL — مایکرو</option>
-                                        <option value="60">60 gtt/mL — میکروست</option>
-                                    </select>
-                                </div>
-                                <button class="converter-btn" onclick="calculateDripRate()">
-                                    <i class="fas fa-calculator"></i> محاسبه
-                                </button>
-                                <div class="converter-result result-hidden" id="dripResult"></div>
+                                <div class="converter-result" id="electrolyteResult">نتیجه اینجا نمایش داده می‌شود</div>
                             </div>
                         </div>
 
@@ -401,7 +416,7 @@
                                 <button class="converter-btn" onclick="convertPercentage()">
                                     <i class="fas fa-sync-alt"></i> تبدیل
                                 </button>
-                                <div class="converter-result result-hidden" id="percentageResult"></div>
+                                <div class="converter-result" id="percentageResult">نتیجه اینجا نمایش داده می‌شود</div>
                             </div>
                         </div>
 
@@ -442,7 +457,49 @@
                                 <button class="converter-btn" onclick="convertUnits()">
                                     <i class="fas fa-sync-alt"></i> تبدیل
                                 </button>
-                                <div class="converter-result result-hidden" id="unitResult"></div>
+                                <div class="converter-result" id="unitResult">نتیجه اینجا نمایش داده می‌شود</div>
+                            </div>
+                        </div>
+
+                        <!-- Drip Rate -->
+                        <div class="converter-card">
+                            <div class="converter-header">
+                                <i class="fas fa-tint"></i>
+                                <div class="converter-header-text">
+                                    <h3>محاسبه نرخ قطره</h3>
+                                    <span class="converter-subtitle">drops/min</span>
+                                </div>
+                            </div>
+                            <div class="converter-body">
+                                <div class="input-row-2col">
+                                    <div class="input-group">
+                                        <label>حجم</label>
+                                        <div class="input-with-unit">
+                                            <input type="number" id="dripVolume" placeholder="0" step="1" inputmode="numeric">
+                                            <span class="input-unit">mL</span>
+                                        </div>
+                                    </div>
+                                    <div class="input-group">
+                                        <label>زمان</label>
+                                        <div class="input-with-unit">
+                                            <input type="number" id="dripTime" placeholder="0" step="0.1" inputmode="decimal">
+                                            <span class="input-unit">hr</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="input-group">
+                                    <label>فاکتور قطره</label>
+                                    <select id="dripFactor">
+                                        <option value="10">10 gtt/mL — ماکرو</option>
+                                        <option value="15">15 gtt/mL</option>
+                                        <option value="20">20 gtt/mL — مایکرو</option>
+                                        <option value="60">60 gtt/mL — میکروست</option>
+                                    </select>
+                                </div>
+                                <button class="converter-btn" onclick="calculateDripRate()">
+                                    <i class="fas fa-calculator"></i> محاسبه
+                                </button>
+                                <div class="converter-result" id="dripResult">نتیجه اینجا نمایش داده می‌شود</div>
                             </div>
                         </div>
 
@@ -498,7 +555,7 @@
                                 <button class="tool-btn" onclick="calculateBMI()">
                                     <i class="fas fa-calculator"></i> محاسبه BMI
                                 </button>
-                                <div class="tool-result result-hidden" id="bmiResult"></div>
+                                <div class="tool-result" id="bmiResult">نتیجه اینجا نمایش داده می‌شود</div>
                             </div>
                         </div>
 
@@ -539,7 +596,7 @@
                                 <button class="tool-btn" onclick="calculateBSA()">
                                     <i class="fas fa-calculator"></i> محاسبه BSA
                                 </button>
-                                <div class="tool-result result-hidden" id="bsaResult"></div>
+                                <div class="tool-result" id="bsaResult">نتیجه اینجا نمایش داده می‌شود</div>
                             </div>
                         </div>
 
@@ -580,7 +637,7 @@
                                 <button class="tool-btn" onclick="calculateIBW()">
                                     <i class="fas fa-calculator"></i> محاسبه
                                 </button>
-                                <div class="tool-result result-hidden" id="ibwResult"></div>
+                                <div class="tool-result" id="ibwResult">نتیجه اینجا نمایش داده می‌شود</div>
                             </div>
                         </div>
 
@@ -629,7 +686,7 @@
                                 <button class="tool-btn" onclick="calculateCrCl()">
                                     <i class="fas fa-calculator"></i> محاسبه CrCl
                                 </button>
-                                <div class="tool-result result-hidden" id="crclResult"></div>
+                                <div class="tool-result" id="crclResult">نتیجه اینجا نمایش داده می‌شود</div>
                             </div>
                         </div>
 
@@ -665,7 +722,7 @@
                                 <button class="tool-btn" onclick="checkCompatibility()">
                                     <i class="fas fa-search"></i> بررسی سازگاری
                                 </button>
-                                <div class="tool-result result-hidden" id="compatResult"></div>
+                                <div class="tool-result" id="compatResult">نتیجه اینجا نمایش داده می‌شود</div>
                             </div>
                         </div>
 
@@ -705,7 +762,7 @@
                                 <button class="tool-btn" onclick="calculateDose()">
                                     <i class="fas fa-calculator"></i> محاسبه حجم
                                 </button>
-                                <div class="tool-result result-hidden" id="doseResult"></div>
+                                <div class="tool-result" id="doseResult">نتیجه اینجا نمایش داده می‌شود</div>
                             </div>
                         </div>
 
