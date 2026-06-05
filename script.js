@@ -548,8 +548,6 @@ function fixVolumeButtonColors() {
     });
 }
 
-// Call this after theme toggle and after any click on volume buttons
-
 function fixMethodButtonTextColor() {
     document.querySelectorAll('.method-btn-compact').forEach(button => {
         if (button.classList.contains('active')) {
@@ -568,19 +566,7 @@ function fixMethodButtonTextColor() {
             if (text) text.style.removeProperty('color');
         }
     });
-    document.querySelectorAll('.volume-preset-btn').forEach(button => {
-        if (button.classList.contains('active')) {
-            ['number', 'unit-text', 'custom-text'].forEach(cls => {
-                const el = button.querySelector('.' + cls);
-                if (el) el.style.color = 'white';
-            });
-        } else {
-            ['number', 'unit-text', 'custom-text'].forEach(cls => {
-                const el = button.querySelector('.' + cls);
-                if (el) el.style.removeProperty('color');
-            });
-        }
-    });
+    fixVolumeButtonColors(); // also fix volume buttons
 }
 
 function positionManualButtonInDrugGrid() {
@@ -723,6 +709,8 @@ function applySettings() {
     else document.body.classList.remove('large-font');
     const icon = DOM.themeToggle?.querySelector('i');
     if (icon) icon.className = AppState.theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+    // Force volume button colors after theme change
+    fixVolumeButtonColors();
 }
 
 // ============================================
@@ -882,6 +870,7 @@ function updateVolumeOptions() {
             if (DOM.customVolumeContainer) { DOM.customVolumeContainer.style.display = 'none'; DOM.customVolume.value = ''; }
             AppState.customVolume = false;
             clearResults();
+            fixVolumeButtonColors();
         });
         DOM.volumeOptions.appendChild(btn);
     });
@@ -895,9 +884,11 @@ function updateVolumeOptions() {
             AppState.customVolume = true;
             document.querySelectorAll('.volume-preset-btn').forEach(b => b.classList.remove('active'));
             clearResults();
+            fixVolumeButtonColors();
         }
     });
     DOM.volumeOptions.appendChild(customBtn);
+    fixVolumeButtonColors(); // initial colors
 }
 
 // ============================================
@@ -1426,6 +1417,7 @@ function toggleTheme() {
     const icon = DOM.themeToggle.querySelector('i');
     if (icon) icon.className = AppState.theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
     localStorage.setItem('theme', AppState.theme);
+    fixVolumeButtonColors();
 }
 
 function loadTheme() {
@@ -1434,6 +1426,7 @@ function loadTheme() {
     document.body.classList.toggle('dark-mode', AppState.theme === 'dark');
     const icon = DOM.themeToggle?.querySelector('i');
     if (icon) icon.className = AppState.theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+    fixVolumeButtonColors();
 }
 
 // ============================================
