@@ -17,47 +17,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&family=Roboto:wght@400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
-
-    <style>
-        @font-face {
-            font-family: 'Mitra';
-            src: url('fonts/Mitra.eot');
-            src: url('fonts/Mitra.eot?#iefix') format('embedded-opentype'),
-                 url('fonts/Mitra.woff2') format('woff2'),
-                 url('fonts/Mitra.woff') format('woff'),
-                 url('fonts/Mitra.ttf') format('truetype');
-            font-weight: normal;
-            font-style: normal;
-            font-display: swap;
-        }
-        .large-font { font-size: 18px; }
-        .large-font .drug-name-compact,
-        .large-font .selected-drug-name-compact,
-        .large-font .result-value-enhanced,
-        .large-font .dose-input-wrapper input { font-size: 1.2em; }
-        .large-font .drug-name-english,
-        .large-font .selected-drug-desc-compact,
-        .large-font .result-label-enhanced,
-        .large-font .result-unit-enhanced { font-size: 0.9em; }
-
-        /* ── COMPLETE REMOVAL OF QUICK ACTIONS ── */
-        .quick-actions-enhanced, .quick-actions, .action-btn-enhanced, .action-btn,
-        #saveCalculation, #shareCalculation, #resetCalculator, #manualResetBtn, #closeManualBtn2,
-        .quick-actions-enhanced *, .quick-actions * {
-            display: none !important; visibility: hidden !important; opacity: 0 !important;
-            height: 0 !important; width: 0 !important; padding: 0 !important; margin: 0 !important;
-            border: none !important; position: absolute !important; left: -9999px !important;
-            pointer-events: none !important;
-        }
-        .method-btn-compact.active { background: var(--gradient-primary) !important; border-color: transparent !important; color: white !important; }
-        .method-btn-compact.active i, .method-btn-compact.active span { color: white !important; }
-        .volume-preset-btn.active { background: var(--gradient-primary) !important; border-color: transparent !important; color: white !important; }
-        .volume-preset-btn.active .number, .volume-preset-btn.active .unit-text, .volume-preset-btn.active .custom-text { color: white !important; }
-    </style>
 </head>
 <body>
 
-    <!-- Loading Screen -->
+    <!-- Loading Screen (MedTime-ER style) -->
     <div id="loadingScreen" class="loading-screen">
         <div class="loading-content">
             <div class="loading-logo">
@@ -65,17 +28,18 @@
                 <div class="loading-logo-icon" style="display:none;"><i class="fas fa-syringe"></i></div>
             </div>
             <div class="loading-app-name">MedCalc Pro</div>
-            <div class="loading-tagline">دستیار هوشمند محاسبات دارویی</div>
+            <div class="loading-tagline">دستیار هوشمند محاسبات انفوزیون</div>
             <div class="loading-bar-wrap">
                 <div class="loading-bar" id="loadingBar"></div>
             </div>
             <div class="loading-status" id="loadingStatus">در حال بارگذاری پایگاه داده دارویی...</div>
             <div class="loading-tips" id="loadingTips">
                 <div class="loading-tip active">💊 محاسبه دقیق دوز برای ۱۱ داروی رایج بخش ICU</div>
-                <div class="loading-tip">⚡ مبدل الکترولیت با پشتیبانی از NaHCO₃</div>
-                <div class="loading-tip">📊 محاسبه BMI، BSA، CrCl و وزن ایده‌آل</div>
+                <div class="loading-tip">⚡ مبدل‌های حرفه‌ای واحدهای دارویی</div>
+                <div class="loading-tip">📊 ابزارهای جانبی: BMI، BSA، CrCl و وزن ایده‌آل</div>
                 <div class="loading-tip">🔒 کاملاً آفلاین — بدون نیاز به اینترنت</div>
             </div>
+            <div class="loading-version">نسخه 2.1.0</div>
         </div>
     </div>
 
@@ -89,7 +53,6 @@
                 <button class="pwa-modal-close" id="pwaModalClose"><i class="fas fa-times"></i></button>
             </div>
 
-            <!-- Android Chrome install (native prompt available) -->
             <div class="pwa-install-section" id="pwaAndroidNative">
                 <p class="pwa-modal-desc">برای دسترسی سریع‌تر و استفاده آفلاین، اپ را روی گوشی خود نصب کنید.</p>
                 <button class="pwa-install-btn" id="pwaInstallBtn">
@@ -97,37 +60,20 @@
                 </button>
             </div>
 
-            <!-- iOS Safari manual steps -->
             <div class="pwa-install-section" id="pwaIOSGuide" style="display:none;">
                 <p class="pwa-modal-desc">برای نصب در آیفون:</p>
                 <div class="pwa-steps">
-                    <div class="pwa-step">
-                        <div class="pwa-step-num">۱</div>
-                        <div class="pwa-step-text">در Safari روی آیکون <strong>اشتراک‌گذاری</strong> <i class="fas fa-share-from-square"></i> در پایین صفحه بزنید</div>
-                    </div>
-                    <div class="pwa-step">
-                        <div class="pwa-step-num">۲</div>
-                        <div class="pwa-step-text">گزینه <strong>«Add to Home Screen»</strong> را انتخاب کنید</div>
-                    </div>
-                    <div class="pwa-step">
-                        <div class="pwa-step-num">۳</div>
-                        <div class="pwa-step-text">روی <strong>«Add»</strong> بزنید — اپ روی صفحه اصلی ظاهر می‌شود</div>
-                    </div>
+                    <div class="pwa-step"><div class="pwa-step-num">۱</div><div class="pwa-step-text">در Safari روی آیکون <strong>اشتراک‌گذاری</strong> <i class="fas fa-share-from-square"></i> در پایین صفحه بزنید</div></div>
+                    <div class="pwa-step"><div class="pwa-step-num">۲</div><div class="pwa-step-text">گزینه <strong>«Add to Home Screen»</strong> را انتخاب کنید</div></div>
+                    <div class="pwa-step"><div class="pwa-step-num">۳</div><div class="pwa-step-text">روی <strong>«Add»</strong> بزنید — اپ روی صفحه اصلی ظاهر می‌شود</div></div>
                 </div>
             </div>
 
-            <!-- Generic browser guide -->
             <div class="pwa-install-section" id="pwaGenericGuide" style="display:none;">
                 <p class="pwa-modal-desc">برای نصب در مرورگر:</p>
                 <div class="pwa-steps">
-                    <div class="pwa-step">
-                        <div class="pwa-step-num">۱</div>
-                        <div class="pwa-step-text">در نوار آدرس روی آیکون <i class="fas fa-ellipsis-v"></i> یا <strong>منو</strong> بزنید</div>
-                    </div>
-                    <div class="pwa-step">
-                        <div class="pwa-step-num">۲</div>
-                        <div class="pwa-step-text">گزینه <strong>«Install App»</strong> یا <strong>«Add to Home Screen»</strong> را بزنید</div>
-                    </div>
+                    <div class="pwa-step"><div class="pwa-step-num">۱</div><div class="pwa-step-text">در نوار آدرس روی آیکون <i class="fas fa-ellipsis-v"></i> یا <strong>منو</strong> بزنید</div></div>
+                    <div class="pwa-step"><div class="pwa-step-num">۲</div><div class="pwa-step-text">گزینه <strong>«Install App»</strong> یا <strong>«Add to Home Screen»</strong> را بزنید</div></div>
                 </div>
             </div>
 
@@ -366,6 +312,7 @@
                                             <option value="potassium">پتاسیم — K</option>
                                             <option value="calcium">کلسیم — Ca</option>
                                             <option value="magnesium">منیزیم — Mg</option>
+                                            <option value="sodium_bicarbonate">بی کربنات سدیم — NaHCO₃</option>
                                         </select>
                                     </div>
                                     <div class="input-group">
@@ -383,7 +330,7 @@
                                 <button class="converter-btn" onclick="convertElectrolyte()">
                                     <i class="fas fa-sync-alt"></i> تبدیل
                                 </button>
-                                <div class="converter-result" id="electrolyteResult">نتیجه اینجا نمایش داده می‌شود</div>
+                                <div class="converter-result" id="electrolyteResult"></div>
                             </div>
                         </div>
 
@@ -416,7 +363,7 @@
                                 <button class="converter-btn" onclick="convertPercentage()">
                                     <i class="fas fa-sync-alt"></i> تبدیل
                                 </button>
-                                <div class="converter-result" id="percentageResult">نتیجه اینجا نمایش داده می‌شود</div>
+                                <div class="converter-result" id="percentageResult"></div>
                             </div>
                         </div>
 
@@ -457,7 +404,7 @@
                                 <button class="converter-btn" onclick="convertUnits()">
                                     <i class="fas fa-sync-alt"></i> تبدیل
                                 </button>
-                                <div class="converter-result" id="unitResult">نتیجه اینجا نمایش داده می‌شود</div>
+                                <div class="converter-result" id="unitResult"></div>
                             </div>
                         </div>
 
@@ -499,7 +446,7 @@
                                 <button class="converter-btn" onclick="calculateDripRate()">
                                     <i class="fas fa-calculator"></i> محاسبه
                                 </button>
-                                <div class="converter-result" id="dripResult">نتیجه اینجا نمایش داده می‌شود</div>
+                                <div class="converter-result" id="dripResult"></div>
                             </div>
                         </div>
 
@@ -507,7 +454,7 @@
                 </div>
             </div>
 
-            <!-- Drugs Tab — Quick Reference (rebuilt) -->
+            <!-- Drugs Tab -->
             <div class="tab-pane" id="drugsTab">
                 <div class="drugs-container">
                     <h2><i class="fas fa-book-medical"></i> مرجع سریع داروها</h2>
@@ -515,7 +462,6 @@
                         <input type="text" id="librarySearch" placeholder="جستجو در مرجع دارویی...">
                         <i class="fas fa-search"></i>
                     </div>
-                    <!-- Quick Reference grid injected by JS -->
                     <div class="drugs-library" id="drugLibrary"></div>
                 </div>
             </div>
@@ -555,7 +501,7 @@
                                 <button class="tool-btn" onclick="calculateBMI()">
                                     <i class="fas fa-calculator"></i> محاسبه BMI
                                 </button>
-                                <div class="tool-result" id="bmiResult">نتیجه اینجا نمایش داده می‌شود</div>
+                                <div class="tool-result" id="bmiResult"></div>
                             </div>
                         </div>
 
@@ -596,7 +542,7 @@
                                 <button class="tool-btn" onclick="calculateBSA()">
                                     <i class="fas fa-calculator"></i> محاسبه BSA
                                 </button>
-                                <div class="tool-result" id="bsaResult">نتیجه اینجا نمایش داده می‌شود</div>
+                                <div class="tool-result" id="bsaResult"></div>
                             </div>
                         </div>
 
@@ -637,7 +583,7 @@
                                 <button class="tool-btn" onclick="calculateIBW()">
                                     <i class="fas fa-calculator"></i> محاسبه
                                 </button>
-                                <div class="tool-result" id="ibwResult">نتیجه اینجا نمایش داده می‌شود</div>
+                                <div class="tool-result" id="ibwResult"></div>
                             </div>
                         </div>
 
@@ -686,7 +632,7 @@
                                 <button class="tool-btn" onclick="calculateCrCl()">
                                     <i class="fas fa-calculator"></i> محاسبه CrCl
                                 </button>
-                                <div class="tool-result" id="crclResult">نتیجه اینجا نمایش داده می‌شود</div>
+                                <div class="tool-result" id="crclResult"></div>
                             </div>
                         </div>
 
@@ -722,7 +668,7 @@
                                 <button class="tool-btn" onclick="checkCompatibility()">
                                     <i class="fas fa-search"></i> بررسی سازگاری
                                 </button>
-                                <div class="tool-result" id="compatResult">نتیجه اینجا نمایش داده می‌شود</div>
+                                <div class="tool-result" id="compatResult"></div>
                             </div>
                         </div>
 
@@ -762,7 +708,7 @@
                                 <button class="tool-btn" onclick="calculateDose()">
                                     <i class="fas fa-calculator"></i> محاسبه حجم
                                 </button>
-                                <div class="tool-result" id="doseResult">نتیجه اینجا نمایش داده می‌شود</div>
+                                <div class="tool-result" id="doseResult"></div>
                             </div>
                         </div>
 
@@ -788,7 +734,6 @@
                 <button class="modal-close" id="closeSettings">&times;</button>
             </div>
             <div class="modal-body">
-
                 <div class="settings-group">
                     <h4><i class="fas fa-palette"></i> ظاهر</h4>
                     <div class="setting-item">
@@ -800,7 +745,6 @@
                         <label class="switch"><input type="checkbox" id="largeFontToggle"><span class="slider"></span></label>
                     </div>
                 </div>
-
                 <div class="settings-group">
                     <h4><i class="fas fa-bell"></i> اعلان‌ها</h4>
                     <div class="setting-item">
@@ -812,7 +756,6 @@
                         <label class="switch"><input type="checkbox" id="compatAlertToggle" checked><span class="slider"></span></label>
                     </div>
                 </div>
-
                 <div class="settings-group">
                     <h4><i class="fas fa-database"></i> داده‌ها</h4>
                     <div class="setting-item">
@@ -824,7 +767,6 @@
                         <button class="setting-btn gradient" id="exportDataBtn"><i class="fas fa-download"></i> خروجی گرفتن</button>
                     </div>
                 </div>
-
                 <div class="settings-group">
                     <h4><i class="fas fa-headset"></i> ارتباط با ما</h4>
                     <a class="setting-contact-btn" href="https://t.me/i_2mt" target="_blank" rel="noopener">
@@ -833,11 +775,10 @@
                         <span class="contact-handle">@i_2mt</span>
                     </a>
                 </div>
-
                 <div class="settings-group">
                     <h4><i class="fas fa-info-circle"></i> درباره</h4>
                     <div class="about-info">
-                        <div class="about-row"><span>نسخه</span><span>2.0.1</span></div>
+                        <div class="about-row"><span>نسخه</span><span>2.1.0</span></div>
                         <div class="about-row"><span>تعداد داروها</span><span id="drugCount">11</span></div>
                         <div class="about-row"><span>آخرین به‌روزرسانی</span><span id="lastUpdate">—</span></div>
                     </div>
@@ -848,7 +789,6 @@
                         <strong>Mohammad Mahdi Taghavi</strong>
                     </div>
                 </div>
-
             </div>
         </div>
     </div>
