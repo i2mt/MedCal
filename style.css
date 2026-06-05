@@ -268,9 +268,23 @@
     color: var(--primary) !important;
 }
 
-/* Dark mode - active volume preset button text color */
+/* ===============================
+   DARK MODE: VOLUME PRESET BUTTON ACTIVE STATE - FORCE WHITE TEXT
+   =============================== */
+.dark-mode .volume-preset-btn.active {
+    background: var(--gradient-primary) !important;
+    border-color: transparent !important;
+    color: white !important;
+}
+
 .dark-mode .volume-preset-btn.active .number,
 .dark-mode .volume-preset-btn.active .unit-text,
+.dark-mode .volume-preset-btn.active .custom-text,
+.dark-mode .volume-preset-btn.active span {
+    color: white !important;
+}
+
+/* Also ensure the "سایر" custom button text is white */
 .dark-mode .volume-preset-btn.active .custom-text {
     color: white !important;
 }
