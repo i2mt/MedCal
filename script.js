@@ -25,53 +25,153 @@ const AppState = {
 };
 
 // ============================================
-// PWA INSTALL BANNER
+// LOADING SCREEN
 // ============================================
-(function setupPWABanner() {
+(function setupLoadingScreen() {
+    const steps = [
+        { status: 'در حال بارگذاری پایگاه داده دارویی...', pct: 20 },
+        { status: 'در حال راه‌اندازی ماشین حساب...', pct: 50 },
+        { status: 'در حال اعمال تنظیمات...', pct: 75 },
+        { status: 'آماده است!', pct: 100 }
+    ];
+
+    let tipIndex = 0;
+    function rotateTip() {
+        const tips = document.querySelectorAll('.loading-tip');
+        if (!tips.length) return;
+        tips[tipIndex % tips.length].classList.remove('active');
+        tipIndex = (tipIndex + 1) % tips.length;
+        tips[tipIndex].classList.add('active');
+    }
+
+    window.loadingProgress = function(pct, status) {
+        const bar    = document.getElementById('loadingBar');
+        const stat   = document.getElementById('loadingStatus');
+        if (bar)  bar.style.width  = pct + '%';
+        if (stat) stat.textContent = status;
+    };
+
+    window.hideLoadingScreen = function() {
+        const screen = document.getElementById('loadingScreen');
+        if (!screen) return;
+        screen.classList.add('fade-out');
+        setTimeout(() => { screen.style.display = 'none'; }, 550);
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const tipInterval = setInterval(rotateTip, 1800);
+        let i = 0;
+        function runStep() {
+            if (i >= steps.length) {
+                clearInterval(tipInterval);
+                setTimeout(window.hideLoadingScreen, 300);
+                return;
+            }
+            loadingProgress(steps[i].pct, steps[i].status);
+            i++;
+            setTimeout(runStep, i === steps.length ? 400 : 600);
+        }
+        setTimeout(runStep, 300);
+    });
+})();
+
+// ============================================
+// PWA INSTALL MODAL
+// ============================================
+(function setupPWAModal() {
+    let deferredPrompt = null;
+
+    // Detect platform
+    function isIOS() {
+        return /iphone|ipad|ipod/i.test(navigator.userAgent) && !window.MSStream;
+    }
+    function isInStandaloneMode() {
+        return window.matchMedia('(display-mode: standalone)').matches
+            || window.navigator.standalone === true;
+    }
+    function shouldShow() {
+        if (isInStandaloneMode()) return false;
+        if (localStorage.getItem('pwaNeverShow') === 'true') return false;
+        const remind = localStorage.getItem('pwaRemindAfter');
+        if (remind && Date.now() < parseInt(remind)) return false;
+        return true;
+    }
+    function showModal() {
+        if (!shouldShow()) return;
+        const modal = document.getElementById('pwaModal');
+        if (!modal) return;
+        // Show right section
+        const androidNative = document.getElementById('pwaAndroidNative');
+        const iosGuide      = document.getElementById('pwaIOSGuide');
+        const genericGuide  = document.getElementById('pwaGenericGuide');
+        if (deferredPrompt) {
+            androidNative.style.display = 'block';
+            iosGuide.style.display = 'none';
+            genericGuide.style.display = 'none';
+        } else if (isIOS()) {
+            androidNative.style.display = 'none';
+            iosGuide.style.display = 'block';
+            genericGuide.style.display = 'none';
+        } else {
+            androidNative.style.display = 'none';
+            iosGuide.style.display = 'none';
+            genericGuide.style.display = 'block';
+        }
+        modal.style.display = 'flex';
+    }
+    function hideModal() {
+        const modal = document.getElementById('pwaModal');
+        if (modal) modal.style.display = 'none';
+    }
+
+    // Capture native install prompt (Android Chrome)
     window.addEventListener('beforeinstallprompt', (e) => {
         e.preventDefault();
+        deferredPrompt = e;
         AppState.pwaInstallPrompt = e;
-        const dismissed = localStorage.getItem('pwaBannerDismissed');
-        const remindAfter = localStorage.getItem('pwaBannerRemindAfter');
-        if (dismissed === 'true') return;
-        if (remindAfter && Date.now() < parseInt(remindAfter)) return;
-        setTimeout(() => {
-            const banner = document.getElementById('pwaBanner');
-            if (banner) banner.style.display = 'flex';
-        }, 2500);
     });
 
     document.addEventListener('DOMContentLoaded', () => {
+        // Show after loading screen clears
+        setTimeout(() => { if (shouldShow()) showModal(); }, 3500);
+
+        // Install button (Android native)
         const installBtn = document.getElementById('pwaInstallBtn');
-        const laterBtn   = document.getElementById('pwaLaterBtn');
-        const dismissBtn = document.getElementById('pwaDismissBtn');
-        const banner     = document.getElementById('pwaBanner');
-
         if (installBtn) installBtn.addEventListener('click', async () => {
-            if (!AppState.pwaInstallPrompt) return;
-            AppState.pwaInstallPrompt.prompt();
-            const { outcome } = await AppState.pwaInstallPrompt.userChoice;
-            AppState.pwaInstallPrompt = null;
-            if (banner) banner.style.display = 'none';
-            if (outcome === 'accepted') localStorage.setItem('pwaBannerDismissed', 'true');
+            if (!deferredPrompt) return;
+            deferredPrompt.prompt();
+            const { outcome } = await deferredPrompt.userChoice;
+            deferredPrompt = null;
+            hideModal();
+            if (outcome === 'accepted') localStorage.setItem('pwaNeverShow', 'true');
         });
 
+        // Later (remind in 48h)
+        const laterBtn = document.getElementById('pwaLaterBtn');
         if (laterBtn) laterBtn.addEventListener('click', () => {
-            if (banner) banner.style.display = 'none';
-            // Remind in 24 hours
-            localStorage.setItem('pwaBannerRemindAfter', Date.now() + 86400000);
+            hideModal();
+            localStorage.setItem('pwaRemindAfter', Date.now() + 172800000);
         });
 
-        if (dismissBtn) dismissBtn.addEventListener('click', () => {
-            if (banner) banner.style.display = 'none';
-            localStorage.setItem('pwaBannerDismissed', 'true');
+        // Never
+        const neverBtn = document.getElementById('pwaNeverBtn');
+        if (neverBtn) neverBtn.addEventListener('click', () => {
+            hideModal();
+            localStorage.setItem('pwaNeverShow', 'true');
         });
+
+        // Close button
+        const closeBtn = document.getElementById('pwaModalClose');
+        if (closeBtn) closeBtn.addEventListener('click', hideModal);
+
+        // Overlay click
+        const overlay = document.getElementById('pwaModalOverlay');
+        if (overlay) overlay.addEventListener('click', hideModal);
     });
 
     window.addEventListener('appinstalled', () => {
-        const banner = document.getElementById('pwaBanner');
-        if (banner) banner.style.display = 'none';
-        localStorage.setItem('pwaBannerDismissed', 'true');
+        hideModal();
+        localStorage.setItem('pwaNeverShow', 'true');
     });
 })();
 
@@ -556,6 +656,7 @@ function initializeApp() {
     setVH();
     window.addEventListener('resize', setVH);
 
+    if (window.loadingProgress) loadingProgress(20, 'در حال بارگذاری پایگاه داده دارویی...');
     loadSettings();
     loadTheme();
     updateStats();
@@ -741,6 +842,16 @@ function updateAmpouleTypeSelector(drug) {
             clearResults();
         });
         container.appendChild(button);
+    });
+    // Reset any leftover inline styles from previous selection
+    container.querySelectorAll('.ampoule-type-btn').forEach(btn => {
+        if (btn.classList.contains('active')) {
+            btn.style.color = 'white';
+            btn.style.removeProperty('background');
+        } else {
+            btn.style.removeProperty('color');
+            btn.style.removeProperty('background');
+        }
     });
 }
 
