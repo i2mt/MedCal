@@ -2547,40 +2547,42 @@ select {
         display: none !important;
     }
 
-    /* Calculator main - scrollable */
-    .calculator-main {
-        flex: 1;
-        padding: 10px !important;
-        padding-bottom: 0 !important;
-        gap: 8px !important;
-        overflow-y: auto !important;
-        -webkit-overflow-scrolling: touch !important;
-        overscroll-behavior: contain;
-        display: flex !important;
-        flex-direction: column !important;
-        min-height: 0;
-    }
+    /* Inside @media (max-width: 768px) - Replace existing rules */
 
-    /* Sticky calculate button - flush with tab bar, no gap */
-    .calculate-btn-sticky-wrap {
-        position: sticky !important;
-        bottom: 0 !important;
-        background: var(--bg-primary);
-        padding: 8px 12px 12px !important;
-        margin: 0 !important;
-        z-index: 15;
-        border-top: 1px solid var(--border);
-        box-shadow: none;
-    }
+/* The scrollable main area: no bottom padding */
+.calculator-main {
+    flex: 1;
+    padding: 10px !important;
+    padding-bottom: 0 !important;          /* ✅ Critical: removes the gap below */
+    gap: 8px !important;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
 
-    .calculate-btn-sticky-wrap::before {
-        display: none !important;
-    }
+/* The button wrapper: sticks to bottom of .calculator-main */
+.calculate-btn-sticky-wrap {
+    position: sticky !important;
+    bottom: 0 !important;
+    background: var(--bg-primary);          /* ✅ Solid background, no blur */
+    padding: 12px 12px 8px 12px !important; /* ✅ Adjusted padding */
+    margin: 0 !important;
+    z-index: 15;
+    border-top: 1px solid var(--border);   /* ✅ Separator line above button */
+    box-shadow: none;                       /* ✅ No shadow to create space illusion */
+}
 
-    .calculate-btn-enhanced {
-        margin: 0 !important;
-        box-shadow: 0 2px 12px rgba(102, 126, 234, 0.3);
-    }
+/* Remove any pseudo-element that could add a blurry border */
+.calculate-btn-sticky-wrap::before {
+    display: none !important;
+    content: none !important;
+}
+
+/* The button itself: no extra margins */
+.calculate-btn-enhanced {
+    margin: 0 !important;
+    box-shadow: 0 2px 12px rgba(102, 126, 234, 0.3);
+}
 
     /* Selected drug header */
     .selected-drug-compact {
