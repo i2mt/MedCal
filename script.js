@@ -533,6 +533,23 @@ function ensureContentVisibility() {
     }
 }
 
+function fixVolumeButtonColors() {
+    document.querySelectorAll('.volume-preset-btn.active').forEach(btn => {
+        btn.style.setProperty('color', 'white', 'important');
+        btn.querySelectorAll('.number, .unit-text, .custom-text, span').forEach(el => {
+            el.style.setProperty('color', 'white', 'important');
+        });
+    });
+    document.querySelectorAll('.volume-preset-btn:not(.active)').forEach(btn => {
+        btn.style.removeProperty('color');
+        btn.querySelectorAll('.number, .unit-text, .custom-text, span').forEach(el => {
+            el.style.removeProperty('color');
+        });
+    });
+}
+
+// Call this after theme toggle and after any click on volume buttons
+
 function fixMethodButtonTextColor() {
     document.querySelectorAll('.method-btn-compact').forEach(button => {
         if (button.classList.contains('active')) {
