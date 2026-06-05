@@ -40,10 +40,10 @@
     --radius-xl: 1.5rem;
     --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     --font-persian: 'Vazirmatn', 'Mitra', Tahoma, 'Arial Unicode MS', sans-serif;
-    --font-latin:   'Roboto', 'Segoe UI', Arial, sans-serif;
-    --font-mono:    'Roboto Mono', 'Courier New', monospace;
+    --font-latin: 'Roboto', 'Segoe UI', Arial, sans-serif;
+    --font-mono: 'Roboto Mono', 'Courier New', monospace;
     --safe-bottom: env(safe-area-inset-bottom, 0px);
-    --safe-top:    env(safe-area-inset-top, 0px);
+    --safe-top: env(safe-area-inset-top, 0px);
 }
 
 .dark-mode {
@@ -75,7 +75,9 @@
 .dark-mode body,
 .dark-mode .app-container,
 .dark-mode .main-content,
-.dark-mode .calculator-main { background: var(--bg-primary) !important; }
+.dark-mode .calculator-main {
+    background: var(--bg-primary) !important;
+}
 
 .dark-mode .converter-card,
 .dark-mode .tool-card,
@@ -85,7 +87,7 @@
     background: var(--surface) !important;
     border-color: var(--border) !important;
     color: var(--text-primary) !important;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.04) !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.04) !important;
 }
 
 .dark-mode .app-header,
@@ -115,7 +117,7 @@
 .dark-mode .method-btn-compact:hover,
 .dark-mode .volume-preset-btn:hover {
     border-color: var(--primary) !important;
-    box-shadow: 0 0 0 1px var(--primary), 0 4px 12px rgba(129,140,248,0.2) !important;
+    box-shadow: 0 0 0 1px var(--primary), 0 4px 12px rgba(129, 140, 248, 0.2) !important;
 }
 
 .dark-mode .method-btn-compact.active,
@@ -126,7 +128,7 @@
     background: var(--gradient-primary) !important;
     border-color: transparent !important;
     color: white !important;
-    box-shadow: 0 4px 15px rgba(129,140,248,0.35) !important;
+    box-shadow: 0 4px 15px rgba(129, 140, 248, 0.35) !important;
 }
 
 .dark-mode input,
@@ -139,7 +141,7 @@
 .dark-mode input:focus,
 .dark-mode select:focus {
     border-color: var(--primary) !important;
-    box-shadow: 0 0 0 3px rgba(129,140,248,0.2) !important;
+    box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.2) !important;
     background: var(--surface) !important;
 }
 
@@ -164,18 +166,25 @@
     -webkit-text-fill-color: unset !important;
 }
 
-.dark-mode .result-value-enhanced { color: var(--text-primary) !important; }
+.dark-mode .result-value-enhanced {
+    color: var(--text-primary) !important;
+}
+
 .dark-mode .result-item-enhanced.highlight {
     background: var(--gradient-primary) !important;
     border-color: transparent !important;
 }
-.dark-mode .result-item-enhanced.highlight .result-value-enhanced { color: white !important; }
+
+.dark-mode .result-item-enhanced.highlight .result-value-enhanced {
+    color: white !important;
+}
 
 .dark-mode .ampoule-btn-enhanced {
     background: var(--surface) !important;
     color: var(--text-secondary) !important;
     border: 1px solid var(--border) !important;
 }
+
 .dark-mode .ampoule-btn-enhanced:hover {
     background: var(--primary-light) !important;
     color: var(--primary) !important;
@@ -183,29 +192,41 @@
 }
 
 .dark-mode .compatible-drugs {
-    background: rgba(52,211,153,0.08) !important;
+    background: rgba(52, 211, 153, 0.08) !important;
     border-color: var(--success) !important;
 }
+
 .dark-mode .incompatible-drugs {
-    background: rgba(248,113,113,0.08) !important;
+    background: rgba(248, 113, 113, 0.08) !important;
     border-color: var(--danger) !important;
 }
 
 .dark-mode .warning-item {
-    background: rgba(251,146,60,0.08) !important;
+    background: rgba(251, 146, 60, 0.08) !important;
     border-right-color: var(--warning) !important;
 }
+
 .dark-mode .guide-step {
     background: var(--surface-elevated) !important;
     border-right-color: var(--primary) !important;
 }
 
-.dark-mode .toggle-slider-enhanced { background: var(--border) !important; }
-.dark-mode .slider { background: #374151; }
-.dark-mode .switch input:checked + .slider { background: var(--primary) !important; }
+.dark-mode .toggle-slider-enhanced {
+    background: var(--border) !important;
+}
+
+.dark-mode .slider {
+    background: #374151;
+}
+
+.dark-mode .switch input:checked+.slider {
+    background: var(--primary) !important;
+}
 
 .dark-mode .drug-name-english,
-.dark-mode .drug-library-english { color: var(--text-tertiary) !important; }
+.dark-mode .drug-library-english {
+    color: var(--text-tertiary) !important;
+}
 
 .dark-mode .control-group label,
 .dark-mode .input-group label,
@@ -239,10 +260,17 @@
     color: var(--text-secondary) !important;
 }
 
-.dark-mode .volume-preset-btn .unit-text { color: var(--text-tertiary) !important; }
-.dark-mode .volume-preset-btn .number    { color: var(--primary) !important; }
+.dark-mode .volume-preset-btn .unit-text {
+    color: var(--text-tertiary) !important;
+}
 
-.dark-mode .result-unit-enhanced { color: var(--text-secondary) !important; }
+.dark-mode .volume-preset-btn .number {
+    color: var(--primary) !important;
+}
+
+.dark-mode .result-unit-enhanced {
+    color: var(--text-secondary) !important;
+}
 
 .dark-mode .converter-result,
 .dark-mode .tool-result {
@@ -251,19 +279,40 @@
     color: var(--primary) !important;
 }
 
-.dark-mode .dose-unit-enhanced { background: var(--gradient-primary) !important; color: white !important; }
+.dark-mode .dose-unit-enhanced {
+    background: var(--gradient-primary) !important;
+    color: white !important;
+}
 
-.dark-mode .ampoule-count-enhanced { color: var(--primary) !important; }
+.dark-mode .ampoule-count-enhanced {
+    color: var(--primary) !important;
+}
 
-.dark-mode .history-time { color: var(--text-tertiary) !important; }
-.dark-mode .history-details { color: var(--text-secondary) !important; }
+.dark-mode .history-time {
+    color: var(--text-tertiary) !important;
+}
 
-.dark-mode .about-info p { color: var(--text-secondary) !important; border-color: var(--border-light) !important; }
+.dark-mode .history-details {
+    color: var(--text-secondary) !important;
+}
 
-.dark-mode .drug-library-label { color: var(--text-secondary) !important; }
-.dark-mode .drug-library-value { color: var(--text-primary) !important; }
+.dark-mode .about-info p {
+    color: var(--text-secondary) !important;
+    border-color: var(--border-light) !important;
+}
 
-.dark-mode ::placeholder { color: var(--text-tertiary) !important; opacity: 1 !important; }
+.dark-mode .drug-library-label {
+    color: var(--text-secondary) !important;
+}
+
+.dark-mode .drug-library-value {
+    color: var(--text-primary) !important;
+}
+
+.dark-mode ::placeholder {
+    color: var(--text-tertiary) !important;
+    opacity: 1 !important;
+}
 
 /* ===============================
    FONT SETUP
@@ -271,10 +320,7 @@
 @font-face {
     font-family: 'Mitra';
     src: url('fonts/Mitra.eot');
-    src: url('fonts/Mitra.eot?#iefix') format('embedded-opentype'),
-         url('fonts/Mitra.woff2') format('woff2'),
-         url('fonts/Mitra.woff') format('woff'),
-         url('fonts/Mitra.ttf') format('truetype');
+    src: url('fonts/Mitra.eot?#iefix') format('embedded-opentype'), url('fonts/Mitra.woff2') format('woff2'), url('fonts/Mitra.woff') format('woff'), url('fonts/Mitra.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
     font-display: swap;
@@ -294,9 +340,16 @@ body *:not(.fa):not(.fas):not(.far):not(.fal):not(.fab):not(.fa-solid):not(.fa-r
     font-family: var(--font-persian);
 }
 
-.fa, .fas, .far, .fal, .fab,
-.fa-solid, .fa-regular, .fa-brands,
-[class*=" fa-"], [class^="fa-"] {
+.fa,
+.fas,
+.far,
+.fal,
+.fab,
+.fa-solid,
+.fa-regular,
+.fa-brands,
+[class*=" fa-"],
+[class^="fa-"] {
     font-family: "Font Awesome 6 Free", "Font Awesome 6 Brands", "FontAwesome" !important;
     -webkit-font-smoothing: antialiased;
     font-style: normal;
@@ -322,7 +375,9 @@ body {
     transition: background-color 0.3s ease;
 }
 
-/* Bidirectional text fixes (unchanged from original) */
+/* ===============================
+   BIDIRECTIONAL TEXT
+   =============================== */
 .latin-text,
 .text-latin,
 .drug-name-english,
@@ -448,6 +503,7 @@ input[inputmode="decimal"]::-webkit-inner-spin-button {
     -webkit-appearance: none;
     margin: 0;
 }
+
 input[type="number"] {
     -moz-appearance: textfield;
 }
@@ -530,7 +586,7 @@ select {
 }
 
 /* ===============================
-   LOADING SCREEN (Enhanced)
+   LOADING SCREEN
    =============================== */
 .loading-screen {
     position: fixed;
@@ -544,11 +600,13 @@ select {
     padding: env(safe-area-inset-top, 20px) 24px env(safe-area-inset-bottom, 20px);
     transition: opacity 0.5s ease, transform 0.5s ease;
 }
+
 .loading-screen.fade-out {
     opacity: 0;
     transform: scale(1.04);
     pointer-events: none;
 }
+
 .loading-content {
     display: flex;
     flex-direction: column;
@@ -558,12 +616,13 @@ select {
     width: 100%;
     text-align: center;
 }
+
 .loading-logo {
     width: 96px;
     height: 96px;
     border-radius: 22px;
     overflow: hidden;
-    box-shadow: 0 12px 40px rgba(0,0,0,0.35);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
     background: white;
     display: flex;
     align-items: center;
@@ -571,15 +630,27 @@ select {
     margin-bottom: 4px;
     animation: loadingPulse 2s ease-in-out infinite;
 }
+
 @keyframes loadingPulse {
-    0%, 100% { transform: scale(1); box-shadow: 0 12px 40px rgba(0,0,0,0.35); }
-    50% { transform: scale(1.04); box-shadow: 0 16px 50px rgba(0,0,0,0.45); }
+
+    0%,
+    100% {
+        transform: scale(1);
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+    }
+
+    50% {
+        transform: scale(1.04);
+        box-shadow: 0 16px 50px rgba(0, 0, 0, 0.45);
+    }
 }
+
 .loading-logo-img {
     width: 96px;
     height: 96px;
     object-fit: cover;
 }
+
 .loading-app-name {
     font-size: 26px;
     font-weight: 800;
@@ -588,20 +659,23 @@ select {
     letter-spacing: 0.5px;
     margin-top: 4px;
 }
+
 .loading-tagline {
     font-size: 13px;
-    color: rgba(255,255,255,0.75);
+    color: rgba(255, 255, 255, 0.75);
     font-family: var(--font-persian);
     direction: rtl;
 }
+
 .loading-bar-wrap {
     width: 100%;
     height: 4px;
-    background: rgba(255,255,255,0.2);
+    background: rgba(255, 255, 255, 0.2);
     border-radius: 99px;
     overflow: hidden;
     margin: 8px 0 2px;
 }
+
 .loading-bar {
     height: 100%;
     width: 0%;
@@ -609,13 +683,15 @@ select {
     border-radius: 99px;
     transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
+
 .loading-status {
     font-size: 11px;
-    color: rgba(255,255,255,0.65);
+    color: rgba(255, 255, 255, 0.65);
     font-family: var(--font-persian);
     direction: rtl;
     min-height: 16px;
 }
+
 .loading-tips {
     margin-top: 20px;
     height: 48px;
@@ -623,11 +699,12 @@ select {
     position: relative;
     width: 100%;
 }
+
 .loading-tip {
     position: absolute;
     width: 100%;
     font-size: 13px;
-    color: rgba(255,255,255,0.8);
+    color: rgba(255, 255, 255, 0.8);
     font-family: var(--font-persian);
     direction: rtl;
     text-align: center;
@@ -640,13 +717,15 @@ select {
     justify-content: center;
     gap: 6px;
 }
+
 .loading-tip.active {
     opacity: 1;
     transform: translateY(0);
 }
+
 .loading-version {
     font-size: 12px;
-    color: rgba(255,255,255,0.4);
+    color: rgba(255, 255, 255, 0.4);
     margin-top: 24px;
     font-family: 'Vazirmatn', sans-serif;
     direction: ltr;
@@ -1490,12 +1569,27 @@ select {
     transition: var(--transition);
 }
 
-.toggle-switch-enhanced input:checked + .toggle-slider-enhanced {
+.toggle-switch-enhanced input:checked+.toggle-slider-enhanced {
     background: var(--primary);
 }
 
-.toggle-switch-enhanced input:checked + .toggle-slider-enhanced:before {
+.toggle-switch-enhanced input:checked+.toggle-slider-enhanced:before {
     transform: translateX(-24px);
+}
+
+/* ===============================
+   CALCULATE BUTTON & STICKY WRAP
+   =============================== */
+.calculate-btn-sticky-wrap {
+    position: relative;
+    z-index: 10;
+    padding: 4px 0 0;
+    background: transparent;
+}
+
+.calculate-btn-sticky-wrap::before {
+    display: none !important;
+    content: none !important;
 }
 
 .calculate-btn-enhanced {
@@ -1517,13 +1611,17 @@ select {
     direction: rtl;
     min-height: 52px;
     font-family: var(--font-persian);
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
 }
 
 .calculate-btn-enhanced:hover {
-    transform: translateY(-3px);
+    transform: translateY(-2px);
     box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
 }
 
+/* ===============================
+   RESULTS SECTION
+   =============================== */
 .results-section-enhanced {
     background: var(--surface-elevated);
     border-radius: 16px;
@@ -1590,6 +1688,7 @@ select {
     font-family: var(--font-latin);
 }
 
+/* Guide, Warnings, Compatibility */
 .guide-section,
 .warnings-section,
 .compatibility-section {
@@ -1722,7 +1821,11 @@ select {
     gap: 10px;
 }
 
-.drugs-library { display: flex; flex-direction: column; gap: 12px; }
+.drugs-library {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
 
 .converter-card,
 .tool-card {
@@ -1756,7 +1859,9 @@ select {
 .tool-header::after {
     content: '';
     position: absolute;
-    right: 0; top: 0; bottom: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
     width: 3px;
     background: var(--gradient-primary);
     border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
@@ -1881,12 +1986,6 @@ select {
     transform: translateY(0);
 }
 
-/* Converter result empty state */
-.converter-result:empty,
-.tool-result:empty {
-    display: none;
-}
-
 .converter-result,
 .tool-result {
     background: var(--primary-light);
@@ -1906,6 +2005,11 @@ select {
     min-height: 44px;
     font-family: var(--font-latin);
     letter-spacing: 0.3px;
+}
+
+.converter-result:empty,
+.tool-result:empty {
+    display: none;
 }
 
 .drugs-search {
@@ -2098,14 +2202,14 @@ select {
     background: white;
     border-radius: 50%;
     transition: var(--transition);
-    box-shadow: 0 1px 4px rgba(0,0,0,0.25);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
 }
 
-.switch input:checked + .slider {
+.switch input:checked+.slider {
     background: var(--primary);
 }
 
-.switch input:checked + .slider:before {
+.switch input:checked+.slider:before {
     transform: translateX(-20px);
 }
 
@@ -2184,7 +2288,9 @@ select {
     min-height: 32px;
 }
 
-/* Hide quick actions */
+/* ===============================
+   HIDE QUICK ACTIONS
+   =============================== */
 .quick-actions-enhanced,
 .quick-actions,
 .action-btn-enhanced,
@@ -2216,12 +2322,14 @@ select {
     html {
         font-size: 15px;
     }
+
     body {
         position: fixed;
         width: 100%;
         height: 100%;
         overflow: hidden;
     }
+
     .app-container {
         height: 100vh;
         height: 100dvh;
@@ -2230,6 +2338,7 @@ select {
         flex-direction: column;
         overflow: hidden;
     }
+
     .app-header {
         height: 50px;
         padding: 0 10px;
@@ -2240,10 +2349,27 @@ select {
         z-index: 1000;
         flex-shrink: 0;
     }
-    .logo { width: 30px; height: 30px; font-size: 13px; }
-    .logo-text h1 { font-size: 13px; }
-    .logo-text p { display: none; }
-    .icon-btn { width: 32px; height: 32px; font-size: 13px; border-radius: 8px; }
+
+    .logo {
+        width: 30px;
+        height: 30px;
+        font-size: 13px;
+    }
+
+    .logo-text h1 {
+        font-size: 13px;
+    }
+
+    .logo-text p {
+        display: none;
+    }
+
+    .icon-btn {
+        width: 32px;
+        height: 32px;
+        font-size: 13px;
+        border-radius: 8px;
+    }
 
     .main-content {
         position: fixed;
@@ -2256,12 +2382,14 @@ select {
         flex-direction: column;
         padding: 0;
     }
+
     .tab-pane {
         height: 100%;
         overflow-y: auto;
         -webkit-overflow-scrolling: touch;
         overscroll-behavior: contain;
     }
+
     .tab-bar {
         position: fixed;
         bottom: 0;
@@ -2272,8 +2400,14 @@ select {
         padding-bottom: calc(6px + var(--safe-bottom));
         z-index: 1000;
     }
-    .tab-item i { font-size: 15px; }
-    .tab-item span { font-size: 10px; }
+
+    .tab-item i {
+        font-size: 15px;
+    }
+
+    .tab-item span {
+        font-size: 10px;
+    }
 
     #calculatorTab {
         overflow: hidden;
@@ -2281,6 +2415,7 @@ select {
         flex-direction: column;
         height: 100%;
     }
+
     .calculator-layout {
         display: flex;
         flex-direction: column;
@@ -2300,9 +2435,11 @@ select {
         flex-direction: column !important;
         overflow: visible !important;
     }
+
     .drug-search-container {
         display: none !important;
     }
+
     .drug-quick-select {
         display: flex !important;
         flex-direction: column !important;
@@ -2311,9 +2448,11 @@ select {
         padding: 0 !important;
         gap: 0 !important;
     }
+
     .drug-quick-select h3 {
         display: none !important;
     }
+
     .drug-scroll-container {
         overflow-x: auto !important;
         overflow-y: hidden !important;
@@ -2322,9 +2461,11 @@ select {
         padding: 6px !important;
         scrollbar-width: none;
     }
+
     .drug-scroll-container::-webkit-scrollbar {
         display: none;
     }
+
     .drug-grid-compact {
         display: flex !important;
         flex-direction: row !important;
@@ -2335,6 +2476,7 @@ select {
         flex-wrap: nowrap !important;
         min-width: min-content !important;
     }
+
     .drug-item-compact {
         flex: 0 0 80px !important;
         width: 80px !important;
@@ -2346,6 +2488,7 @@ select {
         border: 2px solid var(--border) !important;
         box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06) !important;
     }
+
     .drug-icon-small {
         width: 28px !important;
         height: 28px !important;
@@ -2353,11 +2496,13 @@ select {
         margin-bottom: 5px !important;
         border-radius: 8px !important;
     }
+
     .drug-name-compact {
         font-size: 11px !important;
         line-height: 1.2 !important;
         margin-bottom: 2px !important;
     }
+
     .drug-name-english {
         font-size: 9px !important;
         line-height: 1.1 !important;
@@ -2385,21 +2530,28 @@ select {
         box-shadow: 0 2px 6px rgba(240, 147, 251, 0.3) !important;
         flex-shrink: 0 !important;
     }
+
     #openManualMobile i {
         font-size: 16px !important;
         color: white !important;
     }
+
     #openManualMobile span {
         font-size: 10px !important;
         text-align: center;
         line-height: 1.2;
         color: white !important;
     }
-    #openManual { display: none !important; }
 
+    #openManual {
+        display: none !important;
+    }
+
+    /* Calculator main - scrollable */
     .calculator-main {
         flex: 1;
         padding: 10px !important;
+        padding-bottom: 0 !important;
         gap: 8px !important;
         overflow-y: auto !important;
         -webkit-overflow-scrolling: touch !important;
@@ -2409,62 +2561,70 @@ select {
         min-height: 0;
     }
 
-    /* Sticky calculate button for mobile */
+    /* Sticky calculate button - flush with tab bar, no gap */
     .calculate-btn-sticky-wrap {
         position: sticky !important;
         bottom: 0 !important;
         background: var(--bg-primary);
-        padding: 8px 14px 12px !important;
-        margin-top: auto;
-        z-index: 10;
-    }
-    .calculator-main {
-        padding-bottom: 0 !important;
-    }
-    .results-section-enhanced {
-        margin-bottom: 8px;
+        padding: 8px 12px 12px !important;
+        margin: 0 !important;
+        z-index: 15;
+        border-top: 1px solid var(--border);
+        box-shadow: none;
     }
 
-    /* Settings modal adjustments */
-    .modal-content {
-        max-height: 85vh;
-    }
-    .modal-header {
-        padding: 12px var(--spacing-md);
-    }
-    .modal-header h3 {
-        font-size: 1rem;
-    }
-    .modal-body {
-        padding: 12px 16px 20px !important;
-        max-height: calc(85vh - 52px);
+    .calculate-btn-sticky-wrap::before {
+        display: none !important;
     }
 
-    /* Other existing mobile styles... */
+    .calculate-btn-enhanced {
+        margin: 0 !important;
+        box-shadow: 0 2px 12px rgba(102, 126, 234, 0.3);
+    }
+
+    /* Selected drug header */
     .selected-drug-compact {
         padding: 10px;
         gap: 8px;
         flex-shrink: 0;
     }
-    .selected-drug-icon-compact { width: 40px; height: 40px; font-size: 16px; border-radius: 10px; }
-    .selected-drug-name-compact { font-size: 15px; }
-    .selected-drug-desc-compact { font-size: 11px; }
+
+    .selected-drug-icon-compact {
+        width: 40px;
+        height: 40px;
+        font-size: 16px;
+        border-radius: 10px;
+    }
+
+    .selected-drug-name-compact {
+        font-size: 15px;
+    }
+
+    .selected-drug-desc-compact {
+        font-size: 11px;
+    }
 
     .calculator-controls-grid {
         grid-template-columns: 1fr;
         gap: 6px;
         flex-shrink: 0;
     }
+
     .control-group {
         padding: 10px;
         border-radius: 10px;
     }
+
     .control-group label {
         margin-bottom: 6px !important;
         font-size: 13px !important;
     }
 
-    .method-selector-compact { gap: 6px; margin-bottom: 8px; }
+    .method-selector-compact {
+        gap: 6px;
+        margin-bottom: 8px;
+    }
+
     .method-btn-compact {
         padding: 8px 6px !important;
         font-size: 12px !important;
@@ -2472,10 +2632,20 @@ select {
         gap: 4px !important;
         border-radius: 8px;
     }
-    .method-btn-compact i { font-size: 13px !important; }
-    .method-btn-compact span { font-size: 11px !important; }
 
-    .volume-presets { gap: 5px; margin-bottom: 5px; }
+    .method-btn-compact i {
+        font-size: 13px !important;
+    }
+
+    .method-btn-compact span {
+        font-size: 11px !important;
+    }
+
+    .volume-presets {
+        gap: 5px;
+        margin-bottom: 5px;
+    }
+
     .volume-preset-btn {
         min-width: 54px;
         padding: 6px 4px;
@@ -2489,20 +2659,30 @@ select {
         margin-bottom: 6px;
         border-radius: 10px;
     }
+
     .ampoule-btn-enhanced {
-        width: 36px; height: 36px;
+        width: 36px;
+        height: 36px;
         font-size: 13px;
         border-radius: 8px;
         padding: 4px;
     }
-    .ampoule-count-enhanced { font-size: 18px; min-width: 40px; }
 
-    .dose-input-enhanced { margin-bottom: 6px !important; }
+    .ampoule-count-enhanced {
+        font-size: 18px;
+        min-width: 40px;
+    }
+
+    .dose-input-enhanced {
+        margin-bottom: 6px !important;
+    }
+
     .dose-input-wrapper input {
         padding: 10px 72px 10px 10px !important;
         font-size: 16px !important;
         border-radius: 8px;
     }
+
     .dose-unit-enhanced {
         right: 8px !important;
         padding: 4px 6px !important;
@@ -2517,30 +2697,33 @@ select {
         margin-top: 6px;
         border-radius: 10px;
     }
+
     .weight-toggle-enhanced .weight-input-section input {
         width: 56px !important;
         padding: 6px 4px !important;
         font-size: 16px !important;
         border-radius: 6px;
     }
-    .toggle-switch-enhanced { width: 40px !important; height: 22px !important; }
+
+    .toggle-switch-enhanced {
+        width: 40px !important;
+        height: 22px !important;
+    }
+
     .toggle-slider-enhanced:before {
         width: 16px !important;
         height: 16px !important;
         right: 3px !important;
         bottom: 3px !important;
     }
-    .toggle-switch-enhanced input:checked + .toggle-slider-enhanced:before {
+
+    .toggle-switch-enhanced input:checked+.toggle-slider-enhanced:before {
         transform: translateX(-18px) !important;
     }
-    .weight-toggle-enhanced .toggle-label { font-size: 11px !important; gap: 5px !important; }
 
-    .calculate-btn-enhanced {
-        padding: 12px;
-        font-size: 15px;
-        margin: 8px 0;
-        border-radius: 10px;
-        min-height: 48px;
+    .weight-toggle-enhanced .toggle-label {
+        font-size: 11px !important;
+        gap: 5px !important;
     }
 
     .results-section-enhanced {
@@ -2549,14 +2732,26 @@ select {
         border-radius: 12px;
         flex-shrink: 0;
     }
+
     .results-grid-enhanced {
         grid-template-columns: 1fr 1fr;
         gap: 6px;
     }
-    .result-item-enhanced { padding: 10px; border-radius: 10px; }
-    .result-value-enhanced { font-size: 18px; }
-    .result-label-enhanced { font-size: 12px; }
 
+    .result-item-enhanced {
+        padding: 10px;
+        border-radius: 10px;
+    }
+
+    .result-value-enhanced {
+        font-size: 18px;
+    }
+
+    .result-label-enhanced {
+        font-size: 12px;
+    }
+
+    /* Other tabs */
     #convertersTab,
     #drugsTab,
     #toolsTab {
@@ -2564,81 +2759,166 @@ select {
         -webkit-overflow-scrolling: touch;
         overscroll-behavior: contain;
     }
+
     .converters-container,
     .drugs-container,
     .tools-container {
         padding: 10px !important;
     }
+
     .converters-container h2,
     .drugs-container h2,
     .tools-container h2 {
         font-size: 17px !important;
         margin-bottom: 10px !important;
     }
+
     .converter-grid,
     .tools-grid,
     .drugs-library {
         grid-template-columns: 1fr !important;
         gap: 10px !important;
     }
+
     .converter-header,
-    .tool-header { padding: 10px 12px !important; }
+    .tool-header {
+        padding: 10px 12px !important;
+    }
+
     .converter-header h3,
-    .tool-header h3 { font-size: 13px !important; }
-    .converter-body, .tool-body { padding: 10px 12px !important; }
-    .input-group { margin-bottom: 7px !important; }
-    .input-group label { font-size: 11px !important; }
-    .input-group input, .input-group select {
+    .tool-header h3 {
+        font-size: 13px !important;
+    }
+
+    .converter-body,
+    .tool-body {
+        padding: 10px 12px !important;
+    }
+
+    .input-group {
+        margin-bottom: 7px !important;
+    }
+
+    .input-group label {
+        font-size: 11px !important;
+    }
+
+    .input-group input,
+    .input-group select {
         padding: 9px 10px !important;
         font-size: 16px !important;
     }
-    .converter-btn, .tool-btn {
+
+    .converter-btn,
+    .tool-btn {
         padding: 10px 14px !important;
         font-size: 13px !important;
         margin: 6px 0 8px !important;
         min-height: 44px !important;
     }
-    .converter-result, .tool-result {
+
+    .converter-result,
+    .tool-result {
         padding: 10px 14px !important;
         min-height: 44px !important;
         font-size: 14px !important;
     }
-    .drugs-search { margin-bottom: 10px !important; }
-    .drugs-search input { padding: 10px 36px 10px 10px !important; font-size: 16px !important; }
 
-    .modal { padding: 10px; }
-    .modal-content { max-height: 88vh; }
-    .modal-body { max-height: calc(88vh - 70px); }
+    .drugs-search {
+        margin-bottom: 10px !important;
+    }
 
-    .guide-section, .warnings-section, .compatibility-section {
+    .drugs-search input {
+        padding: 10px 36px 10px 10px !important;
+        font-size: 16px !important;
+    }
+
+    /* Modals */
+    .modal {
+        padding: 10px;
+    }
+
+    .modal-content {
+        max-height: 85vh;
+    }
+
+    .modal-header {
+        padding: 12px var(--spacing-md);
+    }
+
+    .modal-header h3 {
+        font-size: 1rem;
+    }
+
+    .modal-body {
+        padding: 12px 16px 20px !important;
+        max-height: calc(85vh - 52px);
+    }
+
+    .guide-section,
+    .warnings-section,
+    .compatibility-section {
         margin-top: 10px;
         padding: 10px;
         border-radius: 10px;
     }
 }
 
+/* Extra small phones */
 @media (max-width: 360px) {
-    html { font-size: 14px; }
-    .app-header { height: 44px; }
+    html {
+        font-size: 14px;
+    }
+
+    .app-header {
+        height: 44px;
+    }
+
     .main-content {
         top: 44px;
         bottom: calc(52px + var(--safe-bottom));
     }
-    .tab-bar { min-height: calc(52px + var(--safe-bottom)); }
+
+    .tab-bar {
+        min-height: calc(52px + var(--safe-bottom));
+    }
+
     .drug-item-compact,
     #openManualMobile {
         flex: 0 0 72px !important;
         width: 72px !important;
         height: 72px !important;
     }
-    .drug-icon-small { width: 24px !important; height: 24px !important; font-size: 12px !important; }
-    .drug-name-compact { font-size: 10px !important; }
-    .drug-name-english { font-size: 8px !important; }
-    .calculator-main { padding: 8px !important; gap: 6px !important; }
-    .converters-container, .drugs-container, .tools-container { padding: 8px !important; }
+
+    .drug-icon-small {
+        width: 24px !important;
+        height: 24px !important;
+        font-size: 12px !important;
+    }
+
+    .drug-name-compact {
+        font-size: 10px !important;
+    }
+
+    .drug-name-english {
+        font-size: 8px !important;
+    }
+
+    .calculator-main {
+        padding: 8px !important;
+        gap: 6px !important;
+    }
+
+    .converters-container,
+    .drugs-container,
+    .tools-container {
+        padding: 8px !important;
+    }
 }
 
+/* Medium phones */
 @media (min-width: 361px) and (max-width: 768px) {
+
     .drug-item-compact,
     #openManualMobile {
         flex: 0 0 85px !important;
@@ -2647,47 +2927,136 @@ select {
     }
 }
 
+/* Desktop layout */
 @media (min-width: 769px) {
-    .calculator-layout { flex-direction: row; }
-    .calculator-main { margin-right: 0; }
-    .calculator-controls-grid { grid-template-columns: repeat(2, 1fr); }
-    .results-grid-enhanced { grid-template-columns: repeat(4, 1fr); }
-    .converter-grid { grid-template-columns: repeat(2, 1fr); gap: var(--spacing-md); }
-    .tools-grid    { grid-template-columns: repeat(2, 1fr); gap: var(--spacing-md); }
-    .drugs-library { grid-template-columns: repeat(2, 1fr); gap: var(--spacing-md); }
+    .calculator-layout {
+        flex-direction: row;
+    }
+
+    .calculator-main {
+        margin-right: 0;
+    }
+
+    .calculator-controls-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .results-grid-enhanced {
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    .converter-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--spacing-md);
+    }
+
+    .tools-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--spacing-md);
+    }
+
+    .drugs-library {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--spacing-md);
+    }
+
     .converters-container,
     .drugs-container,
-    .tools-container { padding: var(--spacing-lg); }
+    .tools-container {
+        padding: var(--spacing-lg);
+    }
+
     .converters-container h2,
     .drugs-container h2,
     .tools-container h2 {
         font-size: 24px;
         margin-bottom: var(--spacing-lg);
     }
-    .converter-header, .tool-header { padding: 12px 14px; }
-    .converter-header h3, .tool-header h3 { font-size: 14px; }
-    .converter-body, .tool-body { padding: 14px; }
-    .input-group { margin-bottom: 10px; }
-    .input-group label { margin-bottom: 4px; font-size: 12px; }
-    .input-group input, .input-group select { padding: 10px; font-size: 15px; }
-    .converter-btn, .tool-btn { padding: 10px 14px; margin: 8px 0 10px; }
-    .converter-result, .tool-result { padding: var(--spacing-md); min-height: 60px; }
-    .drugs-search { margin-bottom: var(--spacing-lg); }
-    .drugs-search input { padding: 1rem 3rem 1rem 1rem; font-size: 1rem; }
-    .drug-search-container { display: block !important; }
-    #openManualMobile { display: none !important; }
-    #openManual { display: flex !important; }
+
+    .converter-header,
+    .tool-header {
+        padding: 12px 14px;
+    }
+
+    .converter-header h3,
+    .tool-header h3 {
+        font-size: 14px;
+    }
+
+    .converter-body,
+    .tool-body {
+        padding: 14px;
+    }
+
+    .input-group {
+        margin-bottom: 10px;
+    }
+
+    .input-group label {
+        margin-bottom: 4px;
+        font-size: 12px;
+    }
+
+    .input-group input,
+    .input-group select {
+        padding: 10px;
+        font-size: 15px;
+    }
+
+    .converter-btn,
+    .tool-btn {
+        padding: 10px 14px;
+        margin: 8px 0 10px;
+    }
+
+    .converter-result,
+    .tool-result {
+        padding: var(--spacing-md);
+        min-height: 60px;
+    }
+
+    .drugs-search {
+        margin-bottom: var(--spacing-lg);
+    }
+
+    .drugs-search input {
+        padding: 1rem 3rem 1rem 1rem;
+        font-size: 1rem;
+    }
+
+    .drug-search-container {
+        display: block !important;
+    }
+
+    #openManualMobile {
+        display: none !important;
+    }
+
+    #openManual {
+        display: flex !important;
+    }
+
     .main-content {
         margin-top: 60px;
         height: calc(100vh - 60px - 60px);
         position: relative;
     }
-    .tab-bar { position: fixed; }
+
+    .tab-bar {
+        position: fixed;
+    }
 }
 
 @media (min-width: 1200px) {
-    .converter-grid, .tools-grid { grid-template-columns: repeat(3, 1fr); }
-    .drugs-library { grid-template-columns: repeat(3, 1fr); }
+
+    .converter-grid,
+    .tools-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .drugs-library {
+        grid-template-columns: repeat(3, 1fr);
+    }
 }
 
 /* ===============================
@@ -2702,6 +3071,7 @@ select {
     margin-bottom: 16px;
     direction: rtl;
 }
+
 .manual-header h3 {
     display: flex;
     align-items: center;
@@ -2709,16 +3079,19 @@ select {
     color: var(--primary);
     font-size: 16px;
 }
+
 .manual-controls {
     display: flex;
     flex-direction: column;
     gap: 12px;
 }
+
 .manual-input-with-unit {
     display: flex;
     align-items: center;
     gap: 8px;
 }
+
 .manual-input-with-unit input {
     flex: 1;
     padding: 10px;
@@ -2731,16 +3104,19 @@ select {
     direction: ltr;
     font-family: var(--font-mono);
 }
+
 .manual-input-with-unit input:focus {
     outline: none;
     border-color: var(--primary);
 }
+
 .manual-input-with-unit .unit {
     color: var(--text-secondary);
     font-size: 13px;
     white-space: nowrap;
     direction: rtl;
 }
+
 .manual-input-with-unit select {
     flex: 1;
     padding: 10px;
@@ -2755,12 +3131,14 @@ select {
 .large-font {
     font-size: 18px;
 }
+
 .large-font .drug-name-compact,
 .large-font .selected-drug-name-compact,
 .large-font .result-value-enhanced,
 .large-font .dose-input-wrapper input {
     font-size: 1.2em;
 }
+
 .large-font .drug-name-english,
 .large-font .selected-drug-desc-compact,
 .large-font .result-label-enhanced,
@@ -2775,23 +3153,28 @@ select {
     max-height: 0;
     transition: max-height 0.3s ease;
 }
+
 .drug-library-card.expanded .drug-library-details {
     max-height: 800px;
 }
+
 .drug-library-actions {
     display: flex;
     gap: 8px;
     margin-top: 12px;
 }
+
 .drug-library-actions .drug-library-btn {
     flex: 1;
     margin: 0;
 }
+
 .drug-library-btn.secondary {
     background: var(--surface-elevated);
     color: var(--primary);
     border: 2px solid var(--primary);
 }
+
 .drug-library-btn.secondary:hover {
     background: var(--primary-light);
 }
@@ -2804,12 +3187,14 @@ select {
     border: 1px solid var(--border);
     direction: rtl;
 }
+
 .history-drug {
     font-weight: 700;
     color: var(--primary);
     margin-bottom: 4px;
     font-size: 15px;
 }
+
 .history-details {
     font-size: 13px;
     color: var(--text-secondary);
@@ -2817,6 +3202,7 @@ select {
     flex-direction: column;
     gap: 2px;
 }
+
 .history-time {
     font-size: 11px;
     color: var(--text-tertiary);
@@ -2826,6 +3212,7 @@ select {
     font-family: var(--font-mono);
     text-align: left;
 }
+
 .empty-history {
     text-align: center;
     color: var(--text-tertiary);
@@ -2840,6 +3227,7 @@ select {
     margin-bottom: 12px;
     direction: rtl;
 }
+
 .about-info p {
     padding: 6px 0;
     border-bottom: 1px dashed var(--border-light);
@@ -2847,18 +3235,23 @@ select {
     display: flex;
     justify-content: space-between;
 }
-.about-info p:last-child { border-bottom: none; }
+
+.about-info p:last-child {
+    border-bottom: none;
+}
 
 .manual-inputs-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 12px;
 }
+
 @media (max-width: 480px) {
     .manual-inputs-grid {
         grid-template-columns: 1fr;
     }
 }
+
 .manual-results {
     background: var(--surface-elevated);
     border: 2px solid var(--primary);
@@ -2866,6 +3259,7 @@ select {
     padding: 16px;
     direction: rtl;
 }
+
 .manual-results h4 {
     display: flex;
     align-items: center;
@@ -2880,6 +3274,7 @@ select {
     color: var(--text-tertiary);
     opacity: 0.7;
 }
+
 input[type="text"]::placeholder,
 input[type="search"]::placeholder {
     text-align: right;
@@ -2891,10 +3286,19 @@ input[type="search"]::placeholder {
     gap: 0;
     animation: slideInDown 0.25s ease;
 }
+
 @keyframes slideInDown {
-    from { opacity: 0; transform: translateY(-12px); }
-    to   { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(-12px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
+
 .manual-header {
     display: flex;
     justify-content: space-between;
@@ -2906,6 +3310,7 @@ input[type="search"]::placeholder {
     border-bottom: none;
     direction: rtl;
 }
+
 .manual-header h3 {
     display: flex;
     align-items: center;
@@ -2914,10 +3319,14 @@ input[type="search"]::placeholder {
     font-size: 15px;
     font-weight: 700;
 }
-.manual-header h3 i { color: white; }
+
+.manual-header h3 i {
+    color: white;
+}
+
 #closeManualBtn {
-    background: rgba(255,255,255,0.2);
-    border: 1px solid rgba(255,255,255,0.3);
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
     border-radius: 8px;
     color: white;
     width: 36px;
@@ -2930,9 +3339,11 @@ input[type="search"]::placeholder {
     transition: var(--transition);
     flex-shrink: 0;
 }
+
 #closeManualBtn:hover {
-    background: rgba(255,255,255,0.35);
+    background: rgba(255, 255, 255, 0.35);
 }
+
 .manual-controls {
     display: flex;
     flex-direction: column;
@@ -2943,12 +3354,14 @@ input[type="search"]::placeholder {
     border-top: none;
     border-radius: 0 0 var(--radius-md) var(--radius-md);
 }
+
 .manual-controls .control-group {
     background: var(--surface-elevated);
     border: 1px solid var(--border);
     border-radius: var(--radius-md);
     padding: 12px;
 }
+
 .manual-controls .control-group label {
     display: flex;
     align-items: center;
@@ -2959,16 +3372,19 @@ input[type="search"]::placeholder {
     margin-bottom: 8px;
     direction: rtl;
 }
+
 .manual-controls .control-group label i {
     color: var(--primary);
     font-size: 13px;
 }
+
 .manual-input-row {
     display: flex;
     align-items: center;
     gap: 8px;
     direction: ltr;
 }
+
 .manual-input-row input {
     flex: 1;
     padding: 10px 12px;
@@ -2982,11 +3398,13 @@ input[type="search"]::placeholder {
     transition: var(--transition);
     min-width: 0;
 }
+
 .manual-input-row input:focus {
     outline: none;
     border-color: var(--primary);
     box-shadow: 0 0 0 3px var(--primary-light);
 }
+
 .manual-input-row select {
     padding: 10px 28px 10px 10px;
     background: var(--surface);
@@ -3000,10 +3418,12 @@ input[type="search"]::placeholder {
     cursor: pointer;
     transition: var(--transition);
 }
+
 .manual-input-row select:focus {
     outline: none;
     border-color: var(--primary);
 }
+
 .manual-unit-label {
     font-size: 13px;
     font-weight: 600;
@@ -3016,12 +3436,14 @@ input[type="search"]::placeholder {
     border-radius: 6px;
     border: 1px solid var(--border);
 }
+
 .manual-dose-row {
     display: flex;
     align-items: center;
     gap: 6px;
     direction: ltr;
 }
+
 .manual-dose-row input {
     flex: 1;
     padding: 10px 12px;
@@ -3035,11 +3457,13 @@ input[type="search"]::placeholder {
     transition: var(--transition);
     min-width: 0;
 }
+
 .manual-dose-row input:focus {
     outline: none;
     border-color: var(--primary);
     box-shadow: 0 0 0 3px var(--primary-light);
 }
+
 .manual-dose-row select {
     padding: 10px 28px 10px 8px;
     background: var(--surface);
@@ -3053,10 +3477,12 @@ input[type="search"]::placeholder {
     cursor: pointer;
     transition: var(--transition);
 }
+
 .manual-dose-row select:focus {
     outline: none;
     border-color: var(--primary);
 }
+
 .manual-ampoule-control {
     display: flex;
     align-items: center;
@@ -3067,12 +3493,14 @@ input[type="search"]::placeholder {
     border-radius: 10px;
     padding: 6px 10px;
 }
+
 .manual-ampoule-control .ampoule-btn-enhanced {
     width: 40px;
     height: 40px;
     min-width: 40px;
     min-height: 40px;
 }
+
 .manual-results {
     background: var(--surface-elevated);
     border: 2px solid var(--primary);
@@ -3081,6 +3509,7 @@ input[type="search"]::placeholder {
     direction: rtl;
     margin-top: 4px;
 }
+
 .manual-results h4 {
     display: flex;
     align-items: center;
@@ -3091,11 +3520,13 @@ input[type="search"]::placeholder {
     font-weight: 700;
     direction: rtl;
 }
+
 .manual-results-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 10px;
 }
+
 .manual-drug-name-input {
     width: 100%;
     padding: 10px 12px;
@@ -3109,19 +3540,23 @@ input[type="search"]::placeholder {
     text-align: right;
     transition: var(--transition);
 }
+
 .manual-drug-name-input:focus {
     outline: none;
     border-color: var(--primary);
     box-shadow: 0 0 0 3px var(--primary-light);
 }
+
 .dark-mode .manual-controls {
     background: var(--surface);
     border-color: var(--border);
 }
+
 .dark-mode .manual-controls .control-group {
     background: var(--bg-secondary);
     border-color: var(--border);
 }
+
 .dark-mode .manual-input-row input,
 .dark-mode .manual-input-row select,
 .dark-mode .manual-dose-row input,
@@ -3131,15 +3566,18 @@ input[type="search"]::placeholder {
     border-color: var(--border);
     color: var(--text-primary);
 }
+
 .dark-mode .manual-unit-label {
     background: var(--surface);
     border-color: var(--border);
     color: var(--text-secondary);
 }
+
 .dark-mode .manual-ampoule-control {
     background: var(--bg-primary);
     border-color: var(--border);
 }
+
 .dark-mode .manual-results {
     background: var(--bg-secondary);
     border-color: var(--primary);
@@ -3147,21 +3585,25 @@ input[type="search"]::placeholder {
 
 @media (max-width: 768px) {
     .calculator-main {
-        padding-bottom: calc(24px + var(--safe-bottom)) !important;
+        padding-bottom: 0 !important;
     }
+
     #convertersTab .converters-container,
     #drugsTab .drugs-container,
     #toolsTab .tools-container {
         padding-bottom: calc(20px + var(--safe-bottom)) !important;
     }
+
     .manual-results-grid {
         grid-template-columns: 1fr 1fr;
         gap: 8px;
     }
+
     .manual-controls {
         gap: 8px;
         padding: 10px;
     }
+
     .manual-controls .control-group {
         padding: 10px;
     }
@@ -3171,60 +3613,76 @@ input[type="search"]::placeholder {
 .input-group label {
     color: var(--text-secondary);
 }
+
 .weight-toggle-enhanced .toggle-label {
     color: var(--text-primary);
 }
+
 .ampoule-info-enhanced {
     color: var(--text-secondary);
 }
+
 .volume-preset-btn {
     color: var(--text-primary);
 }
+
 .volume-preset-btn .number {
     font-weight: 700;
     color: var(--primary);
     font-family: var(--font-latin);
     font-variant-numeric: tabular-nums;
 }
+
 .volume-preset-btn .unit-text {
     font-size: 11px;
     color: var(--text-secondary);
     font-family: var(--font-latin);
 }
+
 .dark-mode .control-group label,
 .dark-mode .input-group label {
     color: var(--text-secondary) !important;
 }
+
 .dark-mode .weight-toggle-enhanced .toggle-label,
 .dark-mode .weight-toggle-enhanced .weight-unit {
     color: var(--text-primary) !important;
 }
+
 .dark-mode .setting-item span {
     color: var(--text-primary) !important;
 }
+
 .dark-mode .ampoule-info-enhanced {
     color: var(--text-secondary) !important;
 }
+
 .dark-mode .volume-preset-btn {
     background: var(--surface-elevated) !important;
     border-color: var(--border) !important;
     color: var(--text-primary) !important;
 }
+
 .dark-mode .volume-preset-btn .number {
     color: var(--primary) !important;
 }
+
 .dark-mode .volume-preset-btn .unit-text {
     color: var(--text-secondary) !important;
 }
+
 .tab-item {
     color: var(--text-tertiary);
 }
+
 .dark-mode .tab-item {
     color: var(--text-secondary) !important;
 }
+
 .dark-mode .tab-item.active {
     color: white !important;
 }
+
 .result-label-enhanced {
     font-size: 13px;
     color: var(--text-secondary);
@@ -3232,9 +3690,11 @@ input[type="search"]::placeholder {
     direction: rtl;
     text-align: center;
 }
+
 .dark-mode .result-label-enhanced {
     color: var(--text-secondary) !important;
 }
+
 .result-unit-enhanced {
     font-size: 12px;
     color: var(--text-secondary);
@@ -3242,12 +3702,14 @@ input[type="search"]::placeholder {
     text-align: center;
     font-family: var(--font-latin);
 }
+
 .dark-mode .result-unit-enhanced {
     color: var(--text-secondary) !important;
 }
+
 .result-item-enhanced.highlight .result-label-enhanced,
 .result-item-enhanced.highlight .result-unit-enhanced {
-    color: rgba(255,255,255,0.85) !important;
+    color: rgba(255, 255, 255, 0.85) !important;
 }
 
 .method-btn-compact:not(.active) {
@@ -3255,38 +3717,46 @@ input[type="search"]::placeholder {
     border: 2px solid var(--border) !important;
     color: var(--text-primary) !important;
 }
+
 .method-btn-compact:not(.active) i,
 .method-btn-compact:not(.active) span {
     color: var(--text-primary) !important;
 }
+
 .method-btn-compact:not(.active):hover {
     border-color: var(--primary) !important;
     color: var(--primary) !important;
     background: var(--primary-light) !important;
 }
+
 .method-btn-compact:not(.active):hover i,
 .method-btn-compact:not(.active):hover span {
     color: var(--primary) !important;
 }
+
 .dark-mode .method-btn-compact:not(.active) {
     background: var(--surface-elevated) !important;
     border: 2px solid #4b5563 !important;
     color: var(--text-primary) !important;
 }
+
 .dark-mode .method-btn-compact:not(.active) i,
 .dark-mode .method-btn-compact:not(.active) span {
     color: var(--text-primary) !important;
 }
+
 .dark-mode .method-btn-compact:not(.active):hover {
     border-color: var(--primary) !important;
     color: var(--primary) !important;
     background: var(--primary-light) !important;
 }
+
 .method-btn-compact.active {
     background: var(--gradient-primary) !important;
     border-color: transparent !important;
     color: white !important;
 }
+
 .method-btn-compact.active i,
 .method-btn-compact.active span {
     color: white !important;
@@ -3297,16 +3767,19 @@ input[type="search"]::placeholder {
     border: 2px solid var(--border) !important;
     color: var(--text-primary) !important;
 }
+
 .ampoule-type-btn {
     background: var(--surface-elevated) !important;
     border: 2px solid var(--border) !important;
     color: var(--text-primary) !important;
 }
+
 .dark-mode .ampoule-type-btn:not(.active) {
     background: var(--surface-elevated) !important;
     border: 2px solid #4b5563 !important;
     color: var(--text-primary) !important;
 }
+
 .dark-mode .volume-preset-btn:not(.active) {
     background: var(--surface-elevated) !important;
     border: 2px solid #4b5563 !important;
@@ -3320,8 +3793,15 @@ input[type="search"]::placeholder {
     justify-content: center;
     font-size: 18px;
 }
-.drug-icon-small .drug-emoji-icon { font-size: 18px; }
-.selected-drug-icon-compact .drug-emoji-icon { font-size: 24px; }
+
+.drug-icon-small .drug-emoji-icon {
+    font-size: 18px;
+}
+
+.selected-drug-icon-compact .drug-emoji-icon {
+    font-size: 24px;
+}
+
 .drug-svg-icon {
     display: flex;
     align-items: center;
@@ -3330,14 +3810,23 @@ input[type="search"]::placeholder {
     height: 100%;
     color: inherit;
 }
+
 .drug-svg-icon svg {
     width: 1.2em;
     height: 1.2em;
     fill: currentColor;
     display: block;
 }
-.drug-icon-small .drug-svg-icon svg { width: 20px; height: 20px; }
-.selected-drug-icon-compact .drug-svg-icon svg { width: 26px; height: 26px; }
+
+.drug-icon-small .drug-svg-icon svg {
+    width: 20px;
+    height: 20px;
+}
+
+.selected-drug-icon-compact .drug-svg-icon svg {
+    width: 26px;
+    height: 26px;
+}
 
 .pwa-banner {
     position: fixed;
@@ -3352,14 +3841,23 @@ input[type="search"]::placeholder {
     align-items: center;
     justify-content: space-between;
     gap: 10px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
     direction: rtl;
     animation: slideDown 0.3s ease;
 }
+
 @keyframes slideDown {
-    from { transform: translateY(-100%); opacity: 0; }
-    to   { transform: translateY(0);    opacity: 1; }
+    from {
+        transform: translateY(-100%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
 }
+
 .pwa-banner-content {
     display: flex;
     align-items: center;
@@ -3367,10 +3865,11 @@ input[type="search"]::placeholder {
     flex: 1;
     min-width: 0;
 }
+
 .pwa-banner-icon {
     width: 38px;
     height: 38px;
-    background: rgba(255,255,255,0.2);
+    background: rgba(255, 255, 255, 0.2);
     border-radius: 10px;
     display: flex;
     align-items: center;
@@ -3378,30 +3877,35 @@ input[type="search"]::placeholder {
     font-size: 18px;
     flex-shrink: 0;
 }
+
 .pwa-banner-text {
     display: flex;
     flex-direction: column;
     gap: 2px;
     min-width: 0;
 }
+
 .pwa-banner-text strong {
     font-size: 13px;
     font-weight: 700;
     color: white;
 }
+
 .pwa-banner-text span {
     font-size: 11px;
-    color: rgba(255,255,255,0.85);
+    color: rgba(255, 255, 255, 0.85);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
 .pwa-banner-actions {
     display: flex;
     align-items: center;
     gap: 6px;
     flex-shrink: 0;
 }
+
 .pwa-btn-install {
     background: white;
     color: var(--primary);
@@ -3414,11 +3918,15 @@ input[type="search"]::placeholder {
     font-family: var(--font-persian);
     transition: var(--transition);
 }
-.pwa-btn-install:hover { background: rgba(255,255,255,0.9); }
+
+.pwa-btn-install:hover {
+    background: rgba(255, 255, 255, 0.9);
+}
+
 .pwa-btn-later {
-    background: rgba(255,255,255,0.15);
+    background: rgba(255, 255, 255, 0.15);
     color: white;
-    border: 1px solid rgba(255,255,255,0.3);
+    border: 1px solid rgba(255, 255, 255, 0.3);
     border-radius: 8px;
     padding: 7px 10px;
     font-size: 11px;
@@ -3426,10 +3934,14 @@ input[type="search"]::placeholder {
     font-family: var(--font-persian);
     transition: var(--transition);
 }
-.pwa-btn-later:hover { background: rgba(255,255,255,0.25); }
+
+.pwa-btn-later:hover {
+    background: rgba(255, 255, 255, 0.25);
+}
+
 .pwa-btn-dismiss {
     background: transparent;
-    color: rgba(255,255,255,0.7);
+    color: rgba(255, 255, 255, 0.7);
     border: none;
     width: 28px;
     height: 28px;
@@ -3441,19 +3953,10 @@ input[type="search"]::placeholder {
     font-size: 14px;
     transition: var(--transition);
 }
-.pwa-btn-dismiss:hover {
-    background: rgba(255,255,255,0.15);
-    color: white;
-}
 
-.calculate-btn-sticky-wrap {
-    position: relative;
-    z-index: 10;
-    padding: 4px 0 0;
-}
-.calculate-btn-sticky-wrap .calculate-btn-enhanced {
-    width: 100%;
-    box-shadow: 0 6px 24px rgba(102, 126, 234, 0.45);
+.pwa-btn-dismiss:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
 }
 
 .results-header-row {
@@ -3463,6 +3966,7 @@ input[type="search"]::placeholder {
     margin-bottom: 12px;
     direction: rtl;
 }
+
 .results-header-row h3 {
     display: flex;
     align-items: center;
@@ -3472,6 +3976,7 @@ input[type="search"]::placeholder {
     color: var(--text-primary);
     margin: 0;
 }
+
 .copy-result-btn {
     display: flex;
     align-items: center;
@@ -3487,12 +3992,17 @@ input[type="search"]::placeholder {
     transition: var(--transition);
     font-family: var(--font-persian);
 }
+
 .copy-result-btn:hover {
     background: var(--primary-light);
     border-color: var(--primary);
     color: var(--primary);
 }
-.copy-result-btn i { font-size: 13px; }
+
+.copy-result-btn i {
+    font-size: 13px;
+}
+
 .dark-mode .copy-result-btn {
     background: var(--surface-elevated);
     border-color: var(--border);
@@ -3504,12 +4014,14 @@ input[type="search"]::placeholder {
     align-items: center;
     gap: 8px;
 }
+
 #drugLibrary {
     display: flex;
     flex-direction: column;
     gap: 12px;
     padding-bottom: 20px;
 }
+
 .qref-card {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -3518,10 +4030,12 @@ input[type="search"]::placeholder {
     transition: var(--transition);
     box-shadow: var(--shadow);
 }
+
 .qref-card:hover {
     box-shadow: var(--shadow-lg);
     border-color: var(--primary);
 }
+
 .qref-header {
     display: flex;
     align-items: center;
@@ -3532,6 +4046,7 @@ input[type="search"]::placeholder {
     direction: rtl;
     position: relative;
 }
+
 .qref-header::before {
     content: '';
     position: absolute;
@@ -3542,6 +4057,7 @@ input[type="search"]::placeholder {
     background: var(--drug-color, var(--primary));
     border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
 }
+
 .qref-icon {
     width: 44px;
     height: 44px;
@@ -3553,23 +4069,27 @@ input[type="search"]::placeholder {
     font-size: 20px;
     flex-shrink: 0;
 }
+
 .qref-title-block {
     flex: 1;
     min-width: 0;
     direction: rtl;
 }
+
 .qref-name {
     font-size: 15px;
     font-weight: 700;
     color: var(--text-primary);
     margin-bottom: 2px;
 }
+
 .qref-english {
     font-size: 12px;
     color: var(--text-secondary);
     font-family: var(--font-latin);
     margin-bottom: 4px;
 }
+
 .qref-category {
     display: inline-block;
     background: var(--primary-light);
@@ -3580,6 +4100,7 @@ input[type="search"]::placeholder {
     border-radius: 20px;
     font-family: var(--font-latin);
 }
+
 .qref-calc-btn {
     width: 38px;
     height: 38px;
@@ -3594,22 +4115,26 @@ input[type="search"]::placeholder {
     justify-content: center;
     flex-shrink: 0;
     transition: var(--transition);
-    box-shadow: 0 4px 12px rgba(102,126,234,0.3);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
 }
+
 .qref-calc-btn:hover {
     transform: scale(1.08);
-    box-shadow: 0 6px 18px rgba(102,126,234,0.45);
+    box-shadow: 0 6px 18px rgba(102, 126, 234, 0.45);
 }
+
 .qref-body {
     padding: 12px 14px;
     direction: rtl;
 }
+
 .qref-chips {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 8px;
     margin-bottom: 10px;
 }
+
 .qref-chip {
     background: var(--surface-elevated);
     border: 1px solid var(--border);
@@ -3617,6 +4142,7 @@ input[type="search"]::placeholder {
     padding: 8px 10px;
     direction: rtl;
 }
+
 .qref-chip-label {
     display: block;
     font-size: 10px;
@@ -3626,6 +4152,7 @@ input[type="search"]::placeholder {
     text-transform: uppercase;
     letter-spacing: 0.3px;
 }
+
 .qref-chip-value {
     display: block;
     font-size: 12px;
@@ -3635,10 +4162,23 @@ input[type="search"]::placeholder {
     direction: ltr;
     text-align: right;
 }
-.qref-chip.dose { border-right: 3px solid var(--primary); }
-.qref-chip.conc { border-right: 3px solid var(--warning); }
-.qref-chip.sol  { border-right: 3px solid var(--success); }
-.qref-chip.amp  { border-right: 3px solid var(--secondary); }
+
+.qref-chip.dose {
+    border-right: 3px solid var(--primary);
+}
+
+.qref-chip.conc {
+    border-right: 3px solid var(--warning);
+}
+
+.qref-chip.sol {
+    border-right: 3px solid var(--success);
+}
+
+.qref-chip.amp {
+    border-right: 3px solid var(--secondary);
+}
+
 .qref-expand-btn {
     width: 100%;
     display: flex;
@@ -3657,27 +4197,35 @@ input[type="search"]::placeholder {
     font-family: var(--font-persian);
     direction: rtl;
 }
+
 .qref-expand-btn:hover {
     border-color: var(--primary);
     color: var(--primary);
     background: var(--primary-light);
 }
+
 .qref-expand-btn i {
     transition: transform 0.25s ease;
     font-size: 11px;
 }
+
 .qref-details {
     margin-top: 10px;
     border-top: 1px solid var(--border);
     padding-top: 10px;
 }
+
 .qref-compat-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 8px;
     margin-bottom: 10px;
 }
-.qref-compat-col { direction: rtl; }
+
+.qref-compat-col {
+    direction: rtl;
+}
+
 .qref-compat-title {
     display: flex;
     align-items: center;
@@ -3686,8 +4234,15 @@ input[type="search"]::placeholder {
     font-weight: 700;
     margin-bottom: 6px;
 }
-.qref-compat-col.compatible .qref-compat-title { color: var(--success); }
-.qref-compat-col.incompatible .qref-compat-title { color: var(--danger); }
+
+.qref-compat-col.compatible .qref-compat-title {
+    color: var(--success);
+}
+
+.qref-compat-col.incompatible .qref-compat-title {
+    color: var(--danger);
+}
+
 .qref-compat-item {
     font-size: 11px;
     color: var(--text-secondary);
@@ -3695,9 +4250,20 @@ input[type="search"]::placeholder {
     border-bottom: 1px solid var(--border-light);
     line-height: 1.4;
 }
-.qref-compat-item:last-child { border-bottom: none; }
-.qref-compat-item.muted { color: var(--text-tertiary); font-style: italic; }
-.qref-warnings { margin-top: 8px; }
+
+.qref-compat-item:last-child {
+    border-bottom: none;
+}
+
+.qref-compat-item.muted {
+    color: var(--text-tertiary);
+    font-style: italic;
+}
+
+.qref-warnings {
+    margin-top: 8px;
+}
+
 .qref-warnings-title {
     display: flex;
     align-items: center;
@@ -3707,6 +4273,7 @@ input[type="search"]::placeholder {
     color: var(--warning);
     margin-bottom: 6px;
 }
+
 .qref-warning-item {
     font-size: 11px;
     color: var(--text-secondary);
@@ -3718,18 +4285,22 @@ input[type="search"]::placeholder {
     direction: rtl;
     line-height: 1.5;
 }
+
 .dark-mode .qref-card {
     background: var(--surface);
     border-color: var(--border);
 }
+
 .dark-mode .qref-header {
     background: var(--surface);
     border-color: var(--border);
 }
+
 .dark-mode .qref-chip {
     background: var(--bg-secondary);
     border-color: var(--border);
 }
+
 .dark-mode .qref-expand-btn {
     background: var(--bg-secondary);
     border-color: var(--border);
@@ -3741,15 +4312,18 @@ input[type="search"]::placeholder {
     overflow-y: auto;
     padding-bottom: max(20px, env(safe-area-inset-bottom)) !important;
 }
+
 .settings-group {
     margin-bottom: 14px !important;
     padding-bottom: 14px !important;
     border-bottom: 1px solid var(--border);
 }
+
 .settings-group:last-of-type {
     margin-bottom: 0 !important;
     border-bottom: none;
 }
+
 .settings-group h4 {
     font-size: 12px !important;
     font-weight: 700 !important;
@@ -3762,6 +4336,7 @@ input[type="search"]::placeholder {
     align-items: center;
     gap: 6px;
 }
+
 .setting-item {
     display: flex;
     align-items: center;
@@ -3770,17 +4345,23 @@ input[type="search"]::placeholder {
     border-bottom: 1px solid var(--border-light);
     min-height: unset !important;
 }
-.setting-item:last-of-type { border-bottom: none; }
+
+.setting-item:last-of-type {
+    border-bottom: none;
+}
+
 .setting-item span {
     font-size: 13px !important;
     color: var(--text-primary);
 }
+
 .settings-btn-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 8px;
     margin-top: 8px;
 }
+
 .setting-btn {
     padding: 8px 10px !important;
     font-size: 11px !important;
@@ -3791,6 +4372,7 @@ input[type="search"]::placeholder {
     gap: 5px;
     min-height: unset !important;
 }
+
 .setting-contact-btn {
     display: flex;
     align-items: center;
@@ -3803,31 +4385,36 @@ input[type="search"]::placeholder {
     direction: rtl;
     transition: var(--transition);
 }
+
 .setting-contact-btn:hover {
     opacity: 0.9;
     transform: translateY(-1px);
 }
+
 .setting-contact-btn .fab.fa-telegram {
     font-size: 22px;
     flex-shrink: 0;
 }
+
 .setting-contact-btn span:first-of-type {
     flex: 1;
     font-size: 13px;
     font-weight: 600;
     font-family: var(--font-persian);
 }
+
 .contact-handle {
     font-size: 12px;
     font-family: var(--font-latin);
     opacity: 0.85;
-    background: rgba(255,255,255,0.15);
+    background: rgba(255, 255, 255, 0.15);
     padding: 2px 8px;
     border-radius: 20px;
     flex-shrink: 0;
     direction: ltr !important;
     unicode-bidi: isolate;
 }
+
 .about-info {
     background: var(--surface-elevated) !important;
     border-radius: 10px !important;
@@ -3835,6 +4422,7 @@ input[type="search"]::placeholder {
     margin-bottom: 8px !important;
     padding: 0 !important;
 }
+
 .about-row {
     display: flex;
     justify-content: space-between;
@@ -3844,16 +4432,22 @@ input[type="search"]::placeholder {
     direction: rtl;
     font-size: 12px;
 }
-.about-row:last-child { border-bottom: none; }
+
+.about-row:last-child {
+    border-bottom: none;
+}
+
 .about-row span:first-child {
     color: var(--text-secondary);
     font-weight: 500;
 }
+
 .about-row span:last-child {
     color: var(--text-primary);
     font-weight: 600;
     font-family: var(--font-latin);
 }
+
 .settings-credits {
     display: flex;
     align-items: center;
@@ -3872,10 +4466,12 @@ input[type="search"]::placeholder {
     line-height: 1.6;
     border: 1px solid var(--border);
 }
+
 .settings-credits i {
     font-size: 11px;
     color: var(--primary);
 }
+
 .settings-credits strong {
     font-weight: 700;
     color: var(--text-primary);
@@ -3887,14 +4483,27 @@ input[type="search"]::placeholder {
         grid-template-columns: 1fr 1fr;
         gap: 6px;
     }
+
     .pwa-banner {
         padding: 8px 10px;
         gap: 8px;
     }
-    .pwa-banner-text span { display: none; }
-    .results-header-row h3 { font-size: 14px; }
-    .copy-result-btn span { display: none; }
-    .copy-result-btn { padding: 6px 10px; }
+
+    .pwa-banner-text span {
+        display: none;
+    }
+
+    .results-header-row h3 {
+        font-size: 14px;
+    }
+
+    .copy-result-btn span {
+        display: none;
+    }
+
+    .copy-result-btn {
+        padding: 6px 10px;
+    }
 }
 
 .dark-mode .converter-header i:first-child,
@@ -3902,15 +4511,18 @@ input[type="search"]::placeholder {
     background: var(--primary-light) !important;
     color: var(--primary) !important;
 }
+
 .dark-mode .converter-card,
 .dark-mode .tool-card {
     background: var(--surface) !important;
     border-color: var(--border) !important;
 }
+
 .dark-mode .converter-body,
 .dark-mode .tool-body {
     background: var(--surface) !important;
 }
+
 .dark-mode .converter-result,
 .dark-mode .tool-result {
     background: var(--primary-light) !important;
@@ -3923,6 +4535,7 @@ input[type="search"]::placeholder {
     flex: 1;
     min-width: 0;
 }
+
 .converter-header-text h3,
 .tool-header-text h3 {
     margin: 0 0 1px;
@@ -3930,6 +4543,7 @@ input[type="search"]::placeholder {
     font-weight: 700;
     color: var(--text-primary);
 }
+
 .converter-subtitle,
 .tool-subtitle {
     display: block;
@@ -3941,24 +4555,29 @@ input[type="search"]::placeholder {
     font-weight: 500;
     letter-spacing: 0.2px;
 }
+
 .input-row-2col {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 8px;
     margin-bottom: 8px;
 }
+
 .input-row-2col .input-group {
     margin-bottom: 0;
 }
+
 .input-with-unit {
     position: relative;
     display: flex;
     align-items: center;
 }
+
 .input-with-unit input {
     width: 100%;
     padding-left: 42px !important;
 }
+
 .input-unit {
     position: absolute;
     left: 8px;
@@ -3974,19 +4593,23 @@ input[type="search"]::placeholder {
     border-radius: 4px;
     border: 1px solid var(--border);
 }
+
 .dark-mode .converter-header-text h3,
 .dark-mode .tool-header-text h3 {
     color: var(--text-primary) !important;
 }
+
 .dark-mode .converter-subtitle,
 .dark-mode .tool-subtitle {
     color: var(--text-tertiary) !important;
 }
+
 .dark-mode .input-unit {
     background: var(--surface) !important;
     border-color: var(--border) !important;
     color: var(--text-tertiary) !important;
 }
+
 @media (max-width: 480px) {
     .input-row-2col {
         grid-template-columns: 1fr 1fr;
@@ -4003,13 +4626,15 @@ input[type="search"]::placeholder {
     justify-content: center;
     padding: 0;
 }
+
 .pwa-modal-overlay {
     position: absolute;
     inset: 0;
-    background: rgba(0,0,0,0.55);
+    background: rgba(0, 0, 0, 0.55);
     backdrop-filter: blur(4px);
     -webkit-backdrop-filter: blur(4px);
 }
+
 .pwa-modal-box {
     position: relative;
     z-index: 1;
@@ -4021,13 +4646,20 @@ input[type="search"]::placeholder {
     max-height: 85vh;
     overflow-y: auto;
     direction: rtl;
-    box-shadow: 0 -8px 40px rgba(0,0,0,0.25);
+    box-shadow: 0 -8px 40px rgba(0, 0, 0, 0.25);
     animation: slideUp 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
+
 @keyframes slideUp {
-    from { transform: translateY(100%); }
-    to   { transform: translateY(0); }
+    from {
+        transform: translateY(100%);
+    }
+
+    to {
+        transform: translateY(0);
+    }
 }
+
 .pwa-modal-header {
     display: flex;
     align-items: center;
@@ -4035,6 +4667,7 @@ input[type="search"]::placeholder {
     margin-bottom: 16px;
     direction: rtl;
 }
+
 .pwa-modal-icon {
     width: 44px;
     height: 44px;
@@ -4047,12 +4680,14 @@ input[type="search"]::placeholder {
     font-size: 20px;
     flex-shrink: 0;
 }
+
 .pwa-modal-title {
     flex: 1;
     font-size: 17px;
     font-weight: 700;
     color: var(--text-primary);
 }
+
 .pwa-modal-close {
     width: 32px;
     height: 32px;
@@ -4068,7 +4703,12 @@ input[type="search"]::placeholder {
     flex-shrink: 0;
     transition: var(--transition);
 }
-.pwa-modal-close:hover { background: var(--danger); color: white; }
+
+.pwa-modal-close:hover {
+    background: var(--danger);
+    color: white;
+}
+
 .pwa-modal-desc {
     font-size: 14px;
     color: var(--text-secondary);
@@ -4076,6 +4716,7 @@ input[type="search"]::placeholder {
     line-height: 1.6;
     direction: rtl;
 }
+
 .pwa-install-btn {
     width: 100%;
     padding: 13px;
@@ -4091,17 +4732,22 @@ input[type="search"]::placeholder {
     justify-content: center;
     gap: 8px;
     font-family: var(--font-persian);
-    box-shadow: 0 6px 20px rgba(102,126,234,0.4);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
     transition: var(--transition);
     margin-bottom: 16px;
 }
-.pwa-install-btn:hover { transform: translateY(-1px); }
+
+.pwa-install-btn:hover {
+    transform: translateY(-1px);
+}
+
 .pwa-steps {
     display: flex;
     flex-direction: column;
     gap: 10px;
     margin-bottom: 16px;
 }
+
 .pwa-step {
     display: flex;
     align-items: flex-start;
@@ -4112,6 +4758,7 @@ input[type="search"]::placeholder {
     padding: 10px 12px;
     border: 1px solid var(--border);
 }
+
 .pwa-step-num {
     width: 26px;
     height: 26px;
@@ -4125,18 +4772,24 @@ input[type="search"]::placeholder {
     font-weight: 700;
     flex-shrink: 0;
 }
+
 .pwa-step-text {
     font-size: 13px;
     color: var(--text-secondary);
     line-height: 1.5;
     padding-top: 2px;
 }
-.pwa-step-text strong { color: var(--text-primary); }
+
+.pwa-step-text strong {
+    color: var(--text-primary);
+}
+
 .pwa-modal-actions {
     display: flex;
     gap: 8px;
     direction: rtl;
 }
+
 .pwa-btn-later-modal,
 .pwa-btn-never {
     flex: 1;
@@ -4148,17 +4801,34 @@ input[type="search"]::placeholder {
     font-family: var(--font-persian);
     transition: var(--transition);
 }
+
 .pwa-btn-later-modal {
     background: var(--surface-elevated);
     border: 1.5px solid var(--border);
     color: var(--text-secondary);
 }
-.pwa-btn-later-modal:hover { border-color: var(--primary); color: var(--primary); }
+
+.pwa-btn-later-modal:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
 .pwa-btn-never {
     background: transparent;
     border: 1.5px solid var(--border);
     color: var(--text-tertiary);
 }
-.pwa-btn-never:hover { border-color: var(--danger); color: var(--danger); }
-.dark-mode .pwa-modal-box { background: var(--surface); }
-.dark-mode .pwa-step { background: var(--bg-secondary); border-color: var(--border); }
+
+.pwa-btn-never:hover {
+    border-color: var(--danger);
+    color: var(--danger);
+}
+
+.dark-mode .pwa-modal-box {
+    background: var(--surface);
+}
+
+.dark-mode .pwa-step {
+    background: var(--bg-secondary);
+    border-color: var(--border);
+}
