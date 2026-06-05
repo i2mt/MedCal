@@ -96,16 +96,13 @@
             </div>
             <div class="header-actions">
                 <button class="icon-btn" id="themeToggle" title="تغییر تم">
-                    <span class="icon-btn-icon"><i class="fas fa-moon"></i></span>
-                    <span class="icon-btn-label">تم</span>
+                    <i class="fas fa-moon"></i>
                 </button>
                 <button class="icon-btn" id="historyBtn" title="تاریخچه">
-                    <span class="icon-btn-icon"><i class="fas fa-history"></i></span>
-                    <span class="icon-btn-label">تاریخچه</span>
+                    <i class="fas fa-history"></i>
                 </button>
                 <button class="icon-btn" id="settingsBtn" title="تنظیمات">
-                    <span class="icon-btn-icon"><i class="fas fa-cog"></i></span>
-                    <span class="icon-btn-label">تنظیمات</span>
+                    <i class="fas fa-cog"></i>
                 </button>
             </div>
         </div>
@@ -192,10 +189,14 @@
 
                             <div class="control-group">
                                 <label><i class="fas fa-file-medical-alt"></i> دوز درخواستی</label>
-                                <div class="reverse-calc-bar">
-                                    <button class="reverse-toggle-btn" id="reverseCalcBtn" title="محاسبه معکوس">
-                                        <i class="fas fa-arrow-right-arrow-left"></i>
-                                        <span id="reverseModeLabel">محاسبه: دوز ← سرعت پمپ</span>
+                                <div class="calc-mode-toggle" id="calcModeToggle">
+                                    <button class="calc-mode-btn active" id="modeForwardBtn" data-mode="forward">
+                                        <i class="fas fa-syringe"></i>
+                                        <span>دوز → سرعت پمپ</span>
+                                    </button>
+                                    <button class="calc-mode-btn" id="modeReverseBtn" data-mode="reverse">
+                                        <i class="fas fa-pump-medical"></i>
+                                        <span>سرعت پمپ → دوز</span>
                                     </button>
                                 </div>
                                 <div class="dose-input-enhanced">
@@ -822,6 +823,54 @@
             <div class="modal-body">
                 <div class="history-list" id="historyList"></div>
             </div>
+        </div>
+    </div>
+
+
+    <!-- First-time onboarding overlay -->
+    <div id="onboardingOverlay" class="onboarding-overlay" style="display:none;">
+        <div class="onboarding-backdrop"></div>
+        <div class="onboarding-box">
+            <div class="onboarding-logo">
+                <i class="fas fa-syringe"></i>
+            </div>
+            <h2 class="onboarding-title">به MedCalc Pro خوش آمدید</h2>
+            <p class="onboarding-subtitle">راهنمای سریع برای شروع</p>
+            <div class="onboarding-steps">
+                <div class="onboarding-step">
+                    <div class="onboarding-step-num">۱</div>
+                    <div class="onboarding-step-body">
+                        <strong>دارو را انتخاب کنید</strong>
+                        <span>از لیست سمت راست یا جستجو، داروی مورد نظر را بزنید</span>
+                    </div>
+                </div>
+                <div class="onboarding-step">
+                    <div class="onboarding-step-num">۲</div>
+                    <div class="onboarding-step-body">
+                        <strong>پارامترها را تنظیم کنید</strong>
+                        <span>روش تزریق، حجم محلول و تعداد آمپول را انتخاب کنید</span>
+                    </div>
+                </div>
+                <div class="onboarding-step">
+                    <div class="onboarding-step-num">۳</div>
+                    <div class="onboarding-step-body">
+                        <strong>دوز را وارد و محاسبه کنید</strong>
+                        <span>دوز دستور پزشک را وارد کنید و دکمه محاسبه را بزنید</span>
+                    </div>
+                </div>
+                <div class="onboarding-step">
+                    <div class="onboarding-step-num">۴</div>
+                    <div class="onboarding-step-body">
+                        <strong>حالت معکوس</strong>
+                        <span>اگر سرعت پمپ را دارید و می‌خواهید دوز را بدانید، کلید حالت را تغییر دهید</span>
+                    </div>
+                </div>
+            </div>
+            <button class="onboarding-btn" id="onboardingDoneBtn">
+                <i class="fas fa-check"></i>
+                شروع کنید
+            </button>
+            <p class="onboarding-skip" id="onboardingSkip">این راهنما را دوباره نشان نده</p>
         </div>
     </div>
 
