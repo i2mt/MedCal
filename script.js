@@ -20,8 +20,10 @@ const AppState = {
         largeFont: false,
         doseAlerts: true,
         compatAlerts: true,
-        saveHistory: true
-    }
+        saveHistory: true,
+        hapticFeedback: true
+    },
+    reverseMode: false
 };
 
 // ============================================
@@ -389,6 +391,14 @@ function setupMobileNumericKeyboard() {
 }
 
 // ============================================
+// HAPTIC FEEDBACK
+// ============================================
+function haptic(ms) {
+    if (!AppState.settings.hapticFeedback) return;
+    if (navigator.vibrate) navigator.vibrate(ms || 30);
+}
+
+// ============================================
 // DOM ELEMENTS
 // ============================================
 const DOM = {
@@ -449,7 +459,13 @@ const DOM = {
     librarySearch: document.getElementById('librarySearch'),
     openManualBtn: document.getElementById('openManual'),
     manualSection: document.getElementById('manualSection'),
-    calculatorControls: document.getElementById('calculatorControls')
+    calculatorControls: document.getElementById('calculatorControls'),
+    hapticToggle: document.getElementById('hapticToggle'),
+    reverseCalcBtn: document.getElementById('reverseCalcBtn'),
+    reverseModeLabel: document.getElementById('reverseModeLabel'),
+    doseRangeIndicator: document.getElementById('doseRangeIndicator'),
+    doseRangeDot: document.getElementById('doseRangeDot'),
+    doseRangeText: document.getElementById('doseRangeText')
 };
 
 // ============================================
@@ -689,12 +705,12 @@ function loadSettings() {
     if (DOM.doseAlertToggle) DOM.doseAlertToggle.checked = AppState.settings.doseAlerts;
     if (DOM.compatAlertToggle) DOM.compatAlertToggle.checked = AppState.settings.compatAlerts;
     if (DOM.saveHistoryToggle) DOM.saveHistoryToggle.checked = AppState.settings.saveHistory;
+    if (DOM.hapticToggle) DOM.hapticToggle.checked = AppState.settings.hapticFeedback !== false;
     applySettings();
 }
 
 function saveSettings() {
     localStorage.setItem('appSettings', JSON.stringify(AppState.settings));
-    showToast('ذخیره شد', 'تنظیمات با موفقیت ذخیره شدند', 'success');
 }
 
 function applySettings() {
@@ -912,6 +928,7 @@ function calculateInfusion() {
         return;
     }
     DOM.doctorOrder.style.borderColor = '';
+    updateDoseRangeIndicator();
 
     let desiredDosePerHour;
 
@@ -1085,7 +1102,7 @@ function updateWeightBasedUnit(drug) {
 // EVENT LISTENERS
 // ============================================
 function setupEventListeners() {
-    if (DOM.themeToggle) DOM.themeToggle.addEventListener('click', toggleTheme);
+    if (DOM.themeToggle) DOM.themeToggle.addEventListener('click', () => { haptic(25); toggleTheme(); });
     if (DOM.historyBtn) DOM.historyBtn.addEventListener('click', () => {
         loadHistory();
         if (DOM.historyModal) { DOM.historyModal.classList.add('active'); document.body.classList.add('no-scroll'); }
@@ -1126,7 +1143,11 @@ function setupEventListeners() {
         DOM.customVolume.setAttribute('pattern', '[0-9]*');
         DOM.customVolume.style.textAlign = 'center';
     }
-    if (DOM.calculateBtn) DOM.calculateBtn.addEventListener('click', calculateInfusion);
+    if (DOM.calculateBtn) DOM.calculateBtn.addEventListener('click', () => {
+        haptic(40);
+        if (AppState.reverseMode) calculateReverse();
+        else calculateInfusion();
+    });
 
     const copyResultBtn = document.getElementById('copyResultBtn');
     if (copyResultBtn) copyResultBtn.addEventListener('click', () => {
@@ -1137,8 +1158,11 @@ function setupEventListeners() {
         const dose = AppState.desiredDose;
         const unit = drug?.standardUnit || '';
         const text = `MedCalc Pro\n${drug?.persianName || ''} (${drug?.englishName || ''})\nدوز: ${dose} ${unit}\nغلظت: ${concentration} ${concentrationUnit}\nسرعت پمپ: ${pumpRate} cc/hr`;
-        if (navigator.clipboard) {
-            navigator.clipboard.writeText(text).then(() => showToast('کپی شد', 'نتیجه در کلیپ‌بورد کپی شد', 'success'));
+        if (navigator.share) {
+            navigator.share({ title: 'MedCalc Pro', text }).catch(() => {});
+            haptic(30);
+        } else if (navigator.clipboard) {
+            navigator.clipboard.writeText(text).then(() => { showToast('کپی شد', 'نتیجه در کلیپ‌بورد کپی شد', 'success'); haptic(20); });
         } else {
             const ta = document.createElement('textarea');
             ta.value = text; document.body.appendChild(ta); ta.select();
@@ -1175,6 +1199,24 @@ function setupEventListeners() {
             card.style.display = (drugName + ' ' + englishName).toLowerCase().includes(term) ? 'block' : 'none';
         });
     });
+    // Reverse mode toggle
+    if (DOM.reverseCalcBtn) {
+        DOM.reverseCalcBtn.addEventListener('click', () => {
+            haptic(30);
+            AppState.reverseMode = !AppState.reverseMode;
+            updateReverseUI();
+            clearResults();
+        });
+    }
+
+    // Dose range live indicator
+    if (DOM.doctorOrder) {
+        DOM.doctorOrder.addEventListener('input', () => {
+            clearResults();
+            updateDoseRangeIndicator();
+        });
+    }
+
     setupSettingsEventListeners();
     window.addEventListener('resize', () => setupMobileLayout());
     document.querySelectorAll('.converter-body input, .tool-body input').forEach(input => {
@@ -1201,7 +1243,12 @@ function setupSettingsEventListeners() {
             showToast('تاریخچه پاک شد', 'تمامی محاسبات ذخیره شده حذف شدند.', 'success');
         }
     });
-    if (DOM.exportDataBtn) DOM.exportDataBtn.addEventListener('click', function() { showToast('اطلاع', 'این ویژگی در نسخه بعدی اضافه خواهد شد', 'info'); });
+    if (DOM.hapticToggle) DOM.hapticToggle.addEventListener('change', function() {
+        AppState.settings.hapticFeedback = this.checked;
+        saveSettings();
+        if (this.checked) haptic(40);
+    });
+    if (DOM.exportDataBtn) DOM.exportDataBtn.addEventListener('click', exportHistory);
     if (DOM.checkUpdateBtn) DOM.checkUpdateBtn.addEventListener('click', function() { showToast('بررسی به‌روزرسانی', 'نسخه فعلی 2.1.0 آخرین نسخه موجود است.', 'info'); });
 }
 
@@ -1676,16 +1723,194 @@ function loadHistory() {
     history.forEach(item => {
         const div = document.createElement('div');
         div.className = 'history-item';
+        div.title = 'برای بازیابی کلیک کنید';
         div.innerHTML = `
-            <div class="history-drug">${item.drugName}</div>
+            <div class="history-drug">${item.drugName} <span class="history-restore-hint"><i class="fas fa-rotate-left"></i></span></div>
             <div class="history-details">
                 <div>دوز: ${PersianNumbers.formatNumber(item.dose, 2)}</div>
                 <div>سرعت پمپ: <span class="latin-inline">${PersianNumbers.formatNumber(item.pumpRate, 2)} cc/hr</span></div>
                 <div class="history-time">${PersianNumbers.toLatin(new Date(item.timestamp).toLocaleDateString('fa-IR'))}</div>
             </div>
+            <div class="history-restore-bar">بازیابی این محاسبه</div>
         `;
+        div.addEventListener('click', () => {
+            restoreFromHistory(item);
+        });
         historyList.appendChild(div);
     });
+}
+
+// ============================================
+// REVERSE MODE
+// ============================================
+function updateReverseUI() {
+    const btn = DOM.reverseCalcBtn;
+    const label = DOM.reverseModeLabel;
+    const docLabel = document.querySelector('label[for="doctorOrder"] span') || document.querySelector('.control-group label');
+    if (AppState.reverseMode) {
+        if (btn) btn.classList.add('active');
+        if (label) label.textContent = 'محاسبه: سرعت پمپ ← دوز';
+        if (DOM.doctorOrder) {
+            DOM.doctorOrder.placeholder = '0';
+            const unitEl = document.getElementById('orderUnit');
+            if (unitEl) unitEl.textContent = 'cc/hour';
+        }
+        // Update the control-group label
+        const doseLabel = document.querySelector('#calculatorControls .control-group:last-of-type label');
+        if (doseLabel) doseLabel.innerHTML = '<i class="fas fa-pump-medical"></i> سرعت پمپ (cc/hour)';
+    } else {
+        if (btn) btn.classList.remove('active');
+        if (label) label.textContent = 'محاسبه: دوز ← سرعت پمپ';
+        if (DOM.doctorOrder) DOM.doctorOrder.placeholder = '0';
+        // Restore label
+        const doseLabel = document.querySelector('#calculatorControls .control-group:last-of-type label');
+        if (doseLabel) doseLabel.innerHTML = '<i class="fas fa-file-medical-alt"></i> دوز درخواستی';
+        // Restore unit from drug
+        const drug = drugDatabase[AppState.selectedDrug];
+        if (drug && DOM.orderUnit) {
+            DOM.orderUnit.textContent = AppState.useWeight && drug.weightBased?.active
+                ? drug.weightBased.unit
+                : (drug.weightBased?.nonWeightUnit || drug.standardUnit);
+        }
+    }
+}
+
+// ============================================
+// DOSE RANGE INDICATOR
+// ============================================
+function updateDoseRangeIndicator() {
+    const drug = drugDatabase[AppState.selectedDrug];
+    if (!drug || !drug.typicalDoseRange || AppState.reverseMode) {
+        if (DOM.doseRangeIndicator) DOM.doseRangeIndicator.style.display = 'none';
+        return;
+    }
+    const raw = DOM.doctorOrder?.value;
+    if (!raw || raw.trim() === '') {
+        if (DOM.doseRangeIndicator) DOM.doseRangeIndicator.style.display = 'none';
+        return;
+    }
+    const val = PersianNumbers.parseNumber(raw);
+    if (isNaN(val) || val <= 0) {
+        if (DOM.doseRangeIndicator) DOM.doseRangeIndicator.style.display = 'none';
+        return;
+    }
+    const { min, max, unit } = drug.typicalDoseRange;
+    let status, color, text;
+    const pct = (val - min) / (max - min);
+    if (val < min * 0.8) {
+        status = 'low'; color = '#60a5fa';
+        text = `پایین‌تر از محدوده معمول (${min}–${max} ${unit})`;
+    } else if (val >= min * 0.8 && val <= max * 1.1) {
+        status = 'ok'; color = '#34d399';
+        text = `در محدوده معمول (${min}–${max} ${unit})`;
+    } else if (val > max * 1.1 && val <= max * 1.5) {
+        status = 'warn'; color = '#fbbf24';
+        text = `بالاتر از محدوده معمول — بررسی شود`;
+    } else {
+        status = 'danger'; color = '#f87171';
+        text = `خارج از محدوده ایمن — دوز را بررسی کنید`;
+    }
+    if (DOM.doseRangeDot) DOM.doseRangeDot.style.background = color;
+    if (DOM.doseRangeText) { DOM.doseRangeText.textContent = text; DOM.doseRangeText.style.color = color; }
+    if (DOM.doseRangeIndicator) DOM.doseRangeIndicator.style.display = 'flex';
+}
+
+// ============================================
+// REVERSE CALCULATION
+// ============================================
+function calculateReverse() {
+    const drug = drugDatabase[AppState.selectedDrug];
+    const ampoule = drug.ampouleOptions[AppState.currentAmpouleIndex];
+    const pumpRateVal = PersianNumbers.parseNumber(DOM.doctorOrder.value);
+    if (!pumpRateVal || isNaN(pumpRateVal) || pumpRateVal <= 0) {
+        showToast('خطا', 'لطفاً سرعت پمپ را وارد کنید (cc/hour)', 'error');
+        DOM.doctorOrder.focus();
+        return;
+    }
+    const totalDrug = AppState.ampouleCount * ampoule.strength;
+    const concentration = totalDrug / AppState.solutionVolume;
+    let derivedDose = pumpRateVal * concentration;
+    // reverse unit adjustments
+    if (['dopamine', 'norepinephrine', 'tng', 'fentanyl'].includes(drug.id)) {
+        derivedDose = derivedDose / 60;
+    }
+    const duration = AppState.solutionVolume / pumpRateVal;
+    // Show results reusing existing display
+    displayResults(totalDrug, concentration, pumpRateVal, duration, ampoule.unit);
+    // Override pump rate label to show derived dose
+    if (DOM.pumpRateResult) DOM.pumpRateResult.textContent = PersianNumbers.formatNumber(pumpRateVal, 2);
+    // Add derived dose to result
+    const unit = AppState.useWeight && drug.weightBased?.active ? drug.weightBased.unit : (drug.weightBased?.nonWeightUnit || drug.standardUnit);
+    showToast('محاسبه معکوس', `دوز دریافتی: ${PersianNumbers.formatNumber(derivedDose, 2)} ${unit}`, 'info');
+    generateStepByStepGuide(drug, totalDrug, concentration, pumpRateVal, derivedDose);
+    displayWarnings(drug);
+    displayCompatibility(drug);
+    if (AppState.settings.saveHistory) saveCalculation(totalDrug, concentration, pumpRateVal, duration);
+}
+
+// ============================================
+// RESTORE FROM HISTORY
+// ============================================
+function restoreFromHistory(item) {
+    // Switch to drug if it exists
+    if (drugDatabase[item.drug]) {
+        selectDrug(item.drug);
+        // close modal
+        if (DOM.historyModal) { DOM.historyModal.classList.remove('active'); document.body.classList.remove('no-scroll'); }
+        // Fill dose
+        setTimeout(() => {
+            if (DOM.doctorOrder) {
+                DOM.doctorOrder.value = item.dose;
+                DOM.doctorOrder.dataset.numericValue = item.dose;
+                updateDoseRangeIndicator();
+            }
+            // Fill weight if applicable
+            if (item.weight && DOM.patientWeight && DOM.weightCheckbox) {
+                DOM.weightCheckbox.checked = true;
+                AppState.useWeight = true;
+                DOM.patientWeight.disabled = false;
+                DOM.patientWeight.value = item.weight;
+                DOM.patientWeight.dataset.numericValue = item.weight;
+            }
+            showToast('بازیابی شد', `محاسبه ${item.drugName} بازیابی شد`, 'success');
+            haptic(40);
+        }, 300);
+    } else {
+        showToast('خطا', 'این دارو در پایگاه داده یافت نشد', 'error');
+    }
+}
+
+// ============================================
+// EXPORT HISTORY
+// ============================================
+function exportHistory() {
+    const history = JSON.parse(localStorage.getItem('calculationHistory') || '[]');
+    if (history.length === 0) {
+        showToast('اطلاع', 'تاریخچه‌ای برای خروجی وجود ندارد', 'info');
+        return;
+    }
+    const lines = ['MedCalc Pro — تاریخچه محاسبات', '='.repeat(40), ''];
+    history.forEach((item, i) => {
+        const d = new Date(item.timestamp);
+        const dateStr = d.toLocaleDateString('fa-IR') + ' ' + d.toLocaleTimeString('fa-IR', {hour:'2-digit', minute:'2-digit'});
+        lines.push(`#${i + 1} — ${item.drugName}`);
+        lines.push(`تاریخ: ${dateStr}`);
+        lines.push(`دوز: ${item.dose}`);
+        lines.push(`سرعت پمپ: ${parseFloat(item.pumpRate).toFixed(2)} cc/hr`);
+        lines.push(`غلظت: ${parseFloat(item.concentration).toFixed(2)}`);
+        lines.push(`مدت: ${parseFloat(item.duration).toFixed(1)} ساعت`);
+        if (item.weight) lines.push(`وزن بیمار: ${item.weight} kg`);
+        lines.push('-'.repeat(30));
+        lines.push('');
+    });
+    const blob = new Blob([lines.join('\n')], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `MedCalc-History-${new Date().toISOString().slice(0,10)}.txt`;
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast('خروجی گرفته شد', `${history.length} محاسبه ذخیره شد`, 'success');
 }
 
 // ============================================
@@ -1706,3 +1931,6 @@ window.checkCompatibility = checkCompatibility;
 window.calculateDose = calculateDose;
 window.TextDirection = TextDirection;
 window.PersianNumbers = PersianNumbers;
+window.exportHistory = exportHistory;
+window.restoreFromHistory = restoreFromHistory;
+window.updateDoseRangeIndicator = updateDoseRangeIndicator;
