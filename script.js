@@ -395,7 +395,13 @@ function setupMobileNumericKeyboard() {
 // ============================================
 function haptic(ms) {
     if (!AppState.settings.hapticFeedback) return;
-    if (navigator.vibrate) navigator.vibrate(ms || 30);
+    try {
+        if (navigator.vibrate) {
+            navigator.vibrate(ms || 30);
+        } else if (window.DeviceMotionEvent && typeof DeviceMotionEvent.requestPermission === 'function') {
+            // iOS 13+ – silently skip if no vibrate API (iOS does not support it)
+        }
+    } catch(e) { /* silently fail */ }
 }
 
 // ============================================
@@ -461,8 +467,8 @@ const DOM = {
     manualSection: document.getElementById('manualSection'),
     calculatorControls: document.getElementById('calculatorControls'),
     hapticToggle: document.getElementById('hapticToggle'),
-    reverseCalcBtn: document.getElementById('reverseCalcBtn'),
-    reverseModeLabel: document.getElementById('reverseModeLabel'),
+    modeForwardBtn: document.getElementById('modeForwardBtn'),
+    modeReverseBtn: document.getElementById('modeReverseBtn'),
     doseRangeIndicator: document.getElementById('doseRangeIndicator'),
     doseRangeDot: document.getElementById('doseRangeDot'),
     doseRangeText: document.getElementById('doseRangeText')
@@ -678,6 +684,7 @@ function initializeApp() {
         DOM.lastUpdate.textContent = PersianNumbers.toLatin(persianDate);
     }
     setupManualCalculation();
+    setupOnboarding();
 }
 
 function setupMobileOptimizations() {
@@ -699,7 +706,11 @@ function setupMobileOptimizations() {
 // ============================================
 function loadSettings() {
     const savedSettings = localStorage.getItem('appSettings');
-    if (savedSettings) AppState.settings = JSON.parse(savedSettings);
+    if (savedSettings) {
+        const parsed = JSON.parse(savedSettings);
+        // Merge so new keys (like hapticFeedback) keep their defaults if absent
+        AppState.settings = Object.assign({}, AppState.settings, parsed);
+    }
     if (DOM.darkModeToggle) DOM.darkModeToggle.checked = AppState.settings.darkMode;
     if (DOM.largeFontToggle) DOM.largeFontToggle.checked = AppState.settings.largeFont;
     if (DOM.doseAlertToggle) DOM.doseAlertToggle.checked = AppState.settings.doseAlerts;
@@ -1199,15 +1210,18 @@ function setupEventListeners() {
             card.style.display = (drugName + ' ' + englishName).toLowerCase().includes(term) ? 'block' : 'none';
         });
     });
-    // Reverse mode toggle
-    if (DOM.reverseCalcBtn) {
-        DOM.reverseCalcBtn.addEventListener('click', () => {
+    // Segmented calc mode toggle
+    document.querySelectorAll('.calc-mode-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
             haptic(30);
-            AppState.reverseMode = !AppState.reverseMode;
+            const mode = btn.dataset.mode;
+            AppState.reverseMode = (mode === 'reverse');
+            document.querySelectorAll('.calc-mode-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
             updateReverseUI();
             clearResults();
         });
-    }
+    });
 
     // Dose range live indicator
     if (DOM.doctorOrder) {
@@ -1744,31 +1758,18 @@ function loadHistory() {
 // REVERSE MODE
 // ============================================
 function updateReverseUI() {
-    const btn = DOM.reverseCalcBtn;
-    const label = DOM.reverseModeLabel;
-    const docLabel = document.querySelector('label[for="doctorOrder"] span') || document.querySelector('.control-group label');
+    const doseLabel = document.querySelector('#calculatorControls .control-group:last-of-type > label');
+    const unitEl = document.getElementById('orderUnit');
     if (AppState.reverseMode) {
-        if (btn) btn.classList.add('active');
-        if (label) label.textContent = 'محاسبه: سرعت پمپ ← دوز';
-        if (DOM.doctorOrder) {
-            DOM.doctorOrder.placeholder = '0';
-            const unitEl = document.getElementById('orderUnit');
-            if (unitEl) unitEl.textContent = 'cc/hour';
-        }
-        // Update the control-group label
-        const doseLabel = document.querySelector('#calculatorControls .control-group:last-of-type label');
-        if (doseLabel) doseLabel.innerHTML = '<i class="fas fa-pump-medical"></i> سرعت پمپ (cc/hour)';
+        if (doseLabel) doseLabel.innerHTML = '<i class="fas fa-pump-medical"></i> سرعت پمپ';
+        if (unitEl) unitEl.textContent = 'cc/hour';
+        if (DOM.doctorOrder) { DOM.doctorOrder.placeholder = '0'; }
     } else {
-        if (btn) btn.classList.remove('active');
-        if (label) label.textContent = 'محاسبه: دوز ← سرعت پمپ';
-        if (DOM.doctorOrder) DOM.doctorOrder.placeholder = '0';
-        // Restore label
-        const doseLabel = document.querySelector('#calculatorControls .control-group:last-of-type label');
         if (doseLabel) doseLabel.innerHTML = '<i class="fas fa-file-medical-alt"></i> دوز درخواستی';
-        // Restore unit from drug
+        if (DOM.doctorOrder) { DOM.doctorOrder.placeholder = '0'; }
         const drug = drugDatabase[AppState.selectedDrug];
-        if (drug && DOM.orderUnit) {
-            DOM.orderUnit.textContent = AppState.useWeight && drug.weightBased?.active
+        if (drug && unitEl) {
+            unitEl.textContent = AppState.useWeight && drug.weightBased?.active
                 ? drug.weightBased.unit
                 : (drug.weightBased?.nonWeightUnit || drug.standardUnit);
         }
@@ -1911,6 +1912,35 @@ function exportHistory() {
     a.click();
     URL.revokeObjectURL(url);
     showToast('خروجی گرفته شد', `${history.length} محاسبه ذخیره شد`, 'success');
+}
+
+// ============================================
+// ONBOARDING
+// ============================================
+function setupOnboarding() {
+    const overlay = document.getElementById('onboardingOverlay');
+    const doneBtn = document.getElementById('onboardingDoneBtn');
+    const skipBtn = document.getElementById('onboardingSkip');
+    if (!overlay) return;
+
+    const seen = localStorage.getItem('onboardingSeen');
+    if (!seen) {
+        setTimeout(() => {
+            overlay.style.display = 'flex';
+            requestAnimationFrame(() => overlay.classList.add('visible'));
+        }, 1200); // show after loading screen clears
+    }
+
+    function close(dontShow) {
+        overlay.classList.remove('visible');
+        setTimeout(() => { overlay.style.display = 'none'; }, 400);
+        if (dontShow) localStorage.setItem('onboardingSeen', 'true');
+    }
+
+    if (doneBtn) doneBtn.addEventListener('click', () => { haptic(30); close(true); });
+    if (skipBtn) skipBtn.addEventListener('click', () => close(true));
+    // backdrop tap
+    overlay.querySelector('.onboarding-backdrop')?.addEventListener('click', () => close(false));
 }
 
 // ============================================
