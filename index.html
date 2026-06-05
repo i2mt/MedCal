@@ -95,9 +95,18 @@
                 </div>
             </div>
             <div class="header-actions">
-                <button class="icon-btn" id="themeToggle"><i class="fas fa-moon"></i></button>
-                <button class="icon-btn" id="historyBtn"><i class="fas fa-history"></i></button>
-                <button class="icon-btn" id="settingsBtn"><i class="fas fa-cog"></i></button>
+                <button class="icon-btn" id="themeToggle" title="تغییر تم">
+                    <span class="icon-btn-icon"><i class="fas fa-moon"></i></span>
+                    <span class="icon-btn-label">تم</span>
+                </button>
+                <button class="icon-btn" id="historyBtn" title="تاریخچه">
+                    <span class="icon-btn-icon"><i class="fas fa-history"></i></span>
+                    <span class="icon-btn-label">تاریخچه</span>
+                </button>
+                <button class="icon-btn" id="settingsBtn" title="تنظیمات">
+                    <span class="icon-btn-icon"><i class="fas fa-cog"></i></span>
+                    <span class="icon-btn-label">تنظیمات</span>
+                </button>
             </div>
         </div>
     </header>
@@ -183,6 +192,12 @@
 
                             <div class="control-group">
                                 <label><i class="fas fa-file-medical-alt"></i> دوز درخواستی</label>
+                                <div class="reverse-calc-bar">
+                                    <button class="reverse-toggle-btn" id="reverseCalcBtn" title="محاسبه معکوس">
+                                        <i class="fas fa-arrow-right-arrow-left"></i>
+                                        <span id="reverseModeLabel">محاسبه: دوز ← سرعت پمپ</span>
+                                    </button>
+                                </div>
                                 <div class="dose-input-enhanced">
                                     <div class="dose-input-wrapper">
                                         <input type="number" id="doctorOrder" placeholder="0" min="0" step="0.1">
@@ -220,9 +235,9 @@
                         <div class="results-section-enhanced" id="resultsSection" style="display: none;">
                             <div class="results-header-row">
                                 <h3><i class="fas fa-chart-line"></i> نتایج محاسبه</h3>
-                                <button class="copy-result-btn" id="copyResultBtn" title="کپی نتیجه">
-                                    <i class="fas fa-copy"></i>
-                                    <span>کپی</span>
+                                <button class="copy-result-btn" id="copyResultBtn" title="اشتراک‌گذاری نتیجه">
+                                    <i class="fas fa-share-nodes"></i>
+                                    <span>اشتراک</span>
                                 </button>
                             </div>
                             <div class="results-grid-enhanced">
@@ -743,6 +758,10 @@
                     <div class="setting-item">
                         <span>فونت بزرگ</span>
                         <label class="switch"><input type="checkbox" id="largeFontToggle"><span class="slider"></span></label>
+                    </div>
+                    <div class="setting-item">
+                        <span><i class="fas fa-mobile-screen-button" style="margin-left:6px;opacity:0.7"></i>لرزش لمسی</span>
+                        <label class="switch"><input type="checkbox" id="hapticToggle" checked><span class="slider"></span></label>
                     </div>
                 </div>
                 <div class="settings-group">
