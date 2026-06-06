@@ -468,7 +468,10 @@ const DOM = {
     reverseTooltip: document.getElementById('reverseTooltip'),
     doseRangeIndicator: document.getElementById('doseRangeIndicator'),
     doseRangeDot: document.getElementById('doseRangeDot'),
-    doseRangeText: document.getElementById('doseRangeText')
+    doseRangeText: document.getElementById('doseRangeText'),
+    dripRateRow: document.getElementById('dripRateRow'),
+    dripRateResult: document.getElementById('dripRateResult'),
+    dripRateLabel: document.getElementById('dripRateLabel')
 };
 
 // ============================================
@@ -1003,6 +1006,7 @@ function calculateInfusion() {
     const duration = AppState.solutionVolume / pumpRate;
 
     displayResults(totalDrug, concentration, pumpRate, duration, ampoule.unit);
+    displayDripRate(pumpRate, AppState.solutionVolume);
     generateStepByStepGuide(drug, totalDrug, concentration, pumpRate, doseValue);
     displayWarnings(drug);
     displayCompatibility(drug);
@@ -1044,6 +1048,7 @@ function clearResults() {
     if (DOM.guideSection) DOM.guideSection.style.display = 'none';
     if (DOM.warningsSection) DOM.warningsSection.style.display = 'none';
     if (DOM.compatibilitySection) DOM.compatibilitySection.style.display = 'none';
+    if (DOM.dripRateRow) DOM.dripRateRow.style.display = 'none';
     // Restore pump rate card in case it was repurposed for reverse mode
     const pumpRateCard = document.getElementById('pumpRateResult')?.closest('.result-item-enhanced');
     if (pumpRateCard) {
@@ -1063,14 +1068,18 @@ function clearResults() {
 function generateStepByStepGuide(drug, totalDrug, concentration, pumpRate, desiredDose) {
     if (!DOM.guideSection || !DOM.stepByStepGuide) return;
     DOM.stepByStepGuide.innerHTML = '';
+    const { factor: dripFactor, label: dripLabel } = getDripFactor(AppState.solutionVolume);
+    const dropsPerMin = (pumpRate * dripFactor) / 60;
+    const setType = AppState.solutionVolume <= 100 ? 'سرنگ پمپ / میکروست' : 'ست وریدی ماکروست';
     const steps = [
         `۱. آماده کردن ${AppState.ampouleCount} آمپول ${drug.persianName}`,
         `۲. کشیدن ${AppState.solutionVolume} cc محلول ${drug.solutionType[0]} به سرنگ/کیسه`,
         `۳. اضافه کردن ${PersianNumbers.formatNumber(totalDrug, 0)} ${drug.ampouleOptions[0].unit} از دارو به محلول`,
         `۴. مخلوط کردن کامل محلول`,
-        `۵. نصب سرنگ/کیسه بر روی پمپ ${AppState.infusionMethod === 'syringe' ? 'سرنگ' : 'انفوزیون'}`,
-        `۶. تنظیم سرعت پمپ بر روی ${PersianNumbers.formatNumber(pumpRate, 2)} cc/hour`,
-        `۷. شروع تزریق با دوز ${PersianNumbers.formatNumber(desiredDose, 2)} ${drug.standardUnit}`
+        `۵. نصب بر روی پمپ ${AppState.infusionMethod === 'syringe' ? 'سرنگ' : 'انفوزیون'} با ${setType}`,
+        `۶. تنظیم سرعت پمپ روی ${PersianNumbers.formatNumber(pumpRate, 2)} cc/hour`,
+        `۷. در صورت تزریق گراویتی: ${PersianNumbers.formatNumber(dropsPerMin, 1)} قطره/دقیقه (${dripLabel})`,
+        `۸. شروع تزریق با دوز ${PersianNumbers.formatNumber(desiredDose, 2)} ${drug.standardUnit}`
     ];
     steps.forEach(step => {
         const stepDiv = document.createElement('div');
@@ -2099,6 +2108,27 @@ function exportHistory() {
     a.click();
     URL.revokeObjectURL(url);
     showToast('خروجی گرفته شد', `${history.length} محاسبه ذخیره شد`, 'success');
+}
+
+// ============================================
+// DRIP RATE CALCULATION
+// ============================================
+function getDripFactor(volumeCC) {
+    // Microset (60 gtt/mL): syringe pumps, ≤100cc — fine drops for precise small volumes
+    // Macroset (20 gtt/mL): serum bottles, ≥250cc — standard IV gravity sets
+    // 100cc is the boundary: a 100cc bag can go either way but microset is standard in ICU
+    if (volumeCC <= 100) return { factor: 60, label: 'میکروست — ۶۰ قطره/mL' };
+    return { factor: 20, label: 'ماکروست — ۲۰ قطره/mL' };
+}
+
+function displayDripRate(pumpRate, volumeCC) {
+    if (!DOM.dripRateRow || !DOM.dripRateResult || !DOM.dripRateLabel) return;
+    const { factor, label } = getDripFactor(volumeCC);
+    // Formula: drops/min = (cc/hour × drip_factor) / 60
+    const dropsPerMin = (pumpRate * factor) / 60;
+    DOM.dripRateResult.textContent = PersianNumbers.formatNumber(dropsPerMin, 1);
+    DOM.dripRateLabel.textContent = 'سرعت قطره (' + label + ')';
+    DOM.dripRateRow.style.display = 'flex';
 }
 
 // ============================================
