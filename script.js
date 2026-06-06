@@ -468,7 +468,7 @@ const DOM = {
     calculatorControls: document.getElementById('calculatorControls'),
     hapticToggle: document.getElementById('hapticToggle'),
     reverseCalcBtn: document.getElementById('reverseCalcBtn'),
-    reverseBadge: document.getElementById('reverseBadge'),
+    reverseIosToggle: document.getElementById('reverseIosToggle'),
     reverseTooltip: document.getElementById('reverseTooltip'),
     doseRangeIndicator: document.getElementById('doseRangeIndicator'),
     doseRangeDot: document.getElementById('doseRangeDot'),
@@ -1779,14 +1779,14 @@ function updateReverseUI() {
     const calcBtnLabel = document.querySelector('#calculateBtn span');
     if (AppState.reverseMode) {
         if (DOM.reverseCalcBtn) DOM.reverseCalcBtn.classList.add('active');
-        if (DOM.reverseBadge) DOM.reverseBadge.textContent = 'روشن';
+        if (DOM.reverseIosToggle) DOM.reverseIosToggle.classList.add('on');
         if (doseLabel) doseLabel.innerHTML = '<i class="fas fa-pump-medical"></i> سرعت پمپ';
         if (unitEl) unitEl.textContent = 'cc/hour';
         if (DOM.doctorOrder) DOM.doctorOrder.placeholder = '0';
         if (calcBtnLabel) calcBtnLabel.textContent = 'محاسبه دوز دریافتی';
     } else {
         if (DOM.reverseCalcBtn) DOM.reverseCalcBtn.classList.remove('active');
-        if (DOM.reverseBadge) DOM.reverseBadge.textContent = 'خاموش';
+        if (DOM.reverseIosToggle) DOM.reverseIosToggle.classList.remove('on');
         if (doseLabel) doseLabel.innerHTML = '<i class="fas fa-file-medical-alt"></i> دوز درخواستی';
         if (DOM.doctorOrder) DOM.doctorOrder.placeholder = '0';
         if (calcBtnLabel) calcBtnLabel.textContent = 'محاسبه سرعت پمپ';
