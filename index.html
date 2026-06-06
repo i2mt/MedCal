@@ -189,14 +189,11 @@
 
                             <div class="control-group">
                                 <label><i class="fas fa-file-medical-alt"></i> دوز درخواستی</label>
-                                <div class="calc-mode-toggle" id="calcModeToggle">
-                                    <button class="calc-mode-btn active" id="modeForwardBtn" data-mode="forward">
-                                        <i class="fas fa-syringe"></i>
-                                        <span>دوز → سرعت پمپ</span>
-                                    </button>
-                                    <button class="calc-mode-btn" id="modeReverseBtn" data-mode="reverse">
-                                        <i class="fas fa-pump-medical"></i>
-                                        <span>سرعت پمپ → دوز</span>
+                                <div class="reverse-mode-row">
+                                    <button class="reverse-mode-btn" id="reverseCalcBtn">
+                                        <i class="fas fa-arrow-right-arrow-left"></i>
+                                        <span>محاسبه معکوس</span>
+                                        <span class="reverse-mode-badge" id="reverseBadge">خاموش</span>
                                     </button>
                                 </div>
                                 <div class="dose-input-enhanced">
@@ -841,28 +838,28 @@
                     <div class="onboarding-step-num">۱</div>
                     <div class="onboarding-step-body">
                         <strong>دارو را انتخاب کنید</strong>
-                        <span>از لیست سمت راست یا جستجو، داروی مورد نظر را بزنید</span>
+                        <span>از لیست موجود، داروی مورد نظر را انتخاب کنید</span>
                     </div>
                 </div>
                 <div class="onboarding-step">
                     <div class="onboarding-step-num">۲</div>
                     <div class="onboarding-step-body">
                         <strong>پارامترها را تنظیم کنید</strong>
-                        <span>روش تزریق، حجم محلول و تعداد آمپول را انتخاب کنید</span>
+                        <span>روش تزریق، حجم محلول و تعداد آمپول را مشخص نمایید</span>
                     </div>
                 </div>
                 <div class="onboarding-step">
                     <div class="onboarding-step-num">۳</div>
                     <div class="onboarding-step-body">
-                        <strong>دوز را وارد و محاسبه کنید</strong>
-                        <span>دوز دستور پزشک را وارد کنید و دکمه محاسبه را بزنید</span>
+                        <strong>دوز را وارد کنید و محاسبه نمایید</strong>
+                        <span>دوز تجویزشده توسط پزشک را وارد کرده و دکمه محاسبه را لمس کنید</span>
                     </div>
                 </div>
                 <div class="onboarding-step">
                     <div class="onboarding-step-num">۴</div>
                     <div class="onboarding-step-body">
                         <strong>حالت معکوس</strong>
-                        <span>اگر سرعت پمپ را دارید و می‌خواهید دوز را بدانید، کلید حالت را تغییر دهید</span>
+                        <span>در صورت نیاز، می‌توانید از حالت معکوس استفاده نمایید</span>
                     </div>
                 </div>
             </div>
@@ -871,6 +868,18 @@
                 شروع کنید
             </button>
             <p class="onboarding-skip" id="onboardingSkip">این راهنما را دوباره نشان نده</p>
+        </div>
+    </div>
+
+
+    <!-- Reverse mode first-use tooltip -->
+    <div id="reverseTooltip" class="reverse-tooltip-overlay" style="display:none;">
+        <div class="reverse-tooltip-backdrop"></div>
+        <div class="reverse-tooltip-box">
+            <div class="reverse-tooltip-icon"><i class="fas fa-arrow-right-arrow-left"></i></div>
+            <h3 class="reverse-tooltip-title">حالت معکوس</h3>
+            <p class="reverse-tooltip-body">در محاسبه‌ی معکوس، دوز در حال انفوزیون بر اساس سرعت پمپ محاسبه می‌شود.</p>
+            <button class="reverse-tooltip-btn" id="reverseTooltipOk">متوجه شدم</button>
         </div>
     </div>
 
