@@ -682,6 +682,7 @@ function initializeApp() {
     }
     setupManualCalculation();
     setupOnboarding();
+    setupOfflineIndicator();
 }
 
 function setupMobileOptimizations() {
@@ -1534,8 +1535,19 @@ function initializeConverters() {
 // TOOLS
 // ============================================
 function initializeTools() {
-    const defaults = { bmiWeight:'70', bmiHeight:'170', bsaWeight:'70', bsaHeight:'170', ibwHeight:'170', crclAge:'40', crclWeight:'70', crclValue:'1.0', doseNeeded:'100', doseConcentration:'10', doseVialVolume:'10' };
+    const defaults = { bmiWeight:'70', bmiHeight:'170', bsaWeight:'70', bsaHeight:'170', ibwHeight:'170', crclAge:'40', crclWeight:'70', crclValue:'1.0' };
     Object.entries(defaults).forEach(([id, val]) => { const el = document.getElementById(id); if (el) el.value = val; });
+    // Populate drug dropdowns (compat + dose calc picker)
+    ['compatDrug1','compatDrug2','doseCalcDrugPicker'].forEach(selId => {
+        const sel = document.getElementById(selId);
+        if (!sel || sel.options.length > 1) return;
+        Object.values(drugDatabase).forEach(drug => {
+            const opt = document.createElement('option');
+            opt.value = drug.id;
+            opt.textContent = drug.persianName + ' (' + drug.englishName + ')';
+            sel.appendChild(opt);
+        });
+    });
 }
 
 function calculateBMI() {
@@ -1593,27 +1605,71 @@ function calculateCrCl() {
 }
 
 function checkCompatibility() {
-    const drug1 = document.getElementById('compatDrug1').value;
-    const drug2 = document.getElementById('compatDrug2').value;
+    const drug1Id = document.getElementById('compatDrug1').value;
+    const drug2Id = document.getElementById('compatDrug2').value;
     const solution = document.getElementById('compatSolution').value;
     const resultDiv = document.getElementById('compatResult');
-    if (!drug1 || !drug2) { showToast('خطا', 'لطفاً هر دو دارو را انتخاب کنید', 'error'); resultDiv.innerHTML = ''; resultDiv.style.display = 'none'; return; }
-    if (drug1 === drug2) { resultDiv.innerHTML = `<span>داروهای یکسان انتخاب شده‌اند</span>`; resultDiv.style.display = 'block'; return; }
-    const d1 = drugDatabase[drug1], d2 = drugDatabase[drug2];
-    if (!d1 || !d2) { resultDiv.textContent = 'اطلاعات دارو یافت نشد'; resultDiv.style.display = 'block'; return; }
-    const d1sol = d1.solutionType.includes(solution);
-    const d2sol = d2.solutionType.includes(solution);
-    if (!d1sol || !d2sol) {
-        const n = !d1sol ? d1.persianName : d2.persianName;
-        resultDiv.innerHTML = `<span>${n} با محلول ${solution} سازگار نیست</span>`;
-        resultDiv.style.display = 'block';
-        return;
+    if (!drug1Id || !drug2Id) { showToast('خطا', 'لطفاً هر دو دارو را انتخاب کنید', 'error'); resultDiv.innerHTML = ''; resultDiv.style.display = 'none'; return; }
+    if (drug1Id === drug2Id) {
+        resultDiv.innerHTML = '<div class="compat-result-box warn"><i class="fas fa-info-circle"></i><span>داروهای یکسان انتخاب شده‌اند</span></div>';
+        resultDiv.style.display = 'block'; return;
     }
-    const compatible = [['heparin','fentanyl'],['heparin','midazolam'],['furosemide','dopamine']];
-    const isCompat = compatible.some(p => (p[0]===drug1&&p[1]===drug2)||(p[0]===drug2&&p[1]===drug1));
-    resultDiv.innerHTML = isCompat
-        ? `<span>${d1.persianName} و ${d2.persianName} سازگار هستند</span>`
-        : `<span>${d1.persianName} و ${d2.persianName} نیاز به بررسی بیشتر دارند</span>`;
+    const d1 = drugDatabase[drug1Id], d2 = drugDatabase[drug2Id];
+    if (!d1 || !d2) { resultDiv.textContent = 'اطلاعات دارو یافت نشد'; resultDiv.style.display = 'block'; return; }
+
+    // Solution compatibility
+    const solMap = { NS: 'N.S', D5W: 'D5W', DS: 'D/S', RL: 'RL' };
+    const solKey = solMap[solution] || solution;
+    const d1SolOk = d1.solutionType.some(s => s.replace(/[\s.\/]/g,'').toLowerCase() === solKey.replace(/[\s.\/]/g,'').toLowerCase() || d1.solutionType.includes(solution));
+    const d2SolOk = d2.solutionType.some(s => s.replace(/[\s.\/]/g,'').toLowerCase() === solKey.replace(/[\s.\/]/g,'').toLowerCase() || d2.solutionType.includes(solution));
+
+    // Y-site compatibility: check d1's list mentions d2's English name, and vice versa
+    const d2EnglishLower = d2.englishName.toLowerCase();
+    const d1EnglishLower = d1.englishName.toLowerCase();
+    const d1Compatibles = (d1.ySiteCompatibilities?.compatible || []).map(s => s.toLowerCase());
+    const d1Incompatibles = (d1.ySiteCompatibilities?.incompatible || []).map(s => s.toLowerCase());
+    const d2Compatibles = (d2.ySiteCompatibilities?.compatible || []).map(s => s.toLowerCase());
+    const d2Incompatibles = (d2.ySiteCompatibilities?.incompatible || []).map(s => s.toLowerCase());
+
+    const d1SaysCompat = d1Compatibles.some(s => s.includes(d2EnglishLower) || s.includes(d2.persianName));
+    const d1SaysIncompat = d1Incompatibles.some(s => s.includes(d2EnglishLower) || s.includes(d2.persianName));
+    const d2SaysCompat = d2Compatibles.some(s => s.includes(d1EnglishLower) || s.includes(d1.persianName));
+    const d2SaysIncompat = d2Incompatibles.some(s => s.includes(d1EnglishLower) || s.includes(d1.persianName));
+
+    const isIncompat = d1SaysIncompat || d2SaysIncompat;
+    const isCompat = (d1SaysCompat || d2SaysCompat) && !isIncompat;
+
+    let solNote = '';
+    if (!d1SolOk) solNote = `<div class="compat-sol-note"><i class="fas fa-exclamation-triangle"></i> ${d1.persianName} معمولاً با ${solution} استفاده نمی‌شود</div>`;
+    else if (!d2SolOk) solNote = `<div class="compat-sol-note"><i class="fas fa-exclamation-triangle"></i> ${d2.persianName} معمولاً با ${solution} استفاده نمی‌شود</div>`;
+
+    let html = '';
+    if (isIncompat) {
+        html = `<div class="compat-result-box danger">
+            <i class="fas fa-times-circle"></i>
+            <div>
+                <strong>${d1.persianName} و ${d2.persianName} ناسازگار هستند</strong>
+                <span>از تزریق همزمان در یک خط خودداری کنید</span>
+            </div>
+        </div>`;
+    } else if (isCompat) {
+        html = `<div class="compat-result-box success">
+            <i class="fas fa-check-circle"></i>
+            <div>
+                <strong>${d1.persianName} و ${d2.persianName} سازگار هستند (Y-Site)</strong>
+                <span>تزریق همزمان در یک خط امکان‌پذیر است</span>
+            </div>
+        </div>`;
+    } else {
+        html = `<div class="compat-result-box warn">
+            <i class="fas fa-question-circle"></i>
+            <div>
+                <strong>اطلاعات کافی در پایگاه داده موجود نیست</strong>
+                <span>قبل از تزریق همزمان با داروساز مشورت کنید</span>
+            </div>
+        </div>`;
+    }
+    resultDiv.innerHTML = html + solNote;
     resultDiv.style.display = 'block';
 }
 
@@ -1621,15 +1677,42 @@ function calculateDose() {
     const needed = PersianNumbers.parseNumber(document.getElementById('doseNeeded').value);
     const concentration = PersianNumbers.parseNumber(document.getElementById('doseConcentration').value);
     const vialVolume = PersianNumbers.parseNumber(document.getElementById('doseVialVolume').value);
+    const unit = document.getElementById('doseUnit')?.value || 'mg';
     const resultDiv = document.getElementById('doseResult');
     if (!needed || !concentration || !vialVolume) { showToast('خطا', 'لطفاً تمامی مقادیر را وارد کنید', 'error'); resultDiv.innerHTML = ''; resultDiv.style.display = 'none'; return; }
     if (concentration === 0) { resultDiv.innerHTML = 'غلظت نمی‌تواند صفر باشد'; resultDiv.style.display = 'block'; return; }
     const volumeNeeded = needed / concentration;
     const vialsNeeded = Math.ceil(volumeNeeded / vialVolume);
-    resultDiv.innerHTML = volumeNeeded <= vialVolume
-        ? `<span class="latin-inline">${PersianNumbers.formatNumber(volumeNeeded, 1)} ml (۱ ویال)</span>`
-        : `<span class="latin-inline">${PersianNumbers.formatNumber(volumeNeeded, 1)} ml (${vialsNeeded} ویال)</span>`;
+    // Syringe size guidance
+    const syringes = [1, 2, 3, 5, 10, 20, 50];
+    const bestSyringe = syringes.find(s => s >= volumeNeeded) || 50;
+    const vialText = vialsNeeded > 1 ? ` — ${vialsNeeded} ویال` : ' — ۱ ویال';
+    resultDiv.innerHTML = `
+        <div class="dose-calc-result">
+            <div class="dose-calc-row"><span>حجم مورد نیاز:</span><strong>${PersianNumbers.formatNumber(volumeNeeded, 2)} mL${vialText}</strong></div>
+            <div class="dose-calc-row"><span>سرنگ پیشنهادی:</span><strong>${bestSyringe} mL</strong></div>
+        </div>`;
     resultDiv.style.display = 'block';
+}
+
+function populateDoseCalcFromDrug() {
+    const sel = document.getElementById('doseCalcDrugPicker');
+    if (!sel) return;
+    const drugId = sel.value;
+    if (!drugId) return;
+    const drug = drugDatabase[drugId];
+    if (!drug) return;
+    const amp = drug.ampouleOptions[0];
+    const conc = amp.strength / amp.volume;
+    const concEl = document.getElementById('doseConcentration');
+    const vialEl = document.getElementById('doseVialVolume');
+    const unitEl = document.getElementById('doseUnit');
+    const concUnitEl = document.getElementById('doseConcentrationUnit');
+    if (concEl) concEl.value = parseFloat(conc.toFixed(3));
+    if (vialEl) vialEl.value = amp.volume;
+    if (unitEl) unitEl.value = amp.unit || 'mg';
+    if (concUnitEl) concUnitEl.textContent = (amp.unit || 'mg') + '/mL';
+    showToast('بارگذاری شد', drug.persianName + ' — غلظت: ' + parseFloat(conc.toFixed(3)) + ' ' + (amp.unit||'mg') + '/mL', 'success');
 }
 
 // ============================================
@@ -1637,7 +1720,12 @@ function calculateDose() {
 // ============================================
 function loadDrugLibrary() {
     const container = document.getElementById('drugLibrary');
-    if (!container || container.children.length > 0) return;
+    if (!container) return;
+    if (container.children.length > 0) {
+        // Already loaded — just wire search if not yet wired
+        wireDrugLibrarySearch();
+        return;
+    }
 
     Object.values(drugDatabase).forEach(drug => {
         const doseRange = drug.typicalDoseRange
@@ -1718,6 +1806,22 @@ function loadDrugLibrary() {
             icon.style.transform = isOpen ? '' : 'rotate(180deg)';
         });
     });
+    wireDrugLibrarySearch();
+}
+
+function wireDrugLibrarySearch() {
+    const input = document.getElementById('librarySearch');
+    const container = document.getElementById('drugLibrary');
+    if (!input || !container || input.dataset.wired) return;
+    input.dataset.wired = 'true';
+    input.addEventListener('input', () => {
+        const term = input.value.trim().toLowerCase();
+        container.querySelectorAll('.qref-card').forEach(card => {
+            const text = card.querySelector('.qref-name')?.textContent.toLowerCase() + ' ' +
+                         card.querySelector('.qref-english')?.textContent.toLowerCase();
+            card.style.display = (!term || text.includes(term)) ? '' : 'none';
+        });
+    });
 }
 
 // ============================================
@@ -1771,7 +1875,7 @@ function loadHistory() {
             <div class="history-details">
                 <div>دوز: ${PersianNumbers.formatNumber(item.dose, 2)}</div>
                 <div>سرعت پمپ: <span class="latin-inline">${PersianNumbers.formatNumber(item.pumpRate, 2)} cc/hr</span></div>
-                <div class="history-time">${PersianNumbers.toLatin(new Date(item.timestamp).toLocaleDateString('fa-IR'))}</div>
+                <div class="history-time">${PersianNumbers.toLatin(new Date(item.timestamp).toLocaleDateString('fa-IR'))} — ${new Date(item.timestamp).toLocaleTimeString('fa-IR', {hour:'2-digit', minute:'2-digit'})}</div>
             </div>
             <div class="history-restore-bar">بازیابی این محاسبه</div>
         `;
@@ -1995,6 +2099,33 @@ function exportHistory() {
     a.click();
     URL.revokeObjectURL(url);
     showToast('خروجی گرفته شد', `${history.length} محاسبه ذخیره شد`, 'success');
+}
+
+// ============================================
+// OFFLINE INDICATOR
+// ============================================
+function setupOfflineIndicator() {
+    const bar = document.createElement('div');
+    bar.id = 'offlineBar';
+    bar.className = 'offline-bar';
+    bar.innerHTML = '<i class="fas fa-wifi-slash"></i> <span>اتصال اینترنت قطع است — اپ به صورت آفلاین کار می‌کند</span>';
+    bar.style.display = 'none';
+    document.body.appendChild(bar);
+
+    function update() {
+        if (!navigator.onLine) {
+            bar.style.display = 'flex';
+            bar.classList.remove('online-flash');
+        } else {
+            bar.classList.add('online-flash');
+            bar.innerHTML = '<i class="fas fa-wifi"></i> <span>اتصال برقرار شد</span>';
+            setTimeout(() => { bar.style.display = 'none'; bar.innerHTML = '<i class="fas fa-wifi-slash"></i> <span>اتصال اینترنت قطع است — اپ به صورت آفلاین کار می‌کند</span>'; }, 2500);
+        }
+    }
+
+    window.addEventListener('offline', update);
+    window.addEventListener('online', update);
+    if (!navigator.onLine) update();
 }
 
 // ============================================
