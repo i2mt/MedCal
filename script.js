@@ -395,13 +395,9 @@ function setupMobileNumericKeyboard() {
 // ============================================
 function haptic(ms) {
     if (!AppState.settings.hapticFeedback) return;
-    try {
-        if (navigator.vibrate) {
-            navigator.vibrate(ms || 30);
-        } else if (window.DeviceMotionEvent && typeof DeviceMotionEvent.requestPermission === 'function') {
-            // iOS 13+ – silently skip if no vibrate API (iOS does not support it)
-        }
-    } catch(e) { /* silently fail */ }
+    // navigator.vibrate is Android-only; iOS Safari does not support it.
+    // On iOS, the only haptic available from a web page is via native app bridges (e.g. Capacitor).
+    try { if (navigator.vibrate) navigator.vibrate(ms || 30); } catch(e) {}
 }
 
 // ============================================
@@ -1128,6 +1124,22 @@ function updateWeightBasedUnit(drug) {
 // EVENT LISTENERS
 // ============================================
 function setupEventListeners() {
+    // Header button press animations (touchstart for instant mobile response)
+    function animateBtn(btn) {
+        if (!btn) return;
+        btn.classList.add('btn-press');
+        btn.classList.add('btn-spin');
+        setTimeout(() => btn.classList.remove('btn-press'), 150);
+        setTimeout(() => btn.classList.remove('btn-spin'), 500);
+    }
+
+    ['themeToggle', 'historyBtn', 'settingsBtn'].forEach(id => {
+        const btn = document.getElementById(id);
+        if (!btn) return;
+        btn.addEventListener('touchstart', () => animateBtn(btn), { passive: true });
+        btn.addEventListener('mousedown', () => animateBtn(btn));
+    });
+
     if (DOM.themeToggle) DOM.themeToggle.addEventListener('click', () => { haptic(25); toggleTheme(); });
     if (DOM.historyBtn) DOM.historyBtn.addEventListener('click', () => {
         loadHistory();
