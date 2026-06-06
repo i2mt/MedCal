@@ -1,5 +1,5 @@
 /* ===============================
-   RESET & BASE STYLES
+   RESET & BASE STYLES (same as before)
    =============================== */
 :root {
     --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -791,6 +791,7 @@ select {
     top: 0;
     z-index: 1000;
     box-shadow: var(--shadow);
+    flex-shrink: 0;
 }
 
 .header-content {
@@ -868,9 +869,10 @@ select {
 
 .main-content {
     flex: 1;
-    overflow: hidden;
+    overflow-y: auto;
     display: flex;
     flex-direction: column;
+    position: relative;
 }
 
 .tab-pane {
@@ -887,7 +889,7 @@ select {
 }
 
 .tab-bar {
-    position: fixed;
+    position: sticky;
     bottom: 0;
     left: 0;
     right: 0;
@@ -900,6 +902,7 @@ select {
     padding-bottom: calc(6px + var(--safe-bottom));
     z-index: 1000;
     min-height: calc(56px + var(--safe-bottom));
+    flex-shrink: 0;
 }
 
 .tab-item {
@@ -2428,8 +2431,8 @@ select {
         top: calc(50px + var(--safe-top));
         left: 0;
         right: 0;
-        bottom: calc(56px + var(--safe-bottom));
-        overflow: hidden;
+        bottom: 0;
+        overflow-y: auto;
         display: flex;
         flex-direction: column;
         padding: 0;
@@ -2600,46 +2603,42 @@ select {
         display: none !important;
     }
 
-    /* Inside @media (max-width: 768px) - Replace existing rules */
+    /* The scrollable main area: no bottom padding */
+    .calculator-main {
+        flex: 1;
+        padding: 10px !important;
+        padding-bottom: 0 !important;
+        gap: 8px !important;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+    }
 
-/* The scrollable main area: no bottom padding */
-.calculator-main {
-    flex: 1;
-    padding: 10px !important;
-    padding-bottom: 0 !important;          /* ✅ Critical: removes the gap below */
-    gap: 8px !important;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-}
+    /* The button wrapper: sticks to bottom of .calculator-main */
+    .calculate-btn-sticky-wrap {
+        position: sticky !important;
+        bottom: 0 !important;
+        background: var(--bg-primary);
+        padding: 6px 12px 8px 12px !important;
+        margin: 0 !important;
+        z-index: 15;
+        border-top: 1px solid var(--border);
+        box-shadow: none;
+    }
 
-/* The button wrapper: sticks to bottom of .calculator-main */
-.calculate-btn-sticky-wrap {
-    position: sticky !important;
-    bottom: 0 !important;
-    background: var(--bg-primary);
-    padding: 6px 12px 8px 12px !important;  /* Reduced top/bottom padding */
-    margin: 0 !important;
-    z-index: 15;
-    border-top: 1px solid var(--border);
-    box-shadow: none;
-}
+    .calculate-btn-sticky-wrap::before {
+        display: none !important;
+        content: none !important;
+    }
 
-/* Remove any pseudo-element that could add a blurry border */
-.calculate-btn-sticky-wrap::before {
-    display: none !important;
-    content: none !important;
-}
-
-/* The button itself: smaller, more compact */
-.calculate-btn-enhanced {
-    margin: 0 !important;
-    padding: 10px 12px !important;
-    font-size: 14px !important;
-    min-height: 44px !important;
-    border-radius: 10px !important;
-    box-shadow: 0 2px 10px rgba(102, 126, 234, 0.3);
-}
+    .calculate-btn-enhanced {
+        margin: 0 !important;
+        padding: 10px 12px !important;
+        font-size: 14px !important;
+        min-height: 44px !important;
+        border-radius: 10px !important;
+        box-shadow: 0 2px 10px rgba(102, 126, 234, 0.3);
+    }
 
     /* Selected drug header */
     .selected-drug-compact {
@@ -2937,7 +2936,7 @@ select {
 
     .main-content {
         top: calc(44px + var(--safe-top));
-        bottom: calc(52px + var(--safe-bottom));
+        bottom: 0;
     }
 
     .tab-bar {
@@ -5614,108 +5613,105 @@ input[type="search"]::placeholder {
 }
 
 /* ============================================
-   PWA STANDALONE / FULLSCREEN MODE
-   Targets the installed app on iOS and Android
-   where browser chrome is hidden but safe areas
-   are still active.
+   PWA STANDALONE / FULLSCREEN MODE — FIXED FOR iOS
    ============================================ */
 @media (display-mode: standalone) {
-    /* Force html and body to fill the screen and prevent scrolling beyond viewport */
+    /* Force full-screen fill including safe areas */
     html, body {
-        height: 100%;
-        min-height: 100%;
-        margin: 0;
-        padding: 0;
-        overflow: hidden;
-        background: var(--surface);
+        height: 100% !important;
+        min-height: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow: hidden !important;
+        background: var(--surface) !important;
     }
 
     .app-container {
-        height: 100%;
-        min-height: 100%;
-        background: var(--surface);
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
+        height: 100% !important;
+        display: flex !important;
+        flex-direction: column !important;
+        overflow: hidden !important;
+        background: var(--surface) !important;
     }
 
-    /* Header: fixed at top with safe area inset */
+    /* Header: sticky top with safe area */
     .app-header {
-        position: sticky;
-        top: 0;
-        z-index: 1000;
-        padding-top: env(safe-area-inset-top, 0px);
-        min-height: calc(50px + env(safe-area-inset-top, 0px));
-        background: var(--surface);
-        flex-shrink: 0;
+        position: sticky !important;
+        top: 0 !important;
+        z-index: 1000 !important;
+        padding-top: env(safe-area-inset-top, 0px) !important;
+        min-height: calc(50px + env(safe-area-inset-top, 0px)) !important;
+        flex-shrink: 0 !important;
     }
 
-    /* Main content takes all remaining space, scrolls internally */
+    /* Main content: takes all remaining space, scrolls */
     .main-content {
-        flex: 1;
-        overflow-y: auto;
-        position: relative;
-        top: auto;
-        left: auto;
-        right: auto;
-        bottom: auto;
-        padding-bottom: 0;
-        margin-bottom: 0;
-        /* Ensure no extra space below */
+        position: relative !important;
+        top: auto !important;
+        left: auto !important;
+        right: auto !important;
+        bottom: auto !important;
+        flex: 1 !important;
+        overflow-y: auto !important;
+        padding-bottom: 0 !important;
+        margin-bottom: 0 !important;
     }
 
-    /* Tab bar: sticky at bottom with safe area */
+    /* Tab bar: sticky at bottom with safe area padding */
     .tab-bar {
-        position: sticky;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        background: var(--surface);
-        border-top: 1px solid var(--border);
-        padding: 6px 4px;
-        padding-bottom: max(env(safe-area-inset-bottom, 0px), 8px);
-        min-height: calc(56px + env(safe-area-inset-bottom, 0px));
-        z-index: 1000;
-        flex-shrink: 0;
+        position: sticky !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        background: var(--surface) !important;
+        border-top: 1px solid var(--border) !important;
+        padding: 6px 4px !important;
+        /* The safe area bottom padding is added to the sticky element itself */
+        padding-bottom: max(env(safe-area-inset-bottom, 0px), 8px) !important;
+        min-height: calc(56px + env(safe-area-inset-bottom, 0px)) !important;
+        flex-shrink: 0 !important;
+        z-index: 1000 !important;
+        margin-top: 0 !important;
     }
 
-    /* Ensure calculator tab fills correctly */
-    #calculatorTab, .calculator-layout {
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
+    /* Calculator tab layout fix */
+    #calculatorTab,
+    .calculator-layout {
+        height: 100% !important;
+        display: flex !important;
+        flex-direction: column !important;
+        overflow: hidden !important;
     }
 
     .calculator-main {
-        flex: 1;
-        overflow-y: auto;
+        flex: 1 !important;
+        overflow-y: auto !important;
     }
 
-    /* Remove any fixed positioning that might cause gaps */
-    .main-content {
-        position: relative !important;
-    }
-
-    /* Loading screen covers everything */
-    .loading-screen {
-        position: fixed;
-        inset: 0;
-        z-index: 99999;
+    /* Override mobile media query fixed positioning for standalone */
+    @media (max-width: 768px) {
+        .main-content {
+            position: relative !important;
+            top: auto !important;
+            bottom: auto !important;
+        }
+        .tab-bar {
+            position: sticky !important;
+        }
     }
 }
 
-/* iOS Safari specific — -webkit-fill-available for true viewport height */
+/* iOS Safari standalone - use -webkit-fill-available for true viewport height */
 @supports (-webkit-touch-callout: none) {
     @media (display-mode: standalone) {
         html {
-            height: -webkit-fill-available;
+            height: -webkit-fill-available !important;
         }
         body {
-            min-height: -webkit-fill-available;
+            min-height: -webkit-fill-available !important;
         }
         .app-container {
-            height: -webkit-fill-available;
+            height: -webkit-fill-available !important;
         }
     }
 }
