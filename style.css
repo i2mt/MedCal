@@ -403,7 +403,7 @@ html {
 }
 
 body {
-    background: var(--surface); /* match tab bar so any gap is invisible */
+    background: var(--surface);
     color: var(--text-primary);
     line-height: 1.7;
     min-height: 100vh;
@@ -782,7 +782,6 @@ select {
 }
 
 .app-header {
-    /* height grows to absorb the status bar safe area */
     min-height: calc(60px + var(--safe-top));
     height: auto;
     background: var(--surface);
@@ -864,7 +863,6 @@ select {
     background: var(--primary-light);
     color: var(--primary);
     border-color: var(--primary);
-    border-color: var(--primary);
     transform: translateY(-2px);
 }
 
@@ -901,7 +899,6 @@ select {
     padding: 6px 4px;
     padding-bottom: calc(6px + var(--safe-bottom));
     z-index: 1000;
-    /* Total height = tab items + safe area so background fills the gap naturally */
     min-height: calc(56px + var(--safe-bottom));
 }
 
@@ -2436,7 +2433,6 @@ select {
         display: flex;
         flex-direction: column;
         padding: 0;
-        /* Drug list scrolls right up to the tab bar — no gap */
         padding-bottom: 0;
     }
 
@@ -5624,12 +5620,13 @@ input[type="search"]::placeholder {
    are still active.
    ============================================ */
 @media (display-mode: standalone) {
-    /* Force the app to fill the entire screen without gaps */
+    /* Force html and body to fill the screen and prevent scrolling beyond viewport */
     html, body {
         height: 100%;
         min-height: 100%;
         margin: 0;
         padding: 0;
+        overflow: hidden;
         background: var(--surface);
     }
 
@@ -5642,7 +5639,7 @@ input[type="search"]::placeholder {
         overflow: hidden;
     }
 
-    /* Header: fixed at top with safe area */
+    /* Header: fixed at top with safe area inset */
     .app-header {
         position: sticky;
         top: 0;
@@ -5650,36 +5647,39 @@ input[type="search"]::placeholder {
         padding-top: env(safe-area-inset-top, 0px);
         min-height: calc(50px + env(safe-area-inset-top, 0px));
         background: var(--surface);
+        flex-shrink: 0;
     }
 
-    /* Main content: flex-grow to fill remaining space, no fixed positioning */
+    /* Main content takes all remaining space, scrolls internally */
     .main-content {
+        flex: 1;
+        overflow-y: auto;
         position: relative;
         top: auto;
         left: auto;
         right: auto;
         bottom: auto;
-        flex: 1;
-        overflow-y: auto;
         padding-bottom: 0;
+        margin-bottom: 0;
+        /* Ensure no extra space below */
     }
 
-    /* Tab bar: fixed at bottom with safe area, background extends fully */
+    /* Tab bar: sticky at bottom with safe area */
     .tab-bar {
         position: sticky;
         bottom: 0;
         left: 0;
         right: 0;
-        margin-top: auto; /* pushes to bottom in flex column */
         background: var(--surface);
         border-top: 1px solid var(--border);
         padding: 6px 4px;
         padding-bottom: max(env(safe-area-inset-bottom, 0px), 8px);
         min-height: calc(56px + env(safe-area-inset-bottom, 0px));
         z-index: 1000;
+        flex-shrink: 0;
     }
 
-    /* Ensure calculator tab layout also fills correctly */
+    /* Ensure calculator tab fills correctly */
     #calculatorTab, .calculator-layout {
         height: 100%;
         display: flex;
@@ -5692,6 +5692,11 @@ input[type="search"]::placeholder {
         overflow-y: auto;
     }
 
+    /* Remove any fixed positioning that might cause gaps */
+    .main-content {
+        position: relative !important;
+    }
+
     /* Loading screen covers everything */
     .loading-screen {
         position: fixed;
@@ -5700,7 +5705,7 @@ input[type="search"]::placeholder {
     }
 }
 
-/* iOS Safari specific — -webkit-fill-available fixes */
+/* iOS Safari specific — -webkit-fill-available for true viewport height */
 @supports (-webkit-touch-callout: none) {
     @media (display-mode: standalone) {
         html {
