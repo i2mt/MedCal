@@ -697,19 +697,30 @@
                                 </div>
                             </div>
                             <div class="tool-body">
+                                <div class="input-group">
+                                    <label>انتخاب دارو (اختیاری — غلظت را خودکار پر می‌کند)</label>
+                                    <select id="doseCalcDrugPicker" onchange="populateDoseCalcFromDrug()">
+                                        <option value="">انتخاب دارو...</option>
+                                    </select>
+                                </div>
                                 <div class="input-row-2col">
                                     <div class="input-group">
                                         <label>دوز مورد نیاز</label>
                                         <div class="input-with-unit">
                                             <input type="number" id="doseNeeded" placeholder="0" step="0.1" inputmode="decimal">
-                                            <span class="input-unit">mg</span>
+                                            <select id="doseUnit" style="border:none;background:transparent;font-size:12px;color:var(--text-tertiary);padding:0 2px;">
+                                                <option value="mg">mg</option>
+                                                <option value="mcg">mcg</option>
+                                                <option value="units">units</option>
+                                                <option value="mEq">mEq</option>
+                                            </select>
                                         </div>
                                     </div>
                                     <div class="input-group">
                                         <label>غلظت</label>
                                         <div class="input-with-unit">
                                             <input type="number" id="doseConcentration" placeholder="0" step="0.01" inputmode="decimal">
-                                            <span class="input-unit">mg/mL</span>
+                                            <span class="input-unit" id="doseConcentrationUnit">mg/mL</span>
                                         </div>
                                     </div>
                                 </div>
