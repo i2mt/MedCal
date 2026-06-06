@@ -467,8 +467,9 @@ const DOM = {
     manualSection: document.getElementById('manualSection'),
     calculatorControls: document.getElementById('calculatorControls'),
     hapticToggle: document.getElementById('hapticToggle'),
-    modeForwardBtn: document.getElementById('modeForwardBtn'),
-    modeReverseBtn: document.getElementById('modeReverseBtn'),
+    reverseCalcBtn: document.getElementById('reverseCalcBtn'),
+    reverseBadge: document.getElementById('reverseBadge'),
+    reverseTooltip: document.getElementById('reverseTooltip'),
     doseRangeIndicator: document.getElementById('doseRangeIndicator'),
     doseRangeDot: document.getElementById('doseRangeDot'),
     doseRangeText: document.getElementById('doseRangeText')
@@ -1046,6 +1047,20 @@ function clearResults() {
     if (DOM.guideSection) DOM.guideSection.style.display = 'none';
     if (DOM.warningsSection) DOM.warningsSection.style.display = 'none';
     if (DOM.compatibilitySection) DOM.compatibilitySection.style.display = 'none';
+    // Restore pump rate card in case it was repurposed for reverse mode
+    const pumpRateCard = document.getElementById('pumpRateResult')?.closest('.result-item-enhanced');
+    if (pumpRateCard) {
+        pumpRateCard.classList.remove('highlight');
+        const labelEl = pumpRateCard.querySelector('.result-label-enhanced');
+        const valueEl = pumpRateCard.querySelector('.result-value-enhanced');
+        const unitEl = pumpRateCard.querySelector('.result-unit-enhanced');
+        if (labelEl) labelEl.textContent = 'سرعت پمپ';
+        if (valueEl) { valueEl.textContent = '0'; valueEl.style.color = ''; }
+        if (unitEl) unitEl.innerHTML = '';
+    }
+    // Restore original highlight card
+    const origHighlight = document.querySelector('.result-item-enhanced:nth-child(3)');
+    if (origHighlight && !origHighlight.classList.contains('highlight')) origHighlight.classList.add('highlight');
 }
 
 function generateStepByStepGuide(drug, totalDrug, concentration, pumpRate, desiredDose) {
@@ -1210,18 +1225,19 @@ function setupEventListeners() {
             card.style.display = (drugName + ' ' + englishName).toLowerCase().includes(term) ? 'block' : 'none';
         });
     });
-    // Segmented calc mode toggle
-    document.querySelectorAll('.calc-mode-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
+    // Reverse mode single toggle button
+    if (DOM.reverseCalcBtn) {
+        DOM.reverseCalcBtn.addEventListener('click', () => {
             haptic(30);
-            const mode = btn.dataset.mode;
-            AppState.reverseMode = (mode === 'reverse');
-            document.querySelectorAll('.calc-mode-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
+            AppState.reverseMode = !AppState.reverseMode;
+            // Show first-use tooltip
+            if (AppState.reverseMode && !localStorage.getItem('reverseTooltipSeen')) {
+                showReverseTooltip();
+            }
             updateReverseUI();
             clearResults();
         });
-    });
+    }
 
     // Dose range live indicator
     if (DOM.doctorOrder) {
@@ -1760,13 +1776,20 @@ function loadHistory() {
 function updateReverseUI() {
     const doseLabel = document.querySelector('#calculatorControls .control-group:last-of-type > label');
     const unitEl = document.getElementById('orderUnit');
+    const calcBtnLabel = document.querySelector('#calculateBtn span');
     if (AppState.reverseMode) {
+        if (DOM.reverseCalcBtn) DOM.reverseCalcBtn.classList.add('active');
+        if (DOM.reverseBadge) DOM.reverseBadge.textContent = 'روشن';
         if (doseLabel) doseLabel.innerHTML = '<i class="fas fa-pump-medical"></i> سرعت پمپ';
         if (unitEl) unitEl.textContent = 'cc/hour';
-        if (DOM.doctorOrder) { DOM.doctorOrder.placeholder = '0'; }
+        if (DOM.doctorOrder) DOM.doctorOrder.placeholder = '0';
+        if (calcBtnLabel) calcBtnLabel.textContent = 'محاسبه دوز دریافتی';
     } else {
+        if (DOM.reverseCalcBtn) DOM.reverseCalcBtn.classList.remove('active');
+        if (DOM.reverseBadge) DOM.reverseBadge.textContent = 'خاموش';
         if (doseLabel) doseLabel.innerHTML = '<i class="fas fa-file-medical-alt"></i> دوز درخواستی';
-        if (DOM.doctorOrder) { DOM.doctorOrder.placeholder = '0'; }
+        if (DOM.doctorOrder) DOM.doctorOrder.placeholder = '0';
+        if (calcBtnLabel) calcBtnLabel.textContent = 'محاسبه سرعت پمپ';
         const drug = drugDatabase[AppState.selectedDrug];
         if (drug && unitEl) {
             unitEl.textContent = AppState.useWeight && drug.weightBased?.active
@@ -1821,32 +1844,80 @@ function updateDoseRangeIndicator() {
 // ============================================
 function calculateReverse() {
     const drug = drugDatabase[AppState.selectedDrug];
+    if (!drug) { showToast('خطا', 'ابتدا یک دارو انتخاب کنید', 'error'); return; }
     const ampoule = drug.ampouleOptions[AppState.currentAmpouleIndex];
     const pumpRateVal = PersianNumbers.parseNumber(DOM.doctorOrder.value);
     if (!pumpRateVal || isNaN(pumpRateVal) || pumpRateVal <= 0) {
+        DOM.doctorOrder.style.borderColor = 'var(--danger)';
         showToast('خطا', 'لطفاً سرعت پمپ را وارد کنید (cc/hour)', 'error');
         DOM.doctorOrder.focus();
         return;
     }
+    DOM.doctorOrder.style.borderColor = '';
     const totalDrug = AppState.ampouleCount * ampoule.strength;
     const concentration = totalDrug / AppState.solutionVolume;
+    // Calculate derived dose from pump rate
+    // concentration is in drug-unit/cc, pumpRate is cc/hour → dose/hour
     let derivedDose = pumpRateVal * concentration;
-    // reverse unit adjustments
-    if (['dopamine', 'norepinephrine', 'tng', 'fentanyl'].includes(drug.id)) {
-        derivedDose = derivedDose / 60;
-    }
-    const duration = AppState.solutionVolume / pumpRateVal;
-    // Show results reusing existing display
-    displayResults(totalDrug, concentration, pumpRateVal, duration, ampoule.unit);
-    // Override pump rate label to show derived dose
-    if (DOM.pumpRateResult) DOM.pumpRateResult.textContent = PersianNumbers.formatNumber(pumpRateVal, 2);
-    // Add derived dose to result
+    // For mcg-based drugs the DB stores in mcg already; if weight-based divide by weight for mcg/kg/min
     const unit = AppState.useWeight && drug.weightBased?.active ? drug.weightBased.unit : (drug.weightBased?.nonWeightUnit || drug.standardUnit);
-    showToast('محاسبه معکوس', `دوز دریافتی: ${PersianNumbers.formatNumber(derivedDose, 2)} ${unit}`, 'info');
+    const isPerMin = unit && unit.toLowerCase().includes('min');
+    if (isPerMin) derivedDose = derivedDose / 60;
+    const isPerKg = unit && unit.toLowerCase().includes('kg');
+    const weight = AppState.useWeight ? (parseFloat(DOM.patientWeight?.dataset.numericValue) || 1) : 1;
+    if (isPerKg && AppState.useWeight) derivedDose = derivedDose / weight;
+    const duration = AppState.solutionVolume / pumpRateVal;
+    // Display: swap highlight card to show derived dose, not pump rate
+    displayResultsReverse(totalDrug, concentration, pumpRateVal, derivedDose, duration, ampoule.unit, unit);
     generateStepByStepGuide(drug, totalDrug, concentration, pumpRateVal, derivedDose);
     displayWarnings(drug);
     displayCompatibility(drug);
     if (AppState.settings.saveHistory) saveCalculation(totalDrug, concentration, pumpRateVal, duration);
+}
+
+function displayResultsReverse(totalDrug, concentration, pumpRate, derivedDose, duration, ampUnit, doseUnit) {
+    const drug = drugDatabase[AppState.selectedDrug];
+    // Total drug
+    DOM.totalDrugAmount.textContent = PersianNumbers.formatNumber(totalDrug, 0);
+    DOM.totalDrugUnit.innerHTML = `<span class="latin-inline">${ampUnit}</span>`;
+    // Concentration
+    let concentrationDisplay, concentrationUnitDisplay;
+    if (drug.id === 'norepinephrine' || drug.id === 'dopamine' || drug.id === 'fentanyl' || drug.id === 'tng') {
+        concentrationDisplay = PersianNumbers.formatNumber(concentration * 1000, 2);
+        concentrationUnitDisplay = 'mcg/cc';
+    } else {
+        concentrationDisplay = PersianNumbers.formatNumber(concentration, 2);
+        concentrationUnitDisplay = `${ampUnit}/cc`;
+    }
+    DOM.concentrationResult.textContent = concentrationDisplay;
+    DOM.concentrationUnit.innerHTML = `<span class="latin-inline">${concentrationUnitDisplay}</span>`;
+    // Pump rate (not highlighted in reverse mode)
+    DOM.pumpRateResult.textContent = PersianNumbers.formatNumber(pumpRate, 2);
+    DOM.pumpRateUnit.innerHTML = `<span class="latin-inline">cc/hour</span>`;
+    // Duration
+    DOM.durationResult.textContent = PersianNumbers.formatNumber(duration, 1);
+    DOM.durationUnit.innerHTML = `<span class="persian-inline">ساعت</span>`;
+    // Rearrange highlight: move it to derived dose
+    const highlightEl = document.querySelector('.result-item-enhanced.highlight');
+    const pumpRateCard = document.getElementById('pumpRateResult')?.closest('.result-item-enhanced');
+    if (highlightEl && pumpRateCard) {
+        highlightEl.classList.remove('highlight');
+    }
+    // Use pump rate card slot to show derived dose (swap content)
+    if (pumpRateCard) {
+        pumpRateCard.classList.add('highlight');
+        const labelEl = pumpRateCard.querySelector('.result-label-enhanced');
+        const valueEl = pumpRateCard.querySelector('.result-value-enhanced');
+        const unitEl = pumpRateCard.querySelector('.result-unit-enhanced');
+        if (labelEl) labelEl.textContent = 'دوز دریافتی';
+        if (valueEl) { valueEl.textContent = PersianNumbers.formatNumber(derivedDose, 2); valueEl.style.color = 'white'; }
+        if (unitEl) { unitEl.innerHTML = `<span class="latin-inline">${doseUnit || ampUnit}</span>`; }
+    }
+    if (DOM.resultsSection) {
+        DOM.resultsSection.classList.add('show');
+        DOM.resultsSection.style.display = 'block';
+        setTimeout(() => DOM.resultsSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 100);
+    }
 }
 
 // ============================================
@@ -1912,6 +1983,24 @@ function exportHistory() {
     a.click();
     URL.revokeObjectURL(url);
     showToast('خروجی گرفته شد', `${history.length} محاسبه ذخیره شد`, 'success');
+}
+
+// ============================================
+// REVERSE TOOLTIP
+// ============================================
+function showReverseTooltip() {
+    const overlay = DOM.reverseTooltip;
+    if (!overlay) return;
+    overlay.style.display = 'flex';
+    requestAnimationFrame(() => overlay.classList.add('visible'));
+    const okBtn = document.getElementById('reverseTooltipOk');
+    const close = () => {
+        overlay.classList.remove('visible');
+        setTimeout(() => { overlay.style.display = 'none'; }, 350);
+        localStorage.setItem('reverseTooltipSeen', 'true');
+    };
+    if (okBtn) okBtn.addEventListener('click', close, { once: true });
+    overlay.querySelector('.reverse-tooltip-backdrop')?.addEventListener('click', close, { once: true });
 }
 
 // ============================================
