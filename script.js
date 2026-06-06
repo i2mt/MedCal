@@ -1416,19 +1416,35 @@ function createManualCalculationContent() {
             <button class="calculate-btn-enhanced" id="manualCalculateBtn">
                 <i class="fas fa-calculator"></i><span>محاسبه سرعت پمپ</span>
             </button>
-            <div class="manual-results" id="manualResults" style="display: none; margin-top: 20px;">
-                <h4><i class="fas fa-chart-line"></i> نتایج محاسبه دستی</h4>
-                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
+            <div class="manual-results" id="manualResults" style="display: none; margin-top: 16px;">
+                <div class="results-grid-enhanced" style="grid-template-columns: repeat(2, 1fr);">
                     <div class="result-item-enhanced">
                         <div class="result-label-enhanced">غلظت محلول</div>
                         <div class="result-value-enhanced" id="manualConcentration">0</div>
                         <div class="result-unit-enhanced" id="manualConcentrationUnit">واحد/سی‌سی</div>
                     </div>
-                    <div class="result-item-enhanced highlight">
+                    <div class="result-item-enhanced">
+                        <div class="result-label-enhanced">مقدار کل دارو</div>
+                        <div class="result-value-enhanced" id="manualTotalDrug">0</div>
+                        <div class="result-unit-enhanced" id="manualTotalDrugUnit">واحد</div>
+                    </div>
+                    <div class="result-item-enhanced highlight gradient" style="grid-column: span 2;">
                         <div class="result-label-enhanced">سرعت پمپ</div>
                         <div class="result-value-enhanced" id="manualPumpRate">0</div>
                         <div class="result-unit-enhanced">cc/hour</div>
                     </div>
+                </div>
+                <div class="drip-rate-row" id="manualDripRow" style="margin-top:10px;">
+                    <div class="drip-rate-icon"><i class="fas fa-droplet"></i></div>
+                    <div class="drip-rate-body">
+                        <span class="drip-rate-label" id="manualDripLabel">سرعت قطره</span>
+                        <span class="drip-rate-value"><span id="manualDripRate">0</span> <span class="drip-rate-unit">قطره/دقیقه</span></span>
+                    </div>
+                </div>
+                <div class="manual-duration-row" id="manualDurationRow" style="margin-top:8px; display:flex; align-items:center; gap:8px; font-family:var(--font-persian); font-size:13px; color:var(--text-secondary); padding:8px 12px; background:var(--surface-elevated); border-radius:10px; border:1px solid var(--border);">
+                    <i class="fas fa-clock" style="color:var(--primary);"></i>
+                    <span>زمان تخمینی تزریق: </span>
+                    <strong id="manualDuration" style="color:var(--text-primary); margin-right:4px;">0 ساعت</strong>
                 </div>
             </div>
         </div>
@@ -1483,12 +1499,36 @@ function calculateManualInfusion() {
         if (doseUnit.includes('/min')) desiredDosePerHour *= 60;
     }
     const pumpRate = desiredDosePerHour / concentration;
+    const duration = solutionVolume / pumpRate;
+    const { factor: dripFactor, label: dripLabel } = getDripFactor(solutionVolume);
+    const dropsPerMin = (pumpRate * dripFactor) / 60;
 
-    document.getElementById('manualConcentration').textContent = PersianNumbers.formatNumber(concentration, 2);
+    // Total drug
+    const totalEl = document.getElementById('manualTotalDrug');
+    const totalUnitEl = document.getElementById('manualTotalDrugUnit');
+    if (totalEl) totalEl.textContent = PersianNumbers.formatNumber(totalDrug, 0);
+    if (totalUnitEl) totalUnitEl.innerHTML = `<span class="latin-inline">${strengthUnit}</span>`;
+
+    // Concentration
+    document.getElementById('manualConcentration').textContent = PersianNumbers.formatNumber(concentration, 3);
     document.getElementById('manualConcentrationUnit').innerHTML = `<span class="latin-inline">${strengthUnit}/cc</span>`;
+
+    // Pump rate
     document.getElementById('manualPumpRate').textContent = PersianNumbers.formatNumber(pumpRate, 2);
+
+    // Drip rate
+    const dripRateEl = document.getElementById('manualDripRate');
+    const dripLabelEl = document.getElementById('manualDripLabel');
+    if (dripRateEl) dripRateEl.textContent = PersianNumbers.formatNumber(dropsPerMin, 1);
+    if (dripLabelEl) dripLabelEl.textContent = 'سرعت قطره (' + dripLabel + ')';
+
+    // Duration
+    const durationEl = document.getElementById('manualDuration');
+    if (durationEl) durationEl.textContent = PersianNumbers.formatNumber(duration, 1) + ' ساعت';
+
     document.getElementById('manualResults').style.display = 'block';
-    showToast('موفق', 'محاسبه دستی انجام شد', 'success');
+    haptic(40);
+    showToast('موفق', 'محاسبه دستی با موفقیت انجام شد', 'success');
 }
 
 // ============================================
@@ -1758,8 +1798,9 @@ function loadDrugLibrary() {
                     <div class="qref-english">${drug.englishName}</div>
                     <span class="qref-category">${drug.category}</span>
                 </div>
-                <button class="qref-calc-btn" onclick="selectDrug('${drug.id}'); switchTab('calculator')" title="محاسبه">
+                <button class="qref-calc-btn" onclick="selectDrug('${drug.id}'); switchTab('calculator')" title="باز کردن در ماشین حساب">
                     <i class="fas fa-calculator"></i>
+                    <span class="qref-calc-label">محاسبه</span>
                 </button>
             </div>
             <div class="qref-body">
