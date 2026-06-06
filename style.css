@@ -5631,6 +5631,16 @@ input[type="search"]::placeholder {
         min-height: 100%;
         /* No gap at bottom — body background matches tab bar */
         background: var(--surface);
+        /* Remove any default margin/padding that could cause white gap */
+        margin: 0;
+        padding: 0;
+    }
+
+    .app-container {
+        /* Ensure container fills full screen height */
+        height: 100%;
+        min-height: 100%;
+        background: var(--surface);
     }
 
     /* Tab bar must stretch to physically touch the bottom edge.
@@ -5642,6 +5652,10 @@ input[type="search"]::placeholder {
         padding-bottom: max(env(safe-area-inset-bottom, 0px), 8px);
         min-height: calc(56px + env(safe-area-inset-bottom, 0px));
         bottom: 0;
+        /* Ensure background covers whole element including padding */
+        background: var(--surface);
+        /* Remove any border that might create a line at the edge */
+        border-top: 1px solid var(--border);
     }
 
     /* Main content must not overlap tab bar */
@@ -5662,6 +5676,11 @@ input[type="search"]::placeholder {
     .main-content {
         top: calc(50px + env(safe-area-inset-top, 0px));
     }
+
+    /* Additional safety: prevent any white gaps due to background-color mismatch */
+    body, .app-container, .main-content, .tab-bar, .calculator-main {
+        background-color: var(--surface);
+    }
 }
 
 /* iOS Safari specific — -webkit-fill-available fills true visual height */
@@ -5672,6 +5691,9 @@ input[type="search"]::placeholder {
         }
         body {
             min-height: -webkit-fill-available;
+        }
+        .app-container {
+            height: -webkit-fill-available;
         }
     }
 }
