@@ -5624,66 +5624,83 @@ input[type="search"]::placeholder {
    are still active.
    ============================================ */
 @media (display-mode: standalone) {
-
+    /* Force the app to fill the entire screen without gaps */
     html, body {
-        /* Fill the entire physical screen */
         height: 100%;
         min-height: 100%;
-        /* No gap at bottom — body background matches tab bar */
-        background: var(--surface);
-        /* Remove any default margin/padding that could cause white gap */
         margin: 0;
         padding: 0;
+        background: var(--surface);
     }
 
     .app-container {
-        /* Ensure container fills full screen height */
         height: 100%;
         min-height: 100%;
         background: var(--surface);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
     }
 
-    /* Tab bar must stretch to physically touch the bottom edge.
-       Its own padding-bottom already accounts for safe-area-inset-bottom
-       so the icons stay above the home indicator, but the background
-       now fills all the way down. */
-    .tab-bar {
-        /* Stretch below safe area with padding, not margin */
-        padding-bottom: max(env(safe-area-inset-bottom, 0px), 8px);
-        min-height: calc(56px + env(safe-area-inset-bottom, 0px));
-        bottom: 0;
-        /* Ensure background covers whole element including padding */
-        background: var(--surface);
-        /* Remove any border that might create a line at the edge */
-        border-top: 1px solid var(--border);
-    }
-
-    /* Main content must not overlap tab bar */
-    .main-content {
-        bottom: calc(56px + env(safe-area-inset-bottom, 0px));
-    }
-
-    /* Header must clear the status bar */
+    /* Header: fixed at top with safe area */
     .app-header {
+        position: sticky;
+        top: 0;
+        z-index: 1000;
         padding-top: env(safe-area-inset-top, 0px);
         min-height: calc(50px + env(safe-area-inset-top, 0px));
+        background: var(--surface);
     }
 
-    .header-content {
-        height: 50px;
-    }
-
+    /* Main content: flex-grow to fill remaining space, no fixed positioning */
     .main-content {
-        top: calc(50px + env(safe-area-inset-top, 0px));
+        position: relative;
+        top: auto;
+        left: auto;
+        right: auto;
+        bottom: auto;
+        flex: 1;
+        overflow-y: auto;
+        padding-bottom: 0;
     }
 
-    /* Additional safety: prevent any white gaps due to background-color mismatch */
-    body, .app-container, .main-content, .tab-bar, .calculator-main {
-        background-color: var(--surface);
+    /* Tab bar: fixed at bottom with safe area, background extends fully */
+    .tab-bar {
+        position: sticky;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        margin-top: auto; /* pushes to bottom in flex column */
+        background: var(--surface);
+        border-top: 1px solid var(--border);
+        padding: 6px 4px;
+        padding-bottom: max(env(safe-area-inset-bottom, 0px), 8px);
+        min-height: calc(56px + env(safe-area-inset-bottom, 0px));
+        z-index: 1000;
+    }
+
+    /* Ensure calculator tab layout also fills correctly */
+    #calculatorTab, .calculator-layout {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+
+    .calculator-main {
+        flex: 1;
+        overflow-y: auto;
+    }
+
+    /* Loading screen covers everything */
+    .loading-screen {
+        position: fixed;
+        inset: 0;
+        z-index: 99999;
     }
 }
 
-/* iOS Safari specific — -webkit-fill-available fills true visual height */
+/* iOS Safari specific — -webkit-fill-available fixes */
 @supports (-webkit-touch-callout: none) {
     @media (display-mode: standalone) {
         html {
