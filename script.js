@@ -686,6 +686,7 @@ function initializeApp() {
     setupManualCalculation();
     setupOnboarding();
     setupOfflineIndicator();
+    setupTabBarMeasurement();
     setupGCS();
     setupBurns();
 }
@@ -1559,6 +1560,9 @@ function toggleTheme() {
     document.body.classList.toggle('dark-mode', AppState.theme === 'dark');
     AppState.settings.darkMode = AppState.theme === 'dark';
     saveSettings();
+    // Update theme-color meta so PWA chrome matches app surface
+    const meta = document.getElementById('themeColorMeta');
+    if (meta) meta.content = AppState.theme === 'dark' ? '#1f2937' : '#ffffff';
     const icon = DOM.themeToggle.querySelector('i');
     if (icon) icon.className = AppState.theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
     localStorage.setItem('theme', AppState.theme);
@@ -2004,7 +2008,7 @@ function loadDrugLibrary() {
                 '</button>' +
                 '<i class="fas fa-chevron-down accordion-chevron" style="margin-right:4px;"></i>' +
             '</button>' +
-            '<div class="accordion-body qref-acc-body">' +
+            '<div class="accordion-body qref-acc-body" id="drug-body-' + drug.id + '">' +
                 '<div class="qref-info-grid">' +
                     '<div class="qref-info-row"><span class="qref-info-label"><i class="fas fa-pills"></i> دوز معمول</span><span class="qref-info-val">' + doseRange + '</span></div>' +
                     '<div class="qref-info-row"><span class="qref-info-label"><i class="fas fa-flask"></i> حداکثر غلظت</span><span class="qref-info-val">' + maxConc + '</span></div>' +
@@ -2047,7 +2051,8 @@ function wireDrugLibrarySearch() {
     input.addEventListener('input', () => {
         const term = input.value.trim().toLowerCase();
         container.querySelectorAll('.qref-accordion-item').forEach(item => {
-            item.style.display = (!term || item.dataset.drugName.includes(term)) ? '' : 'none';
+            const name = (item.dataset.drugName || '');
+            item.style.display = (!term || name.includes(term)) ? '' : 'none';
         });
     });
 }
@@ -2351,6 +2356,32 @@ function displayDripRate(pumpRate, volumeCC) {
 }
 
 // ============================================
+// TAB BAR HEIGHT MEASUREMENT
+// Measures the actual rendered tab bar height (including safe area)
+// and sets it as --tab-bar-height so main-content never overlaps or gaps.
+// ============================================
+function measureTabBarHeight() {
+    const tabBar = document.querySelector('.tab-bar');
+    if (!tabBar) return;
+    const height = tabBar.getBoundingClientRect().height;
+    if (height > 0) {
+        document.documentElement.style.setProperty('--tab-bar-height', height + 'px');
+    }
+}
+
+function setupTabBarMeasurement() {
+    // Measure immediately, then again after a tick (fonts/layout settle)
+    measureTabBarHeight();
+    requestAnimationFrame(() => {
+        measureTabBarHeight();
+        // And once more after full paint
+        setTimeout(measureTabBarHeight, 300);
+    });
+    window.addEventListener('resize', measureTabBarHeight);
+    window.addEventListener('orientationchange', () => setTimeout(measureTabBarHeight, 300));
+}
+
+// ============================================
 // OFFLINE INDICATOR
 // ============================================
 function setupOfflineIndicator() {
@@ -2461,6 +2492,37 @@ function refreshAccordion(el) {
     const body = el.closest('.accordion-body');
     if (body && body.closest('.accordion-item.open')) {
         body.style.maxHeight = body.scrollHeight + 2000 + 'px';
+    }
+}
+
+// Toggle accordion by body element id (for drug library rows)
+function toggleAccordionById(bodyId) {
+    const body = document.getElementById(bodyId);
+    if (!body) return;
+    const item = body.closest('.accordion-item');
+    if (!item) return;
+    const chevron = item.querySelector('.accordion-chevron');
+    const isOpen = item.classList.contains('open');
+    // Close all other drug items
+    document.querySelectorAll('.qref-accordion-item.open').forEach(openItem => {
+        if (openItem !== item) {
+            openItem.classList.remove('open');
+            const b = openItem.querySelector('.accordion-body');
+            if (b) b.style.maxHeight = '0';
+            const c = openItem.querySelector('.accordion-chevron');
+            if (c) c.style.transform = '';
+        }
+    });
+    if (isOpen) {
+        item.classList.remove('open');
+        body.style.maxHeight = '0';
+        if (chevron) chevron.style.transform = '';
+    } else {
+        item.classList.add('open');
+        body.style.maxHeight = body.scrollHeight + 1000 + 'px';
+        if (chevron) chevron.style.transform = 'rotate(180deg)';
+        haptic(20);
+        setTimeout(() => item.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 200);
     }
 }
 
@@ -2768,6 +2830,7 @@ window.TextDirection = TextDirection;
 window.PersianNumbers = PersianNumbers;
 window.exportHistory = exportHistory;
 window.toggleAccordion = toggleAccordion;
+window.toggleAccordionById = toggleAccordionById;
 window.setBurnsAge = setBurnsAge;
 window.resetBurns = resetBurns;
 window.updateParkland = updateParkland;
