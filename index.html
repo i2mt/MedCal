@@ -201,32 +201,43 @@
                                     <span class="dose-range-dot" id="doseRangeDot"></span>
                                     <span class="dose-range-text" id="doseRangeText"></span>
                                 </div>
-                                <div class="calc-toggles-stack">
-                                    <div class="weight-toggle-enhanced" id="weightContainer" style="display: none;">
+
+                                <!-- Stacked toggles — same iOS style, aligned -->
+                                <div class="calc-toggles-stack" id="calcTogglesStack">
+
+                                    <!-- Weight toggle — only shown if drug is weight-based -->
+                                    <div class="calc-toggle-item" id="weightContainer" style="display:none;">
                                         <div class="calc-toggle-row">
                                             <div class="calc-toggle-label">
                                                 <i class="fas fa-weight-scale"></i>
                                                 <span>محاسبه بر اساس وزن</span>
                                             </div>
-                                            <label class="toggle-switch-enhanced" aria-label="محاسبه بر اساس وزن">
-                                                <input type="checkbox" id="weightCheckbox">
-                                                <span class="toggle-slider-enhanced"></span>
-                                            </label>
+                                            <span class="ios-toggle" id="weightIosToggle">
+                                                <span class="ios-knob"></span>
+                                            </span>
+                                            <input type="checkbox" id="weightCheckbox" style="display:none;">
                                         </div>
-                                        <div class="weight-input-section">
-                                            <input type="number" id="patientWeight" placeholder="وزن بیمار" min="0" step="0.1" inputmode="decimal" disabled>
+                                        <!-- Weight input: only visible when weight toggle is ON -->
+                                        <div class="weight-input-row" id="weightInputRow" style="display:none;">
+                                            <i class="fas fa-user"></i>
+                                            <input type="number" id="patientWeight" placeholder="وزن بیمار" min="0" step="0.1" inputmode="decimal">
                                             <span class="weight-unit latin-inline">kg</span>
                                         </div>
                                     </div>
-                                    <div class="calc-toggle-row reverse-toggle-row">
-                                        <div class="calc-toggle-label">
-                                            <i class="fas fa-arrow-right-arrow-left"></i>
-                                            <span>محاسبه معکوس</span>
+
+                                    <!-- Reverse toggle — always shown -->
+                                    <div class="calc-toggle-item">
+                                        <div class="calc-toggle-row reverse-toggle-row">
+                                            <div class="calc-toggle-label">
+                                                <i class="fas fa-arrow-right-arrow-left"></i>
+                                                <span>محاسبه معکوس</span>
+                                            </div>
+                                            <span class="ios-toggle" id="reverseIosToggle">
+                                                <span class="ios-knob"></span>
+                                            </span>
                                         </div>
-                                        <span class="reverse-ios-toggle" id="reverseIosToggle">
-                                            <span class="reverse-ios-knob"></span>
-                                        </span>
                                     </div>
+
                                 </div>
                             </div>
                         </div>
