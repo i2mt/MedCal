@@ -1571,16 +1571,183 @@ function loadTheme() {
 }
 
 // ============================================
-// CONVERTERS (additional)
+// CONVERTERS — bidirectional live
 // ============================================
 function initializeConverters() {
-    const defaults = { electrolyteValue:'100', percentageValue:'5', percentageVolume:'100', unitValue:'1000', dripVolume:'1000', dripTime:'8' };
+    // Set sensible defaults
+    const defaults = { percentageValue:'5', percentageVolume:'100', dripVolume:'500', dripTime:'8', tempC:'37', weightKg:'70' };
     Object.entries(defaults).forEach(([id, val]) => { const el = document.getElementById(id); if (el) el.value = val; });
-    ['electrolyteValue','percentageValue','percentageVolume','unitValue','dripVolume','dripTime'].forEach(id => {
-        const input = document.getElementById(id);
-        if (input) { input.setAttribute('inputmode', 'decimal'); input.style.textAlign = 'center'; }
-    });
+    // Trigger initial calculations for live converters
+    convertPercentageLive();
+    calculateDripRateLive();
+    convertTempLive('c');
+    convertWeightLive('kg');
 }
+
+// Electrolyte valences for mEq↔mg
+const ELECTROLYTE_DATA = {
+    sodium:             { mw: 23,  valence: 1 },
+    potassium:          { mw: 39,  valence: 1 },
+    calcium:            { mw: 20,  valence: 2 },
+    magnesium:          { mw: 12,  valence: 2 },
+    sodium_bicarbonate: { mw: 84,  valence: 1 }
+};
+
+function convertElectrolyteLive(source) {
+    const element = document.getElementById('electrolyteElement').value;
+    const data = ELECTROLYTE_DATA[element];
+    if (!data) return;
+    const meqEl = document.getElementById('electrolyteMeq');
+    const mgEl  = document.getElementById('electrolyteMg');
+    const resEl = document.getElementById('electrolyteResult');
+    // mEq = mg / (mw / valence)  →  mg = mEq × (mw / valence)
+    const eqWeight = data.mw / data.valence;
+    if (source === 'meq') {
+        const meq = parseFloat(meqEl.value);
+        if (!isNaN(meq) && meq >= 0) mgEl.value = parseFloat((meq * eqWeight).toFixed(3));
+    } else if (source === 'mg') {
+        const mg = parseFloat(mgEl.value);
+        if (!isNaN(mg) && mg >= 0) meqEl.value = parseFloat((mg / eqWeight).toFixed(3));
+    }
+    const meq = parseFloat(meqEl.value) || 0;
+    const mg  = parseFloat(mgEl.value)  || 0;
+    if (meq > 0 || mg > 0) {
+        resEl.innerHTML = renderConverterResult([
+            { label: 'mEq', value: meq.toFixed(2) },
+            { label: 'mg',  value: mg.toFixed(2) },
+            { label: 'وزن اکی‌والان', value: eqWeight.toFixed(1) + ' mg/mEq' }
+        ]);
+        resEl.style.display = 'block';
+    }
+}
+
+function convertUnitsLive(source) {
+    const fromSel = document.getElementById('unitFromSelect');
+    const toSel   = document.getElementById('unitToSelect');
+    const fromEl  = document.getElementById('unitFromVal');
+    const toEl    = document.getElementById('unitToVal');
+    const resEl   = document.getElementById('unitResult');
+    // All in mcg base
+    const toMcg = { mcg: 1, mg: 1000, g: 1000000 };
+    const fromUnit = fromSel.value, toUnit = toSel.value;
+    if (source === 'from') {
+        const val = parseFloat(fromEl.value);
+        if (!isNaN(val) && val >= 0) {
+            const mcg = val * toMcg[fromUnit];
+            toEl.value = parseFloat((mcg / toMcg[toUnit]).toFixed(6));
+        }
+    } else if (source === 'to') {
+        const val = parseFloat(toEl.value);
+        if (!isNaN(val) && val >= 0) {
+            const mcg = val * toMcg[toUnit];
+            fromEl.value = parseFloat((mcg / toMcg[fromUnit]).toFixed(6));
+        }
+    }
+    const fromVal = parseFloat(fromEl.value) || 0;
+    const toVal   = parseFloat(toEl.value)   || 0;
+    if (fromVal > 0 || toVal > 0) {
+        resEl.innerHTML = renderConverterResult([
+            { label: fromUnit, value: fromVal.toFixed(4) },
+            { label: toUnit,   value: toVal.toFixed(4) }
+        ]);
+        resEl.style.display = 'block';
+    }
+}
+
+function convertPercentageLive() {
+    const pct = parseFloat(document.getElementById('percentageValue').value) || 0;
+    const vol = parseFloat(document.getElementById('percentageVolume').value) || 100;
+    const resEl = document.getElementById('percentageResult');
+    if (pct <= 0) { resEl.style.display = 'none'; return; }
+    const grams = (pct / 100) * vol;
+    const mgPerMl = (pct / 100) * 1000;
+    resEl.innerHTML = renderConverterResult([
+        { label: 'مقدار دارو در محلول', value: grams.toFixed(2) + ' g' },
+        { label: 'غلظت', value: mgPerMl.toFixed(1) + ' mg/mL' },
+        { label: 'غلظت میکروگرمی', value: (mgPerMl * 1000).toFixed(0) + ' mcg/mL' }
+    ]);
+    resEl.style.display = 'block';
+}
+
+function calculateDripRateLive() {
+    const vol    = parseFloat(document.getElementById('dripVolume').value) || 0;
+    const time   = parseFloat(document.getElementById('dripTime').value)   || 0;
+    const factor = parseInt(document.getElementById('dripFactorSelect').value) || 20;
+    const resEl  = document.getElementById('dripResult');
+    if (vol <= 0 || time <= 0) { resEl.style.display = 'none'; return; }
+    const mlPerHr   = vol / time;
+    const dropsMin  = (mlPerHr * factor) / 60;
+    const drops15s  = dropsMin / 4;
+    resEl.innerHTML = renderConverterResult([
+        { label: 'سرعت پمپ',         value: mlPerHr.toFixed(1) + ' mL/hr' },
+        { label: 'قطره در دقیقه',     value: dropsMin.toFixed(1) + ' gtt/min' },
+        { label: 'قطره در ۱۵ ثانیه',  value: Math.round(drops15s) + ' قطره (شمارش در ۱۵ ثانیه)' }
+    ]);
+    resEl.style.display = 'block';
+}
+
+function convertTempLive(source) {
+    const cEl   = document.getElementById('tempC');
+    const fEl   = document.getElementById('tempF');
+    const resEl = document.getElementById('tempResult');
+    if (!cEl || !fEl) return;
+    if (source === 'c') {
+        const c = parseFloat(cEl.value);
+        if (!isNaN(c)) fEl.value = parseFloat(((c * 9/5) + 32).toFixed(1));
+    } else {
+        const f = parseFloat(fEl.value);
+        if (!isNaN(f)) cEl.value = parseFloat(((f - 32) * 5/9).toFixed(1));
+    }
+    const c = parseFloat(cEl.value) || 0;
+    let note = '';
+    if (c < 35)       note = '🔵 هیپوترمی';
+    else if (c < 36.5) note = '⚪ زیر نرمال';
+    else if (c <= 37.5) note = '🟢 طبیعی';
+    else if (c <= 38.5) note = '🟡 تب خفیف';
+    else if (c <= 40)  note = '🟠 تب';
+    else               note = '🔴 تب شدید — اورژانسی';
+    resEl.innerHTML = renderConverterResult([
+        { label: 'سلسیوس',  value: (parseFloat(cEl.value) || 0).toFixed(1) + ' °C' },
+        { label: 'فارنهایت', value: (parseFloat(fEl.value) || 0).toFixed(1) + ' °F' },
+        { label: 'وضعیت',   value: note }
+    ]);
+    resEl.style.display = 'block';
+}
+
+function convertWeightLive(source) {
+    const kgEl  = document.getElementById('weightKg');
+    const lbEl  = document.getElementById('weightLb');
+    const gEl   = document.getElementById('weightG');
+    const resEl = document.getElementById('weightResult');
+    if (!kgEl || !lbEl || !gEl) return;
+    let kg = 0;
+    if (source === 'kg') kg = parseFloat(kgEl.value) || 0;
+    else if (source === 'lb') { kg = (parseFloat(lbEl.value) || 0) / 2.20462; kgEl.value = kg.toFixed(2); }
+    else if (source === 'g')  { kg = (parseFloat(gEl.value) || 0) / 1000; kgEl.value = kg.toFixed(3); }
+    if (kg > 0) {
+        lbEl.value = (kg * 2.20462).toFixed(1);
+        gEl.value  = (kg * 1000).toFixed(0);
+        resEl.innerHTML = renderConverterResult([
+            { label: 'کیلوگرم', value: kg.toFixed(2) + ' kg' },
+            { label: 'پوند',    value: (kg * 2.20462).toFixed(1) + ' lb' },
+            { label: 'گرم',     value: (kg * 1000).toFixed(0) + ' g' }
+        ]);
+        resEl.style.display = 'block';
+    }
+}
+
+// Helper: render a styled result row list
+function renderConverterResult(rows) {
+    return '<div class="conv-result-list">' + rows.map(r =>
+        '<div class="conv-result-row"><span class="conv-result-label">' + r.label + '</span><strong class="conv-result-value">' + r.value + '</strong></div>'
+    ).join('') + '</div>';
+}
+
+// Legacy stubs so old onclick handlers don't throw
+function convertElectrolyte() { convertElectrolyteLive('meq'); }
+function convertPercentage() { convertPercentageLive(); }
+function convertUnits() { convertUnitsLive('from'); }
+function calculateDripRate() { calculateDripRateLive(); }
 
 // ============================================
 // TOOLS
@@ -1607,9 +1774,17 @@ function calculateBMI() {
     const resultDiv = document.getElementById('bmiResult');
     if (!weight || !height) { showToast('خطا', 'لطفاً وزن و قد را وارد کنید', 'error'); resultDiv.innerHTML = ''; resultDiv.style.display = 'none'; return; }
     const bmi = weight / Math.pow(height / 100, 2);
-    let cat = bmi < 18.5 ? 'کمبود وزن' : bmi < 25 ? 'طبیعی' : bmi < 30 ? 'اضافه وزن' : 'چاقی';
-    resultDiv.innerHTML = `<span class="latin-inline">BMI: ${PersianNumbers.formatNumber(bmi, 1)}</span><span> (${cat})</span>`;
+    let cat, color;
+    if (bmi < 18.5)      { cat = 'کمبود وزن';  color = '#60a5fa'; }
+    else if (bmi < 25)   { cat = 'طبیعی';       color = '#34d399'; }
+    else if (bmi < 30)   { cat = 'اضافه وزن';   color = '#fbbf24'; }
+    else                 { cat = 'چاقی';         color = '#f87171'; }
+    resultDiv.innerHTML = renderConverterResult([
+        { label: 'BMI', value: PersianNumbers.formatNumber(bmi, 1) + ' kg/m²' },
+        { label: 'وضعیت', value: `<span style="color:${color};font-weight:700;">${cat}</span>` }
+    ]);
     resultDiv.style.display = 'block';
+    refreshAccordion(resultDiv);
 }
 
 function calculateBSA() {
@@ -1622,8 +1797,12 @@ function calculateBSA() {
     if (formula === 'mosteller') bsa = Math.sqrt((weight * height) / 3600);
     else if (formula === 'dubois') bsa = 0.007184 * Math.pow(weight, 0.425) * Math.pow(height, 0.725);
     else bsa = 0.024265 * Math.pow(weight, 0.5378) * Math.pow(height, 0.3964);
-    resultDiv.innerHTML = `<span class="latin-inline">${PersianNumbers.formatNumber(bsa, 3)} m²</span>`;
+    resultDiv.innerHTML = renderConverterResult([
+        { label: 'سطح بدن (BSA)', value: PersianNumbers.formatNumber(bsa, 3) + ' m²' },
+        { label: 'فرمول', value: formula === 'mosteller' ? 'Mosteller' : formula === 'dubois' ? 'DuBois' : 'Haycock' }
+    ]);
     resultDiv.style.display = 'block';
+    refreshAccordion(resultDiv);
 }
 
 function calculateIBW() {
@@ -1637,8 +1816,12 @@ function calculateIBW() {
     if (formula === 'devine') ibw = gender === 'male' ? 50 + 2.3 * (hIn - 60) : 45.5 + 2.3 * (hIn - 60);
     else if (formula === 'robinson') ibw = gender === 'male' ? 52 + 1.9 * (hIn - 60) : 49 + 1.7 * (hIn - 60);
     else ibw = gender === 'male' ? 56.2 + 1.41 * (hIn - 60) : 53.1 + 1.36 * (hIn - 60);
-    resultDiv.innerHTML = `<span class="latin-inline">${PersianNumbers.formatNumber(ibw, 1)} kg</span>`;
+    resultDiv.innerHTML = renderConverterResult([
+        { label: 'وزن ایده‌آل (IBW)', value: PersianNumbers.formatNumber(ibw, 1) + ' kg' },
+        { label: 'فرمول', value: formula.charAt(0).toUpperCase() + formula.slice(1) }
+    ]);
     resultDiv.style.display = 'block';
+    refreshAccordion(resultDiv);
 }
 
 function calculateCrCl() {
@@ -1650,9 +1833,19 @@ function calculateCrCl() {
     if (!age || !weight || !creatinine) { showToast('خطا', 'لطفاً تمامی مقادیر را وارد کنید', 'error'); resultDiv.innerHTML = ''; resultDiv.style.display = 'none'; return; }
     let crcl = ((140 - age) * weight) / (72 * creatinine);
     if (gender === 'female') crcl *= 0.85;
-    let fn = crcl > 90 ? 'طبیعی' : crcl > 60 ? 'کاهش خفیف' : crcl > 30 ? 'کاهش متوسط' : crcl > 15 ? 'کاهش شدید' : 'نارسایی کلیه';
-    resultDiv.innerHTML = `<span class="latin-inline">${PersianNumbers.formatNumber(crcl, 0)} ml/min</span><span> (${fn})</span>`;
+    let fn, fnColor;
+    if (crcl > 90)       { fn = 'طبیعی';         fnColor = '#34d399'; }
+    else if (crcl > 60)  { fn = 'کاهش خفیف';     fnColor = '#fbbf24'; }
+    else if (crcl > 30)  { fn = 'کاهش متوسط';    fnColor = '#f97316'; }
+    else if (crcl > 15)  { fn = 'کاهش شدید';     fnColor = '#f87171'; }
+    else                 { fn = 'نارسایی کلیه';   fnColor = '#ef4444'; }
+    resultDiv.innerHTML = renderConverterResult([
+        { label: 'کلیرانس کراتینین', value: PersianNumbers.formatNumber(crcl, 0) + ' mL/min' },
+        { label: 'وضعیت کلیه', value: `<span style="color:${fnColor};font-weight:700;">${fn}</span>` },
+        { label: 'توجه', value: crcl < 30 ? 'تنظیم دوز داروهای کلیوی ضروری است' : 'دوز داروها را بر اساس CrCl بررسی کنید' }
+    ]);
     resultDiv.style.display = 'block';
+    refreshAccordion(resultDiv);
 }
 
 function checkCompatibility() {
@@ -2573,6 +2766,12 @@ window.selectDrug = selectDrug;
 window.switchTab = switchTab;
 window.calculateManualInfusion = calculateManualInfusion;
 window.convertElectrolyte = convertElectrolyte;
+window.convertElectrolyteLive = convertElectrolyteLive;
+window.convertUnitsLive = convertUnitsLive;
+window.convertPercentageLive = convertPercentageLive;
+window.calculateDripRateLive = calculateDripRateLive;
+window.convertTempLive = convertTempLive;
+window.convertWeightLive = convertWeightLive;
 window.convertPercentage = convertPercentage;
 window.convertUnits = convertUnits;
 window.calculateDripRate = calculateDripRate;
