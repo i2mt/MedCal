@@ -21,7 +21,8 @@ const AppState = {
         doseAlerts: true,
         compatAlerts: true,
         saveHistory: true,
-        hapticFeedback: true
+        hapticFeedback: true,
+        colorTheme: 'default'
     },
     reverseMode: false
 };
@@ -691,6 +692,7 @@ function initializeApp() {
     setupTabBarMeasurement();
     setupGCS();
     setupBurns();
+    setupThemePicker();
 }
 
 function setupMobileOptimizations() {
@@ -792,6 +794,9 @@ function selectDrug(drugId) {
     if (DOM.weightContainer && DOM.weightCheckbox && DOM.patientWeight) {
         if (drug.weightBased && drug.weightBased.active) {
             DOM.weightContainer.style.display = 'flex';
+            // Reset toggle to off state when drug changes
+            if (DOM.weightIosToggle) DOM.weightIosToggle.classList.remove('on');
+            if (DOM.weightInputRow) DOM.weightInputRow.style.display = 'none';
             const defaultUseWeight = drug.weightBased.defaultUseWeight !== undefined ? drug.weightBased.defaultUseWeight : false;
             AppState.useWeight = defaultUseWeight;
             DOM.weightCheckbox.checked = defaultUseWeight;
@@ -1180,15 +1185,39 @@ function setupEventListeners() {
         const maxAmpoules = Math.floor(1000 / drug.ampouleOptions[0].strength) || 20;
         if (AppState.ampouleCount < maxAmpoules) { AppState.ampouleCount++; updateAmpouleInfo(); clearResults(); }
     });
+    // Weight iOS toggle (the visible toggle — drives the hidden checkbox)
+    if (DOM.weightIosToggle) {
+        DOM.weightIosToggle.addEventListener('click', () => {
+            haptic(25);
+            AppState.useWeight = !AppState.useWeight;
+            // Sync hidden checkbox
+            if (DOM.weightCheckbox) DOM.weightCheckbox.checked = AppState.useWeight;
+            // Toggle knob visual
+            DOM.weightIosToggle.classList.toggle('on', AppState.useWeight);
+            // Show/hide weight input row
+            if (DOM.weightInputRow) {
+                DOM.weightInputRow.style.display = AppState.useWeight ? 'flex' : 'none';
+            }
+            if (DOM.patientWeight) {
+                DOM.patientWeight.disabled = !AppState.useWeight;
+                if (AppState.useWeight) setTimeout(() => DOM.patientWeight.focus(), 150);
+            }
+            const drug = drugDatabase[AppState.selectedDrug];
+            updateWeightBasedUnit(drug);
+            clearResults();
+        });
+    }
+
     if (DOM.weightCheckbox && DOM.patientWeight) {
         DOM.weightCheckbox.addEventListener('change', function() {
             AppState.useWeight = this.checked;
             DOM.patientWeight.disabled = !this.checked;
+            if (DOM.weightIosToggle) DOM.weightIosToggle.classList.toggle('on', this.checked);
+            if (DOM.weightInputRow) DOM.weightInputRow.style.display = this.checked ? 'flex' : 'none';
             const drug = drugDatabase[AppState.selectedDrug];
             updateWeightBasedUnit(drug);
             if (this.checked && DOM.patientWeight) DOM.patientWeight.focus();
             clearResults();
-            if (this.checked) showToast('اطلاع', 'محاسبه بر اساس وزن فعال شد', 'info');
         });
     }
     if (DOM.customVolume) {
@@ -1565,6 +1594,8 @@ function toggleTheme() {
     // Update theme-color meta so PWA chrome matches app surface
     const meta = document.getElementById('themeColorMeta');
     if (meta) meta.content = AppState.theme === 'dark' ? '#1f2937' : '#ffffff';
+    // Re-apply colour theme for new light/dark context
+    applyTheme(AppState.settings.colorTheme || 'default');
     const icon = DOM.themeToggle.querySelector('i');
     if (icon) icon.className = AppState.theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
     localStorage.setItem('theme', AppState.theme);
@@ -2308,6 +2339,8 @@ function restoreFromHistory(item) {
                 DOM.weightCheckbox.checked = true;
                 AppState.useWeight = true;
                 DOM.patientWeight.disabled = false;
+                if (DOM.weightIosToggle) DOM.weightIosToggle.classList.add('on');
+                if (DOM.weightInputRow) DOM.weightInputRow.style.display = 'flex';
                 DOM.patientWeight.value = item.weight;
                 DOM.patientWeight.dataset.numericValue = item.weight;
             }
@@ -2482,6 +2515,129 @@ function setupOnboarding() {
     overlay.querySelector('.onboarding-backdrop')?.addEventListener('click', () => close(false));
 }
 
+
+// ============================================
+// THEME COLOR SYSTEM
+// ============================================
+const THEMES = {
+    default: {
+        light: {
+            '--primary':          '#667eea',
+            '--primary-dark':     '#5a67d8',
+            '--primary-light':    'rgba(102,126,234,0.1)',
+            '--gradient-primary': 'linear-gradient(135deg,#667eea 0%,#764ba2 100%)',
+            '--secondary':        '#f093fb',
+        },
+        dark: {
+            '--primary':          '#60a5fa',
+            '--primary-dark':     '#3b82f6',
+            '--primary-light':    'rgba(96,165,250,0.15)',
+            '--gradient-primary': 'linear-gradient(135deg,#60a5fa 0%,#34d399 100%)',
+            '--secondary':        '#c084fc',
+        }
+    },
+    fox: {
+        // Warm amber-orange inspired by fox fur — deep rust gradient
+        light: {
+            '--primary':          '#ea580c',
+            '--primary-dark':     '#c2410c',
+            '--primary-light':    'rgba(234,88,12,0.1)',
+            '--gradient-primary': 'linear-gradient(135deg,#f97316 0%,#dc2626 100%)',
+            '--secondary':        '#fbbf24',
+        },
+        dark: {
+            '--primary':          '#fb923c',
+            '--primary-dark':     '#f97316',
+            '--primary-light':    'rgba(251,146,60,0.15)',
+            '--gradient-primary': 'linear-gradient(135deg,#fb923c 0%,#ef4444 100%)',
+            '--secondary':        '#fcd34d',
+        }
+    },
+    ocean: {
+        // Deep teal-cyan — calm and clinical
+        light: {
+            '--primary':          '#0284c7',
+            '--primary-dark':     '#0369a1',
+            '--primary-light':    'rgba(2,132,199,0.1)',
+            '--gradient-primary': 'linear-gradient(135deg,#0ea5e9 0%,#0d9488 100%)',
+            '--secondary':        '#38bdf8',
+        },
+        dark: {
+            '--primary':          '#38bdf8',
+            '--primary-dark':     '#0ea5e9',
+            '--primary-light':    'rgba(56,189,248,0.15)',
+            '--gradient-primary': 'linear-gradient(135deg,#38bdf8 0%,#2dd4bf 100%)',
+            '--secondary':        '#7dd3fc',
+        }
+    },
+    rose: {
+        // Rose-pink — warm and approachable
+        light: {
+            '--primary':          '#e11d48',
+            '--primary-dark':     '#be123c',
+            '--primary-light':    'rgba(225,29,72,0.1)',
+            '--gradient-primary': 'linear-gradient(135deg,#f43f5e 0%,#ec4899 100%)',
+            '--secondary':        '#fb7185',
+        },
+        dark: {
+            '--primary':          '#fb7185',
+            '--primary-dark':     '#f43f5e',
+            '--primary-light':    'rgba(251,113,133,0.15)',
+            '--gradient-primary': 'linear-gradient(135deg,#fb7185 0%,#f472b6 100%)',
+            '--secondary':        '#fda4af',
+        }
+    },
+    forest: {
+        // Emerald green — fresh and natural
+        light: {
+            '--primary':          '#16a34a',
+            '--primary-dark':     '#15803d',
+            '--primary-light':    'rgba(22,163,74,0.1)',
+            '--gradient-primary': 'linear-gradient(135deg,#22c55e 0%,#14b8a6 100%)',
+            '--secondary':        '#4ade80',
+        },
+        dark: {
+            '--primary':          '#4ade80',
+            '--primary-dark':     '#22c55e',
+            '--primary-light':    'rgba(74,222,128,0.15)',
+            '--gradient-primary': 'linear-gradient(135deg,#4ade80 0%,#2dd4bf 100%)',
+            '--secondary':        '#86efac',
+        }
+    }
+};
+
+function applyTheme(themeName) {
+    const isDark = AppState.theme === 'dark';
+    const palette = THEMES[themeName] || THEMES.default;
+    const vars = isDark ? palette.dark : palette.light;
+    const root = document.documentElement;
+    Object.entries(vars).forEach(([k, v]) => root.style.setProperty(k, v));
+    // Update theme-color meta to match new primary
+    const meta = document.getElementById('themeColorMeta');
+    if (meta) meta.content = isDark ? '#1f2937' : '#ffffff';
+    // Mark active swatch
+    document.querySelectorAll('.theme-swatch').forEach(s => {
+        s.classList.toggle('active', s.dataset.theme === themeName);
+    });
+    AppState.settings.colorTheme = themeName;
+    saveSettings();
+}
+
+function setupThemePicker() {
+    document.querySelectorAll('.theme-swatch').forEach(btn => {
+        btn.addEventListener('click', () => {
+            haptic(25);
+            applyTheme(btn.dataset.theme);
+        });
+    });
+    // Apply saved theme on load
+    const saved = AppState.settings.colorTheme || 'default';
+    if (saved !== 'default') applyTheme(saved);
+    // Mark the active swatch
+    document.querySelectorAll('.theme-swatch').forEach(s => {
+        s.classList.toggle('active', s.dataset.theme === saved);
+    });
+}
 
 // ============================================
 // ACCORDION
@@ -2857,6 +3013,7 @@ window.TextDirection = TextDirection;
 window.PersianNumbers = PersianNumbers;
 window.exportHistory = exportHistory;
 window.toggleAccordion = toggleAccordion;
+window.applyTheme = applyTheme;
 window.toggleAccordionById = toggleAccordionById;
 window.setBurnsAge = setBurnsAge;
 window.resetBurns = resetBurns;
