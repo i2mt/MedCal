@@ -3,7 +3,7 @@
 // Always tries to fetch the latest version.
 // Falls back to cache only when offline.
 
-const CACHE_NAME = 'medcalc-pro-v2.2.0';
+const CACHE_NAME = 'medcalc-pro-v3.0.0';
 
 const urlsToCache = [
     './',
