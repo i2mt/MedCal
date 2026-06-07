@@ -463,7 +463,7 @@ const DOM = {
     manualSection: document.getElementById('manualSection'),
     calculatorControls: document.getElementById('calculatorControls'),
     hapticToggle: document.getElementById('hapticToggle'),
-    reverseCalcBtn: document.getElementById('reverseCalcBtn'),
+    reverseCalcBtn: document.querySelector('.reverse-toggle-row'),
     reverseIosToggle: document.getElementById('reverseIosToggle'),
     reverseTooltip: document.getElementById('reverseTooltip'),
     doseRangeIndicator: document.getElementById('doseRangeIndicator'),
@@ -1250,12 +1250,12 @@ function setupEventListeners() {
             card.style.display = (drugName + ' ' + englishName).toLowerCase().includes(term) ? 'block' : 'none';
         });
     });
-    // Reverse mode single toggle button
-    if (DOM.reverseCalcBtn) {
-        DOM.reverseCalcBtn.addEventListener('click', () => {
+    // Reverse mode toggle row
+    const reverseRow = document.querySelector('.reverse-toggle-row');
+    if (reverseRow) {
+        reverseRow.addEventListener('click', () => {
             haptic(30);
             AppState.reverseMode = !AppState.reverseMode;
-            // Show first-use tooltip
             if (AppState.reverseMode && !localStorage.getItem('reverseTooltipSeen')) {
                 showReverseTooltip();
             }
@@ -1994,20 +1994,22 @@ function loadDrugLibrary() {
         item.style.setProperty('--drug-color', drug.color);
         item.dataset.drugName = drug.persianName.toLowerCase() + ' ' + drug.englishName.toLowerCase();
         item.innerHTML =
-            '<button class="accordion-header qref-acc-header" onclick="toggleAccordion(this)">' +
-                '<div class="qref-acc-icon" style="background:linear-gradient(135deg,' + drug.color + ',' + drug.color + '99);--drug-color:' + drug.color + '">' +
+            '<div class="qref-row" data-body-id="drug-body-' + drug.id + '">' +
+                '<div class="qref-acc-icon" style="background:linear-gradient(135deg,' + drug.color + ',' + drug.color + 'bb)">' +
                     renderDrugIcon(drug.icon) +
                 '</div>' +
-                '<div class="accordion-title-wrap">' +
-                    '<span class="accordion-title">' + drug.persianName + '</span>' +
-                    '<span class="accordion-sub">' + drug.englishName + ' — ' + drug.category + '</span>' +
+                '<div class="qref-title-block">' +
+                    '<span class="qref-name">' + drug.persianName + '</span>' +
+                    '<span class="qref-english">' + drug.englishName + ' — ' + drug.category + '</span>' +
                 '</div>' +
-                '<button class="qref-calc-btn" onclick="event.stopPropagation();selectDrug(\'' + drug.id + '\');switchTab(\'calculator\')" title="باز کردن در ماشین حساب">' +
+                '<button class="qref-calc-btn" onclick="event.stopPropagation();selectDrug(\'' + drug.id + '\');switchTab(\'calculator\')">' +
                     '<i class="fas fa-calculator"></i>' +
-                    '<span class="qref-calc-label">محاسبه</span>' +
+                    '<span>محاسبه</span>' +
                 '</button>' +
-                '<i class="fas fa-chevron-down accordion-chevron" style="margin-right:4px;"></i>' +
-            '</button>' +
+                '<div class="qref-chevron">' +
+                    '<i class="fas fa-chevron-down"></i>' +
+                '</div>' +
+            '</div>' +
             '<div class="accordion-body qref-acc-body" id="drug-body-' + drug.id + '">' +
                 '<div class="qref-info-grid">' +
                     '<div class="qref-info-row"><span class="qref-info-label"><i class="fas fa-pills"></i> دوز معمول</span><span class="qref-info-val">' + doseRange + '</span></div>' +
@@ -2055,6 +2057,19 @@ function wireDrugLibrarySearch() {
             item.style.display = (!term || name.includes(term)) ? '' : 'none';
         });
     });
+
+    // Event delegation for drug row taps
+    if (!container.dataset.delegated) {
+        container.dataset.delegated = 'true';
+        container.addEventListener('click', (e) => {
+            // Calc button — handled by its own onclick
+            if (e.target.closest('.qref-calc-btn')) return;
+            const row = e.target.closest('.qref-row');
+            if (row && row.dataset.bodyId) {
+                toggleAccordionById(row.dataset.bodyId);
+            }
+        });
+    }
 }
 
 // ============================================
@@ -2126,16 +2141,17 @@ function updateReverseUI() {
     const doseLabel = document.querySelector('#calculatorControls .control-group:last-of-type > label');
     const unitEl = document.getElementById('orderUnit');
     const calcBtnLabel = document.querySelector('#calculateBtn span');
+    const reverseRow = document.querySelector('.reverse-toggle-row');
     if (AppState.reverseMode) {
-        if (DOM.reverseCalcBtn) DOM.reverseCalcBtn.classList.add('active');
         if (DOM.reverseIosToggle) DOM.reverseIosToggle.classList.add('on');
+        if (reverseRow) reverseRow.classList.add('active');
         if (doseLabel) doseLabel.innerHTML = '<i class="fas fa-pump-medical"></i> سرعت پمپ';
         if (unitEl) unitEl.textContent = 'cc/hour';
         if (DOM.doctorOrder) DOM.doctorOrder.placeholder = '0';
         if (calcBtnLabel) calcBtnLabel.textContent = 'محاسبه دوز دریافتی';
     } else {
-        if (DOM.reverseCalcBtn) DOM.reverseCalcBtn.classList.remove('active');
         if (DOM.reverseIosToggle) DOM.reverseIosToggle.classList.remove('on');
+        if (reverseRow) reverseRow.classList.remove('active');
         if (doseLabel) doseLabel.innerHTML = '<i class="fas fa-file-medical-alt"></i> دوز درخواستی';
         if (DOM.doctorOrder) DOM.doctorOrder.placeholder = '0';
         if (calcBtnLabel) calcBtnLabel.textContent = 'محاسبه سرعت پمپ';
@@ -2501,7 +2517,7 @@ function toggleAccordionById(bodyId) {
     if (!body) return;
     const item = body.closest('.accordion-item');
     if (!item) return;
-    const chevron = item.querySelector('.accordion-chevron');
+    const chevronIcon = item.querySelector('.qref-chevron i');
     const isOpen = item.classList.contains('open');
     // Close all other drug items
     document.querySelectorAll('.qref-accordion-item.open').forEach(openItem => {
@@ -2509,18 +2525,18 @@ function toggleAccordionById(bodyId) {
             openItem.classList.remove('open');
             const b = openItem.querySelector('.accordion-body');
             if (b) b.style.maxHeight = '0';
-            const c = openItem.querySelector('.accordion-chevron');
+            const c = openItem.querySelector('.qref-chevron i');
             if (c) c.style.transform = '';
         }
     });
     if (isOpen) {
         item.classList.remove('open');
         body.style.maxHeight = '0';
-        if (chevron) chevron.style.transform = '';
+        if (chevronIcon) chevronIcon.style.transform = '';
     } else {
         item.classList.add('open');
         body.style.maxHeight = body.scrollHeight + 1000 + 'px';
-        if (chevron) chevron.style.transform = 'rotate(180deg)';
+        if (chevronIcon) chevronIcon.style.transform = 'rotate(180deg)';
         haptic(20);
         setTimeout(() => item.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 200);
     }
