@@ -2250,6 +2250,45 @@ function setupOnboarding() {
 
 
 // ============================================
+// ACCORDION
+// ============================================
+function toggleAccordion(headerBtn) {
+    const item = headerBtn.closest('.accordion-item');
+    const body = item.querySelector('.accordion-body');
+    const chevron = headerBtn.querySelector('.accordion-chevron');
+    const isOpen = item.classList.contains('open');
+
+    // Close all others
+    document.querySelectorAll('.accordion-item.open').forEach(openItem => {
+        if (openItem !== item) {
+            openItem.classList.remove('open');
+            openItem.querySelector('.accordion-body').style.maxHeight = '0';
+            openItem.querySelector('.accordion-chevron').style.transform = '';
+        }
+    });
+
+    if (isOpen) {
+        item.classList.remove('open');
+        body.style.maxHeight = '0';
+        chevron.style.transform = '';
+    } else {
+        item.classList.add('open');
+        body.style.maxHeight = body.scrollHeight + 2000 + 'px';
+        chevron.style.transform = 'rotate(180deg)';
+        haptic(20);
+        setTimeout(() => item.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 200);
+    }
+}
+
+// Re-expand accordion body height after content changes (e.g. result appears)
+function refreshAccordion(el) {
+    const body = el.closest('.accordion-body');
+    if (body && body.closest('.accordion-item.open')) {
+        body.style.maxHeight = body.scrollHeight + 2000 + 'px';
+    }
+}
+
+// ============================================
 // GCS CALCULATOR
 // ============================================
 const GCS_STATE = { eye: null, verbal: null, motor: null };
@@ -2332,7 +2371,8 @@ function updateGCS() {
 
     if (boxEl) {
         boxEl.style.display = 'block';
-        boxEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        refreshAccordion(boxEl);
+        setTimeout(() => boxEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 150);
     }
     haptic(40);
 }
@@ -2456,6 +2496,7 @@ function updateBurns() {
 
     if (BURNS_STATE.selected.size === 0) {
         if (resultBox) resultBox.style.display = 'none';
+        refreshAccordion(chipsEl || document.getElementById('burnsChips'));
         return;
     }
 
@@ -2477,7 +2518,10 @@ function updateBurns() {
         notesEl.innerHTML = notes.map(n => `<div class="burns-note-item"><i class="fas fa-circle-info"></i><span>${n}</span></div>`).join('');
     }
 
-    if (resultBox) resultBox.style.display = 'block';
+    if (resultBox) {
+        resultBox.style.display = 'block';
+        refreshAccordion(resultBox);
+    }
 
     // Parkland if weight is available
     updateParkland();
@@ -2541,6 +2585,7 @@ window.calculateDose = calculateDose;
 window.TextDirection = TextDirection;
 window.PersianNumbers = PersianNumbers;
 window.exportHistory = exportHistory;
+window.toggleAccordion = toggleAccordion;
 window.setBurnsAge = setBurnsAge;
 window.resetBurns = resetBurns;
 window.updateParkland = updateParkland;
