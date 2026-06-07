@@ -315,161 +315,203 @@
             <div class="tab-pane" id="convertersTab">
                 <div class="converters-container">
                     <h2><i class="fas fa-exchange-alt"></i> مبدل‌های دارویی</h2>
-                    <div class="converter-grid">
+                    <div class="accordion-list">
+
+                        <!-- Unit Converter — bidirectional -->
+                        <div class="accordion-item">
+                            <button class="accordion-header" onclick="toggleAccordion(this)">
+                                <div class="accordion-icon-wrap" style="background:linear-gradient(135deg,#667eea,#764ba2)"><i class="fas fa-balance-scale"></i></div>
+                                <div class="accordion-title-wrap">
+                                    <span class="accordion-title">مبدل واحد دارو</span>
+                                    <span class="accordion-sub">mcg ↔ mg ↔ g — Live</span>
+                                </div>
+                                <i class="fas fa-chevron-down accordion-chevron"></i>
+                            </button>
+                            <div class="accordion-body">
+                                <div class="bidir-converter">
+                                    <div class="bidir-field">
+                                        <select id="unitFromSelect" onchange="convertUnitsLive()">
+                                            <option value="mcg">mcg</option>
+                                            <option value="mg" selected>mg</option>
+                                            <option value="g">g</option>
+                                        </select>
+                                        <input type="number" id="unitFromVal" placeholder="0" inputmode="decimal" oninput="convertUnitsLive('from')">
+                                    </div>
+                                    <div class="bidir-arrow"><i class="fas fa-arrow-right-arrow-left"></i></div>
+                                    <div class="bidir-field">
+                                        <select id="unitToSelect" onchange="convertUnitsLive()">
+                                            <option value="mcg" selected>mcg</option>
+                                            <option value="mg">mg</option>
+                                            <option value="g">g</option>
+                                        </select>
+                                        <input type="number" id="unitToVal" placeholder="0" inputmode="decimal" oninput="convertUnitsLive('to')">
+                                    </div>
+                                </div>
+                                <div class="converter-result" id="unitResult"></div>
+                            </div>
+                        </div>
 
                         <!-- Electrolyte Converter -->
-                        <div class="converter-card">
-                            <div class="converter-header">
-                                <i class="fas fa-bolt"></i>
-                                <div class="converter-header-text">
-                                    <h3>مبدل الکترولیت</h3>
-                                    <span class="converter-subtitle">mEq ↔ میلی‌گرم</span>
+                        <div class="accordion-item">
+                            <button class="accordion-header" onclick="toggleAccordion(this)">
+                                <div class="accordion-icon-wrap" style="background:linear-gradient(135deg,#f093fb,#f5576c)"><i class="fas fa-bolt"></i></div>
+                                <div class="accordion-title-wrap">
+                                    <span class="accordion-title">مبدل الکترولیت</span>
+                                    <span class="accordion-sub">mEq ↔ mg — Live</span>
                                 </div>
-                            </div>
-                            <div class="converter-body">
-                                <div class="input-row-2col">
-                                    <div class="input-group">
-                                        <label>عنصر</label>
-                                        <select id="electrolyteElement">
-                                            <option value="sodium">سدیم — Na</option>
-                                            <option value="potassium">پتاسیم — K</option>
-                                            <option value="calcium">کلسیم — Ca</option>
-                                            <option value="magnesium">منیزیم — Mg</option>
-                                            <option value="sodium_bicarbonate">بی کربنات سدیم — NaHCO₃</option>
-                                        </select>
+                                <i class="fas fa-chevron-down accordion-chevron"></i>
+                            </button>
+                            <div class="accordion-body">
+                                <div class="input-group" style="margin-bottom:10px;">
+                                    <label>عنصر</label>
+                                    <select id="electrolyteElement" onchange="convertElectrolyteLive()">
+                                        <option value="sodium">سدیم — Na (وزن ۲۳)</option>
+                                        <option value="potassium">پتاسیم — K (وزن ۳۹)</option>
+                                        <option value="calcium">کلسیم — Ca (وزن ۲۰)</option>
+                                        <option value="magnesium">منیزیم — Mg (وزن ۱۲)</option>
+                                        <option value="sodium_bicarbonate">بی‌کربنات سدیم — NaHCO₃ (وزن ۸۴)</option>
+                                    </select>
+                                </div>
+                                <div class="bidir-converter">
+                                    <div class="bidir-field">
+                                        <label class="bidir-label">mEq</label>
+                                        <input type="number" id="electrolyteMeq" placeholder="0" inputmode="decimal" oninput="convertElectrolyteLive('meq')">
                                     </div>
-                                    <div class="input-group">
-                                        <label>واحد ورودی</label>
-                                        <select id="electrolyteFrom">
-                                            <option value="mEq">mEq</option>
-                                            <option value="mg">میلی‌گرم</option>
-                                        </select>
+                                    <div class="bidir-arrow"><i class="fas fa-arrow-right-arrow-left"></i></div>
+                                    <div class="bidir-field">
+                                        <label class="bidir-label">mg</label>
+                                        <input type="number" id="electrolyteMg" placeholder="0" inputmode="decimal" oninput="convertElectrolyteLive('mg')">
                                     </div>
                                 </div>
-                                <div class="input-group">
-                                    <label>مقدار</label>
-                                    <input type="number" id="electrolyteValue" placeholder="0" step="0.1" inputmode="decimal">
-                                </div>
-                                <button class="converter-btn" onclick="convertElectrolyte()">
-                                    <i class="fas fa-sync-alt"></i> تبدیل
-                                </button>
                                 <div class="converter-result" id="electrolyteResult"></div>
                             </div>
                         </div>
 
                         <!-- Percentage Converter -->
-                        <div class="converter-card">
-                            <div class="converter-header">
-                                <i class="fas fa-percent"></i>
-                                <div class="converter-header-text">
-                                    <h3>مبدل درصدی</h3>
-                                    <span class="converter-subtitle">٪ → گرم / میلی‌گرم</span>
+                        <div class="accordion-item">
+                            <button class="accordion-header" onclick="toggleAccordion(this)">
+                                <div class="accordion-icon-wrap" style="background:linear-gradient(135deg,#4facfe,#00f2fe)"><i class="fas fa-percent"></i></div>
+                                <div class="accordion-title-wrap">
+                                    <span class="accordion-title">مبدل درصدی محلول</span>
+                                    <span class="accordion-sub">% → g/mL → mg/mL</span>
                                 </div>
-                            </div>
-                            <div class="converter-body">
+                                <i class="fas fa-chevron-down accordion-chevron"></i>
+                            </button>
+                            <div class="accordion-body">
                                 <div class="input-row-2col">
                                     <div class="input-group">
                                         <label>درصد محلول</label>
                                         <div class="input-with-unit">
-                                            <input type="number" id="percentageValue" placeholder="0" step="0.1" inputmode="decimal">
+                                            <input type="number" id="percentageValue" placeholder="5" step="0.1" inputmode="decimal" oninput="convertPercentageLive()">
                                             <span class="input-unit">%</span>
                                         </div>
                                     </div>
                                     <div class="input-group">
                                         <label>حجم</label>
                                         <div class="input-with-unit">
-                                            <input type="number" id="percentageVolume" value="100" step="1" inputmode="numeric">
+                                            <input type="number" id="percentageVolume" value="100" step="1" inputmode="numeric" oninput="convertPercentageLive()">
                                             <span class="input-unit">mL</span>
                                         </div>
                                     </div>
                                 </div>
-                                <button class="converter-btn" onclick="convertPercentage()">
-                                    <i class="fas fa-sync-alt"></i> تبدیل
-                                </button>
                                 <div class="converter-result" id="percentageResult"></div>
                             </div>
                         </div>
 
-                        <!-- Unit Converter -->
-                        <div class="converter-card">
-                            <div class="converter-header">
-                                <i class="fas fa-balance-scale"></i>
-                                <div class="converter-header-text">
-                                    <h3>مبدل واحد دارو</h3>
-                                    <span class="converter-subtitle">mcg / mg / g / units</span>
+                        <!-- Drip Rate — standalone (separate from main calc) -->
+                        <div class="accordion-item">
+                            <button class="accordion-header" onclick="toggleAccordion(this)">
+                                <div class="accordion-icon-wrap" style="background:linear-gradient(135deg,#43e97b,#38f9d7)"><i class="fas fa-droplet"></i></div>
+                                <div class="accordion-title-wrap">
+                                    <span class="accordion-title">محاسبه نرخ قطره</span>
+                                    <span class="accordion-sub">drops/min — Gravity IV</span>
                                 </div>
-                            </div>
-                            <div class="converter-body">
-                                <div class="input-row-2col">
-                                    <div class="input-group">
-                                        <label>از واحد</label>
-                                        <select id="unitFrom">
-                                            <option value="mcg">mcg</option>
-                                            <option value="mg">mg</option>
-                                            <option value="g">g</option>
-                                            <option value="units">units</option>
-                                        </select>
-                                    </div>
-                                    <div class="input-group">
-                                        <label>به واحد</label>
-                                        <select id="unitTo">
-                                            <option value="mg">mg</option>
-                                            <option value="mcg">mcg</option>
-                                            <option value="g">g</option>
-                                            <option value="units">units</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="input-group">
-                                    <label>مقدار</label>
-                                    <input type="number" id="unitValue" placeholder="0" step="0.01" inputmode="decimal">
-                                </div>
-                                <button class="converter-btn" onclick="convertUnits()">
-                                    <i class="fas fa-sync-alt"></i> تبدیل
-                                </button>
-                                <div class="converter-result" id="unitResult"></div>
-                            </div>
-                        </div>
-
-                        <!-- Drip Rate -->
-                        <div class="converter-card">
-                            <div class="converter-header">
-                                <i class="fas fa-tint"></i>
-                                <div class="converter-header-text">
-                                    <h3>محاسبه نرخ قطره</h3>
-                                    <span class="converter-subtitle">drops/min</span>
-                                </div>
-                            </div>
-                            <div class="converter-body">
+                                <i class="fas fa-chevron-down accordion-chevron"></i>
+                            </button>
+                            <div class="accordion-body">
                                 <div class="input-row-2col">
                                     <div class="input-group">
                                         <label>حجم</label>
                                         <div class="input-with-unit">
-                                            <input type="number" id="dripVolume" placeholder="0" step="1" inputmode="numeric">
+                                            <input type="number" id="dripVolume" placeholder="500" step="1" inputmode="numeric" oninput="calculateDripRateLive()">
                                             <span class="input-unit">mL</span>
                                         </div>
                                     </div>
                                     <div class="input-group">
                                         <label>زمان</label>
                                         <div class="input-with-unit">
-                                            <input type="number" id="dripTime" placeholder="0" step="0.1" inputmode="decimal">
+                                            <input type="number" id="dripTime" placeholder="8" step="0.1" inputmode="decimal" oninput="calculateDripRateLive()">
                                             <span class="input-unit">hr</span>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="input-group">
-                                    <label>فاکتور قطره</label>
-                                    <select id="dripFactor">
-                                        <option value="10">10 gtt/mL — ماکرو</option>
-                                        <option value="15">15 gtt/mL</option>
-                                        <option value="20">20 gtt/mL — مایکرو</option>
-                                        <option value="60">60 gtt/mL — میکروست</option>
+                                    <label>نوع ست</label>
+                                    <select id="dripFactorSelect" onchange="calculateDripRateLive()">
+                                        <option value="20">ماکروست — ۲۰ gtt/mL (سرم‌های ≥۲۵۰ mL)</option>
+                                        <option value="60">میکروست — ۶۰ gtt/mL (محلول‌های ≤۱۰۰ mL)</option>
+                                        <option value="15">۱۵ gtt/mL</option>
+                                        <option value="10">۱۰ gtt/mL</option>
                                     </select>
                                 </div>
-                                <button class="converter-btn" onclick="calculateDripRate()">
-                                    <i class="fas fa-calculator"></i> محاسبه
-                                </button>
                                 <div class="converter-result" id="dripResult"></div>
+                            </div>
+                        </div>
+
+                        <!-- Temperature Converter — new -->
+                        <div class="accordion-item">
+                            <button class="accordion-header" onclick="toggleAccordion(this)">
+                                <div class="accordion-icon-wrap" style="background:linear-gradient(135deg,#fa709a,#fee140)"><i class="fas fa-temperature-half"></i></div>
+                                <div class="accordion-title-wrap">
+                                    <span class="accordion-title">مبدل دما</span>
+                                    <span class="accordion-sub">°C ↔ °F — Live</span>
+                                </div>
+                                <i class="fas fa-chevron-down accordion-chevron"></i>
+                            </button>
+                            <div class="accordion-body">
+                                <div class="bidir-converter">
+                                    <div class="bidir-field">
+                                        <label class="bidir-label">سلسیوس °C</label>
+                                        <input type="number" id="tempC" placeholder="37" inputmode="decimal" step="0.1" oninput="convertTempLive('c')">
+                                    </div>
+                                    <div class="bidir-arrow"><i class="fas fa-arrow-right-arrow-left"></i></div>
+                                    <div class="bidir-field">
+                                        <label class="bidir-label">فارنهایت °F</label>
+                                        <input type="number" id="tempF" placeholder="98.6" inputmode="decimal" step="0.1" oninput="convertTempLive('f')">
+                                    </div>
+                                </div>
+                                <div class="converter-result" id="tempResult"></div>
+                            </div>
+                        </div>
+
+                        <!-- Weight Converter — new -->
+                        <div class="accordion-item">
+                            <button class="accordion-header" onclick="toggleAccordion(this)">
+                                <div class="accordion-icon-wrap" style="background:linear-gradient(135deg,#a18cd1,#fbc2eb)"><i class="fas fa-weight-hanging"></i></div>
+                                <div class="accordion-title-wrap">
+                                    <span class="accordion-title">مبدل وزن</span>
+                                    <span class="accordion-sub">kg ↔ lb ↔ g — Live</span>
+                                </div>
+                                <i class="fas fa-chevron-down accordion-chevron"></i>
+                            </button>
+                            <div class="accordion-body">
+                                <div class="bidir-converter" style="flex-wrap:wrap;gap:8px;">
+                                    <div class="bidir-field">
+                                        <label class="bidir-label">کیلوگرم (kg)</label>
+                                        <input type="number" id="weightKg" placeholder="70" inputmode="decimal" step="0.1" oninput="convertWeightLive('kg')">
+                                    </div>
+                                    <div class="bidir-arrow"><i class="fas fa-arrow-right-arrow-left"></i></div>
+                                    <div class="bidir-field">
+                                        <label class="bidir-label">پوند (lb)</label>
+                                        <input type="number" id="weightLb" placeholder="154" inputmode="decimal" step="0.1" oninput="convertWeightLive('lb')">
+                                    </div>
+                                    <div class="bidir-arrow"><i class="fas fa-arrow-right-arrow-left"></i></div>
+                                    <div class="bidir-field">
+                                        <label class="bidir-label">گرم (g)</label>
+                                        <input type="number" id="weightG" placeholder="70000" inputmode="decimal" step="1" oninput="convertWeightLive('g')">
+                                    </div>
+                                </div>
+                                <div class="converter-result" id="weightResult"></div>
                             </div>
                         </div>
 
