@@ -686,6 +686,8 @@ function initializeApp() {
     setupManualCalculation();
     setupOnboarding();
     setupOfflineIndicator();
+    setupGCS();
+    setupBurns();
 }
 
 function setupMobileOptimizations() {
@@ -2246,6 +2248,280 @@ function setupOnboarding() {
     overlay.querySelector('.onboarding-backdrop')?.addEventListener('click', () => close(false));
 }
 
+
+// ============================================
+// GCS CALCULATOR
+// ============================================
+const GCS_STATE = { eye: null, verbal: null, motor: null };
+
+function setupGCS() {
+    document.querySelectorAll('.gcs-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            haptic(25);
+            const domain = btn.dataset.domain;
+            const score = parseInt(btn.dataset.score);
+            // Deselect others in same group
+            btn.closest('.gcs-btn-group').querySelectorAll('.gcs-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            GCS_STATE[domain] = score;
+            // Update inline score display
+            const scoreMap = { eye: 'eScore', verbal: 'vScore', motor: 'mScore' };
+            const scoreEl = document.getElementById(scoreMap[domain]);
+            if (scoreEl) scoreEl.textContent = score;
+            updateGCS();
+        });
+    });
+
+    const resetBtn = document.getElementById('gcsResetBtn');
+    if (resetBtn) resetBtn.addEventListener('click', resetGCS);
+}
+
+function updateGCS() {
+    const { eye, verbal, motor } = GCS_STATE;
+    if (eye === null || verbal === null || motor === null) return;
+
+    const total = eye + verbal + motor;
+    const totalEl = document.getElementById('gcsTotalScore');
+    const formulaEl = document.getElementById('gcsTotalFormula');
+    const badgeEl = document.getElementById('gcsSeverityBadge');
+    const notesEl = document.getElementById('gcsNotes');
+    const boxEl = document.getElementById('gcsResultBox');
+
+    if (totalEl) totalEl.textContent = total;
+    if (formulaEl) formulaEl.textContent = `E${eye} + V${verbal} + M${motor}`;
+
+    let severity, badgeClass, notes;
+
+    if (total >= 13) {
+        severity = 'خفیف';
+        badgeClass = 'gcs-badge-mild';
+        notes = [
+            'سطح هوشیاری خوب — بیمار پاسخ‌دهی مناسب دارد',
+            'پایش مداوم علائم حیاتی توصیه می‌شود',
+            'در صورت کاهش GCS بلافاصله گزارش دهید'
+        ];
+    } else if (total >= 9) {
+        severity = 'متوسط';
+        badgeClass = 'gcs-badge-moderate';
+        notes = [
+            'اختلال هوشیاری متوسط — نیاز به مراقبت ویژه دارد',
+            'پایش مداوم راه هوایی ضروری است',
+            'خطر آسپیراسیون وجود دارد — وضعیت بیمار را مدیریت کنید',
+            'بررسی مکرر GCS هر ۱ تا ۲ ساعت'
+        ];
+    } else {
+        severity = 'شدید — کُما';
+        badgeClass = 'gcs-badge-severe';
+        notes = [
+            '⚠️ GCS ≤ ۸: آستانه اینتوباسیون — راه هوایی را ایمن کنید',
+            'خطر بالای آسپیراسیون و انسداد راه هوایی',
+            'بیمار نیاز به ICU و مراقبت‌های ویژه دارد',
+            'پزشک را فوری مطلع کنید',
+            'پایش ICP در صورت آسیب مغزی توصیه می‌شود'
+        ];
+    }
+
+    if (badgeEl) {
+        badgeEl.textContent = `شدت: ${severity}`;
+        badgeEl.className = `gcs-severity-badge ${badgeClass}`;
+    }
+
+    if (notesEl) {
+        notesEl.innerHTML = notes.map(n => `<div class="gcs-note-item"><i class="fas fa-circle-info"></i><span>${n}</span></div>`).join('');
+    }
+
+    if (boxEl) {
+        boxEl.style.display = 'block';
+        boxEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+    haptic(40);
+}
+
+function resetGCS() {
+    GCS_STATE.eye = null;
+    GCS_STATE.verbal = null;
+    GCS_STATE.motor = null;
+    document.querySelectorAll('.gcs-btn').forEach(b => b.classList.remove('active'));
+    ['eScore','vScore','mScore'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = '—';
+    });
+    const box = document.getElementById('gcsResultBox');
+    if (box) box.style.display = 'none';
+    haptic(30);
+}
+
+// ============================================
+// BURNS / TBSA CALCULATOR
+// ============================================
+
+// Rule of Nines — adult percentages per region
+// Each region maps to its TBSA %
+const BURNS_ADULT = {
+    head: 4.5, head_b: 4.5,
+    neck: 1,
+    chest: 9, abdomen: 9,
+    upper_back: 9, lower_back: 9,
+    perineum: 1,
+    buttocks: 2.5,
+    l_upper_arm: 2, r_upper_arm: 2,
+    l_upper_arm_b: 2, r_upper_arm_b: 2,
+    l_lower_arm: 1.5, r_lower_arm: 1.5,
+    l_lower_arm_b: 1.5, r_lower_arm_b: 1.5,
+    l_hand: 1.25, r_hand: 1.25,
+    l_thigh_f: 4.75, r_thigh_f: 4.75,
+    l_thigh_b: 4.75, r_thigh_b: 4.75,
+    l_leg_f: 3.5, r_leg_f: 3.5,
+    l_leg_b: 3.5, r_leg_b: 3.5,
+    l_foot: 1.75, r_foot: 1.75
+};
+
+// Lund-Browder — pediatric (approximate for ~1yr; head larger, legs smaller)
+const BURNS_PEDIATRIC = {
+    head: 9.5, head_b: 9.5,
+    neck: 1,
+    chest: 9, abdomen: 9,
+    upper_back: 9, lower_back: 9,
+    perineum: 1,
+    buttocks: 2.5,
+    l_upper_arm: 2, r_upper_arm: 2,
+    l_upper_arm_b: 2, r_upper_arm_b: 2,
+    l_lower_arm: 1.5, r_lower_arm: 1.5,
+    l_lower_arm_b: 1.5, r_lower_arm_b: 1.5,
+    l_hand: 1.25, r_hand: 1.25,
+    l_thigh_f: 3.25, r_thigh_f: 3.25,
+    l_thigh_b: 3.25, r_thigh_b: 3.25,
+    l_leg_f: 2.75, r_leg_f: 2.75,
+    l_leg_b: 2.75, r_leg_b: 2.75,
+    l_foot: 1.75, r_foot: 1.75
+};
+
+const BURNS_STATE = { selected: new Set(), ageMode: 'adult' };
+
+function setupBurns() {
+    document.querySelectorAll('.burns-region').forEach(region => {
+        region.addEventListener('click', () => {
+            haptic(20);
+            const key = region.dataset.region;
+            if (BURNS_STATE.selected.has(key)) {
+                BURNS_STATE.selected.delete(key);
+                // Deselect paired SVG elements (front/back have same region ids on different svgs)
+                document.querySelectorAll(`[data-region="${key}"]`).forEach(el => el.classList.remove('selected'));
+            } else {
+                BURNS_STATE.selected.add(key);
+                document.querySelectorAll(`[data-region="${key}"]`).forEach(el => el.classList.add('selected'));
+            }
+            updateBurns();
+        });
+    });
+}
+
+function setBurnsAge(mode) {
+    BURNS_STATE.ageMode = mode;
+    const adultBtn = document.getElementById('burnsAdultBtn');
+    const pedBtn = document.getElementById('burnsPedBtn');
+    const noteEl = document.getElementById('burnsRuleNote');
+    if (adultBtn) adultBtn.classList.toggle('active', mode === 'adult');
+    if (pedBtn) pedBtn.classList.toggle('active', mode === 'pediatric');
+    if (noteEl) noteEl.textContent = mode === 'adult' ? 'قانون نُه — بزرگسال' : 'Lund-Browder — کودک (تقریبی)';
+    updateBurns();
+    haptic(25);
+}
+
+function updateBurns() {
+    const table = BURNS_STATE.ageMode === 'adult' ? BURNS_ADULT : BURNS_PEDIATRIC;
+    let total = 0;
+    BURNS_STATE.selected.forEach(key => { total += (table[key] || 0); });
+    // Cap at 100
+    total = Math.min(total, 100);
+
+    const tbsaEl = document.getElementById('burnsTBSA');
+    const resultBox = document.getElementById('burnsResultBox');
+    const chipsEl = document.getElementById('burnsChips');
+    const notesEl = document.getElementById('burnsNotes');
+
+    // Update chips
+    if (chipsEl) {
+        if (BURNS_STATE.selected.size === 0) {
+            chipsEl.innerHTML = '<span class="burns-chips-placeholder">هیچ ناحیه‌ای انتخاب نشده</span>';
+        } else {
+            const labels = [];
+            BURNS_STATE.selected.forEach(key => {
+                const el = document.querySelector(`[data-region="${key}"]`);
+                if (el) labels.push(el.dataset.label);
+            });
+            chipsEl.innerHTML = labels.map(l => `<span class="burns-chip">${l}</span>`).join('');
+        }
+    }
+
+    if (BURNS_STATE.selected.size === 0) {
+        if (resultBox) resultBox.style.display = 'none';
+        return;
+    }
+
+    if (tbsaEl) tbsaEl.textContent = total.toFixed(1) + '%';
+
+    // Clinical notes based on severity
+    let notes = [];
+    if (total < 10) {
+        notes = ['سوختگی محدود — مراقبت سرپایی ممکن است کافی باشد', 'درصورت درگیری صورت، دست یا پرینه: ارجاع به مرکز سوختگی'];
+    } else if (total < 20) {
+        notes = ['سوختگی متوسط — بستری ضروری است', 'احیاء مایع را شروع کنید (فرمول Parkland)', 'پایش ادرار ساعتی توصیه می‌شود (۰.۵ cc/kg/hr)'];
+    } else if (total < 40) {
+        notes = ['⚠️ سوختگی وسیع — ICU ضروری است', 'فوری فرمول Parkland را شروع کنید', '۵۰٪ مایع اول ۸ ساعت، ۵۰٪ باقی ۱۶ ساعت', 'ارجاع فوری به مرکز تخصصی سوختگی'];
+    } else {
+        notes = ['🚨 سوختگی حیاتی — خطر جدی برای بیمار', 'انتقال فوری به مرکز تخصصی سوختگی', 'احیاء مایع تهاجمی فوری', 'پایش راه هوایی — احتمال سوختگی استنشاقی را بررسی کنید'];
+    }
+
+    if (notesEl) {
+        notesEl.innerHTML = notes.map(n => `<div class="burns-note-item"><i class="fas fa-circle-info"></i><span>${n}</span></div>`).join('');
+    }
+
+    if (resultBox) resultBox.style.display = 'block';
+
+    // Parkland if weight is available
+    updateParkland();
+}
+
+function updateParkland() {
+    const weightEl = document.getElementById('burnsWeight');
+    const parklandEl = document.getElementById('parklandResult');
+    const parklandRow = document.getElementById('parklandRow');
+    if (!weightEl || !parklandEl || !parklandRow) return;
+
+    const weight = parseFloat(weightEl.value);
+    const table = BURNS_STATE.ageMode === 'adult' ? BURNS_ADULT : BURNS_PEDIATRIC;
+    let total = 0;
+    BURNS_STATE.selected.forEach(key => { total += (table[key] || 0); });
+    total = Math.min(total, 100);
+
+    if (!weight || weight <= 0 || BURNS_STATE.selected.size === 0) {
+        parklandRow.style.display = 'none';
+        return;
+    }
+
+    // Parkland formula: 4 × weight(kg) × TBSA(%)
+    const totalFluid = 4 * weight * total;
+    const first8h = totalFluid / 2;
+    const next16h = totalFluid / 2;
+    parklandEl.textContent = `${totalFluid.toFixed(0)} mL`;
+    parklandRow.style.display = 'flex';
+    parklandRow.querySelector('.burns-result-label').textContent =
+        `Parkland: ${totalFluid.toFixed(0)} mL (اول ۸ ساعت: ${first8h.toFixed(0)} mL | ۱۶ ساعت باقی: ${next16h.toFixed(0)} mL)`;
+}
+
+function resetBurns() {
+    BURNS_STATE.selected.clear();
+    document.querySelectorAll('.burns-region').forEach(el => el.classList.remove('selected'));
+    const chipsEl = document.getElementById('burnsChips');
+    if (chipsEl) chipsEl.innerHTML = '<span class="burns-chips-placeholder">هیچ ناحیه‌ای انتخاب نشده</span>';
+    const resultBox = document.getElementById('burnsResultBox');
+    if (resultBox) resultBox.style.display = 'none';
+    const weightEl = document.getElementById('burnsWeight');
+    if (weightEl) weightEl.value = '';
+    haptic(30);
+}
+
 // ============================================
 // GLOBALS
 // ============================================
@@ -2265,5 +2541,8 @@ window.calculateDose = calculateDose;
 window.TextDirection = TextDirection;
 window.PersianNumbers = PersianNumbers;
 window.exportHistory = exportHistory;
+window.setBurnsAge = setBurnsAge;
+window.resetBurns = resetBurns;
+window.updateParkland = updateParkland;
 window.restoreFromHistory = restoreFromHistory;
 window.updateDoseRangeIndicator = updateDoseRangeIndicator;
