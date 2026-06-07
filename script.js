@@ -424,6 +424,8 @@ const DOM = {
     weightContainer: document.getElementById('weightContainer'),
     weightCheckbox: document.getElementById('weightCheckbox'),
     patientWeight: document.getElementById('patientWeight'),
+    weightIosToggle: document.getElementById('weightIosToggle'),
+    weightInputRow: document.getElementById('weightInputRow'),
     calculateBtn: document.getElementById('calculateBtn'),
     resultsSection: document.getElementById('resultsSection'),
     totalDrugAmount: document.getElementById('totalDrugAmount'),
@@ -2379,22 +2381,31 @@ function displayDripRate(pumpRate, volumeCC) {
 function measureTabBarHeight() {
     const tabBar = document.querySelector('.tab-bar');
     if (!tabBar) return;
-    const height = tabBar.getBoundingClientRect().height;
-    if (height > 0) {
+    const rect = tabBar.getBoundingClientRect();
+    const height = rect.height;
+    // Only set if we got a real value
+    if (height > 20) {
         document.documentElement.style.setProperty('--tab-bar-height', height + 'px');
+        return true;
     }
+    return false;
 }
 
 function setupTabBarMeasurement() {
-    // Measure immediately, then again after a tick (fonts/layout settle)
-    measureTabBarHeight();
-    requestAnimationFrame(() => {
-        measureTabBarHeight();
-        // And once more after full paint
-        setTimeout(measureTabBarHeight, 300);
-    });
+    // Try immediately, then keep retrying until we get a real value
+    if (!measureTabBarHeight()) {
+        const delays = [50, 150, 300, 600, 1000];
+        delays.forEach(d => setTimeout(measureTabBarHeight, d));
+    }
     window.addEventListener('resize', measureTabBarHeight);
-    window.addEventListener('orientationchange', () => setTimeout(measureTabBarHeight, 300));
+    window.addEventListener('orientationchange', () => {
+        setTimeout(measureTabBarHeight, 100);
+        setTimeout(measureTabBarHeight, 400);
+    });
+    // Also re-measure after page visibility change (returning from background on iOS)
+    document.addEventListener('visibilitychange', () => {
+        if (!document.hidden) setTimeout(measureTabBarHeight, 200);
+    });
 }
 
 // ============================================
