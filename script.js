@@ -1209,7 +1209,7 @@ function setupEventListeners() {
         const unit = drug?.standardUnit || '';
         const text = `MedCalc Pro\n${drug?.persianName || ''} (${drug?.englishName || ''})\nدوز: ${dose} ${unit}\nغلظت: ${concentration} ${concentrationUnit}\nسرعت پمپ: ${pumpRate} cc/hr`;
         if (navigator.share) {
-            navigator.share({ title: 'MedCalc Pro', text }).catch(() => {});
+            navigator.share({ title: 'FoxiMed', text }).catch(() => {});
             haptic(30);
         } else if (navigator.clipboard) {
             navigator.clipboard.writeText(text).then(() => { showToast('کپی شد', 'نتیجه در کلیپ‌بورد کپی شد', 'success'); haptic(20); });
@@ -1964,96 +1964,77 @@ function populateDoseCalcFromDrug() {
 }
 
 // ============================================
-// DRUG QUICK REFERENCE
+// DRUG QUICK REFERENCE — Accordion style
 // ============================================
 function loadDrugLibrary() {
     const container = document.getElementById('drugLibrary');
     if (!container) return;
-    if (container.children.length > 0) {
-        // Already loaded — just wire search if not yet wired
-        wireDrugLibrarySearch();
-        return;
-    }
+    if (container.children.length > 0) { wireDrugLibrarySearch(); return; }
 
     Object.values(drugDatabase).forEach(drug => {
         const doseRange = drug.typicalDoseRange
-            ? `${drug.typicalDoseRange.min}–${drug.typicalDoseRange.max} ${drug.typicalDoseRange.unit}`
+            ? drug.typicalDoseRange.min + '–' + drug.typicalDoseRange.max + ' ' + drug.typicalDoseRange.unit
             : '--';
         const maxConc = drug.maxSafeConcentration || '--';
         const solutions = drug.solutionType.join(' / ');
-        const ampouleLabel = drug.ampouleOptions[0].label;
         const compatible = (drug.ySiteCompatibilities?.compatible || []).slice(0, 5);
         const incompatible = (drug.ySiteCompatibilities?.incompatible || []).slice(0, 5);
 
-        const card = document.createElement('div');
-        card.className = 'qref-card';
-        card.innerHTML = `
-            <div class="qref-header" style="--drug-color:${drug.color}">
-                <div class="qref-icon" style="background: linear-gradient(135deg, ${drug.color}, ${drug.color}99)">
-                    ${renderDrugIcon(drug.icon)}
-                </div>
-                <div class="qref-title-block">
-                    <div class="qref-name">${drug.persianName}</div>
-                    <div class="qref-english">${drug.englishName}</div>
-                    <span class="qref-category">${drug.category}</span>
-                </div>
-                <button class="qref-calc-btn" onclick="selectDrug('${drug.id}'); switchTab('calculator')" title="باز کردن در ماشین حساب">
-                    <i class="fas fa-calculator"></i>
-                    <span class="qref-calc-label">محاسبه</span>
-                </button>
-            </div>
-            <div class="qref-body">
-                <div class="qref-chips">
-                    <div class="qref-chip dose">
-                        <span class="qref-chip-label">دوز معمول</span>
-                        <span class="qref-chip-value">${doseRange}</span>
-                    </div>
-                    <div class="qref-chip conc">
-                        <span class="qref-chip-label">حداکثر غلظت</span>
-                        <span class="qref-chip-value">${maxConc}</span>
-                    </div>
-                    <div class="qref-chip sol">
-                        <span class="qref-chip-label">محلول‌ها</span>
-                        <span class="qref-chip-value">${solutions}</span>
-                    </div>
-                    <div class="qref-chip amp">
-                        <span class="qref-chip-label">آمپول</span>
-                        <span class="qref-chip-value">${ampouleLabel}</span>
-                    </div>
-                </div>
-                <button class="qref-expand-btn" data-drug-id="${drug.id}">
-                    <i class="fas fa-chevron-down"></i>
-                    <span>سازگاری Y-Site و هشدارها</span>
-                </button>
-                <div class="qref-details" id="qref-details-${drug.id}" style="display:none">
-                    <div class="qref-compat-grid">
-                        <div class="qref-compat-col compatible">
-                            <div class="qref-compat-title"><i class="fas fa-check-circle"></i> سازگار</div>
-                            ${compatible.length ? compatible.map(d => `<div class="qref-compat-item">${d}</div>`).join('') : '<div class="qref-compat-item muted">اطلاعات موجود نیست</div>'}
-                        </div>
-                        <div class="qref-compat-col incompatible">
-                            <div class="qref-compat-title"><i class="fas fa-times-circle"></i> ناسازگار</div>
-                            ${incompatible.length ? incompatible.map(d => `<div class="qref-compat-item">${d}</div>`).join('') : '<div class="qref-compat-item muted">اطلاعات موجود نیست</div>'}
-                        </div>
-                    </div>
-                    ${drug.cautions && drug.cautions.length ? `
-                    <div class="qref-warnings">
-                        <div class="qref-warnings-title"><i class="fas fa-exclamation-triangle"></i> هشدارها</div>
-                        ${drug.cautions.slice(0, 3).map(c => `<div class="qref-warning-item">${c}</div>`).join('')}
-                    </div>` : ''}
-                </div>
-            </div>
-        `;
+        // Build ampoule options list
+        const ampoulesHTML = drug.ampouleOptions.map(a =>
+            '<div class="qref-ampoule-item"><i class="fas fa-vial"></i><span>' + a.label + '</span></div>'
+        ).join('');
 
-        container.appendChild(card);
+        const item = document.createElement('div');
+        item.className = 'accordion-item qref-accordion-item';
+        item.style.setProperty('--drug-color', drug.color);
+        item.dataset.drugName = drug.persianName.toLowerCase() + ' ' + drug.englishName.toLowerCase();
+        item.innerHTML =
+            '<button class="accordion-header qref-acc-header" onclick="toggleAccordion(this)">' +
+                '<div class="qref-acc-icon" style="background:linear-gradient(135deg,' + drug.color + ',' + drug.color + '99);--drug-color:' + drug.color + '">' +
+                    renderDrugIcon(drug.icon) +
+                '</div>' +
+                '<div class="accordion-title-wrap">' +
+                    '<span class="accordion-title">' + drug.persianName + '</span>' +
+                    '<span class="accordion-sub">' + drug.englishName + ' — ' + drug.category + '</span>' +
+                '</div>' +
+                '<button class="qref-calc-btn" onclick="event.stopPropagation();selectDrug(\'' + drug.id + '\');switchTab(\'calculator\')" title="باز کردن در ماشین حساب">' +
+                    '<i class="fas fa-calculator"></i>' +
+                    '<span class="qref-calc-label">محاسبه</span>' +
+                '</button>' +
+                '<i class="fas fa-chevron-down accordion-chevron" style="margin-right:4px;"></i>' +
+            '</button>' +
+            '<div class="accordion-body qref-acc-body">' +
+                '<div class="qref-info-grid">' +
+                    '<div class="qref-info-row"><span class="qref-info-label"><i class="fas fa-pills"></i> دوز معمول</span><span class="qref-info-val">' + doseRange + '</span></div>' +
+                    '<div class="qref-info-row"><span class="qref-info-label"><i class="fas fa-flask"></i> حداکثر غلظت</span><span class="qref-info-val">' + maxConc + '</span></div>' +
+                    '<div class="qref-info-row"><span class="qref-info-label"><i class="fas fa-droplet"></i> محلول‌های سازگار</span><span class="qref-info-val">' + solutions + '</span></div>' +
+                '</div>' +
+                '<div class="qref-ampoule-section">' +
+                    '<div class="qref-ampoule-title"><i class="fas fa-syringe"></i> آمپول‌های موجود</div>' +
+                    '<div class="qref-ampoule-list">' + ampoulesHTML + '</div>' +
+                '</div>' +
+                (compatible.length || incompatible.length ? (
+                    '<div class="qref-compat-grid">' +
+                        '<div class="qref-compat-col compatible">' +
+                            '<div class="qref-compat-title"><i class="fas fa-check-circle"></i> سازگار (Y-Site)</div>' +
+                            (compatible.length ? compatible.map(d => '<div class="qref-compat-item">' + d + '</div>').join('') : '<div class="qref-compat-item muted">—</div>') +
+                        '</div>' +
+                        '<div class="qref-compat-col incompatible">' +
+                            '<div class="qref-compat-title"><i class="fas fa-times-circle"></i> ناسازگار</div>' +
+                            (incompatible.length ? incompatible.map(d => '<div class="qref-compat-item">' + d + '</div>').join('') : '<div class="qref-compat-item muted">—</div>') +
+                        '</div>' +
+                    '</div>'
+                ) : '') +
+                (drug.cautions && drug.cautions.length ? (
+                    '<div class="qref-warnings">' +
+                        '<div class="qref-warnings-title"><i class="fas fa-exclamation-triangle"></i> هشدارها</div>' +
+                        drug.cautions.slice(0, 3).map(c => '<div class="qref-warning-item">' + c + '</div>').join('') +
+                    '</div>'
+                ) : '') +
+            '</div>';
 
-        card.querySelector('.qref-expand-btn').addEventListener('click', function() {
-            const details = document.getElementById(`qref-details-${drug.id}`);
-            const icon = this.querySelector('i');
-            const isOpen = details.style.display !== 'none';
-            details.style.display = isOpen ? 'none' : 'block';
-            icon.style.transform = isOpen ? '' : 'rotate(180deg)';
-        });
+        container.appendChild(item);
     });
     wireDrugLibrarySearch();
 }
@@ -2065,10 +2046,8 @@ function wireDrugLibrarySearch() {
     input.dataset.wired = 'true';
     input.addEventListener('input', () => {
         const term = input.value.trim().toLowerCase();
-        container.querySelectorAll('.qref-card').forEach(card => {
-            const text = card.querySelector('.qref-name')?.textContent.toLowerCase() + ' ' +
-                         card.querySelector('.qref-english')?.textContent.toLowerCase();
-            card.style.display = (!term || text.includes(term)) ? '' : 'none';
+        container.querySelectorAll('.qref-accordion-item').forEach(item => {
+            item.style.display = (!term || item.dataset.drugName.includes(term)) ? '' : 'none';
         });
     });
 }
@@ -2344,7 +2323,7 @@ function exportHistory() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `MedCalc-History-${new Date().toISOString().slice(0,10)}.txt`;
+    a.download = `FoxiMed-History-${new Date().toISOString().slice(0,10)}.txt`;
     a.click();
     URL.revokeObjectURL(url);
     showToast('خروجی گرفته شد', `${history.length} محاسبه ذخیره شد`, 'success');
