@@ -1545,6 +1545,10 @@ function switchTab(tabName) {
     });
     AppState.currentTab = tabName;
     if (tabName === 'drugs') loadDrugLibrary();
+    if (tabName === 'tools') {
+        initializeTools();
+        initializeConverters();
+    }
 }
 
 // ============================================
