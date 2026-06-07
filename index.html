@@ -191,35 +191,41 @@
 
                             <div class="control-group">
                                 <label><i class="fas fa-file-medical-alt"></i> دوز درخواستی</label>
-                                <div class="reverse-mode-row">
-                                    <button class="reverse-mode-btn" id="reverseCalcBtn">
-                                        <i class="fas fa-arrow-right-arrow-left"></i>
-                                        <span class="reverse-mode-label">محاسبه معکوس</span>
-                                        <span class="reverse-ios-toggle" id="reverseIosToggle">
-                                            <span class="reverse-ios-knob"></span>
-                                        </span>
-                                    </button>
-                                </div>
                                 <div class="dose-input-enhanced">
                                     <div class="dose-input-wrapper">
                                         <input type="number" id="doctorOrder" placeholder="0" min="0" step="0.1">
                                         <span class="dose-unit-enhanced" id="orderUnit">units/hour</span>
                                     </div>
                                 </div>
-                                <div class="weight-toggle-enhanced" id="weightContainer" style="display: none;">
-                                    <div class="toggle-section">
-                                        <label class="toggle-switch-enhanced" aria-label="محاسبه بر اساس وزن">
-                                            <input type="checkbox" id="weightCheckbox">
-                                            <span class="toggle-slider-enhanced"></span>
-                                        </label>
-                                        <label class="toggle-label" for="weightCheckbox">
-                                            <i class="fas fa-weight-scale"></i>
-                                            <span>محاسبه بر اساس وزن</span>
-                                        </label>
+                                <div class="dose-range-indicator" id="doseRangeIndicator" style="display:none;">
+                                    <span class="dose-range-dot" id="doseRangeDot"></span>
+                                    <span class="dose-range-text" id="doseRangeText"></span>
+                                </div>
+                                <div class="calc-toggles-stack">
+                                    <div class="weight-toggle-enhanced" id="weightContainer" style="display: none;">
+                                        <div class="calc-toggle-row">
+                                            <div class="calc-toggle-label">
+                                                <i class="fas fa-weight-scale"></i>
+                                                <span>محاسبه بر اساس وزن</span>
+                                            </div>
+                                            <label class="toggle-switch-enhanced" aria-label="محاسبه بر اساس وزن">
+                                                <input type="checkbox" id="weightCheckbox">
+                                                <span class="toggle-slider-enhanced"></span>
+                                            </label>
+                                        </div>
+                                        <div class="weight-input-section">
+                                            <input type="number" id="patientWeight" placeholder="وزن بیمار" min="0" step="0.1" inputmode="decimal" disabled>
+                                            <span class="weight-unit latin-inline">kg</span>
+                                        </div>
                                     </div>
-                                    <div class="weight-input-section">
-                                        <input type="number" id="patientWeight" placeholder="0" min="0" step="0.1" inputmode="decimal" disabled>
-                                        <span class="weight-unit latin-inline">kg</span>
+                                    <div class="calc-toggle-row reverse-toggle-row">
+                                        <div class="calc-toggle-label">
+                                            <i class="fas fa-arrow-right-arrow-left"></i>
+                                            <span>محاسبه معکوس</span>
+                                        </div>
+                                        <span class="reverse-ios-toggle" id="reverseIosToggle">
+                                            <span class="reverse-ios-knob"></span>
+                                        </span>
                                     </div>
                                 </div>
                             </div>
