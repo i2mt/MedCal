@@ -530,6 +530,176 @@
                         <!-- BSA -->
                         <div class="accordion-item">
                             <button class="accordion-header" onclick="toggleAccordion(this)">
+                                <div class="accordion-icon-wrap" style="background:linear-gradient(135deg,#6366f1,#8b5cf6)"><i class="fas fa-brain"></i></div>
+                                <div class="accordion-title-wrap">
+                                    <span class="accordion-title">مقیاس کُما گلاسکو</span>
+                                    <span class="accordion-sub">Glasgow Coma Scale — GCS</span>
+                                </div>
+                                <i class="fas fa-chevron-down accordion-chevron"></i>
+                            </button>
+                            <div class="accordion-body" id="gcsAccordionBody">
+
+                                <!-- Eye -->
+                                <div class="gcs-domain">
+                                    <div class="gcs-domain-header">
+                                        <div class="gcs-domain-icon eye"><i class="fas fa-eye"></i></div>
+                                        <div>
+                                            <div class="gcs-domain-title">پاسخ چشمی — Eye Opening (E)</div>
+                                            <div class="gcs-domain-score">امتیاز: <span id="eScore">—</span></div>
+                                        </div>
+                                    </div>
+                                    <div class="gcs-btn-group">
+                                        <button class="gcs-btn" data-domain="eye" data-score="4"><span class="gcs-score-badge">۴</span><span class="gcs-btn-label">خودبخود باز می‌شود</span></button>
+                                        <button class="gcs-btn" data-domain="eye" data-score="3"><span class="gcs-score-badge">۳</span><span class="gcs-btn-label">با صدا باز می‌شود</span></button>
+                                        <button class="gcs-btn" data-domain="eye" data-score="2"><span class="gcs-score-badge">۲</span><span class="gcs-btn-label">با درد باز می‌شود</span></button>
+                                        <button class="gcs-btn" data-domain="eye" data-score="1"><span class="gcs-score-badge">۱</span><span class="gcs-btn-label">هیچ پاسخی ندارد</span></button>
+                                    </div>
+                                </div>
+
+                                <!-- Verbal -->
+                                <div class="gcs-domain">
+                                    <div class="gcs-domain-header">
+                                        <div class="gcs-domain-icon verbal"><i class="fas fa-comment-medical"></i></div>
+                                        <div>
+                                            <div class="gcs-domain-title">پاسخ کلامی — Verbal Response (V)</div>
+                                            <div class="gcs-domain-score">امتیاز: <span id="vScore">—</span></div>
+                                        </div>
+                                    </div>
+                                    <div class="gcs-btn-group">
+                                        <button class="gcs-btn" data-domain="verbal" data-score="5"><span class="gcs-score-badge">۵</span><span class="gcs-btn-label">جواب منطقی می‌دهد</span></button>
+                                        <button class="gcs-btn" data-domain="verbal" data-score="4"><span class="gcs-score-badge">۴</span><span class="gcs-btn-label">گیج و سردرگم</span></button>
+                                        <button class="gcs-btn" data-domain="verbal" data-score="3"><span class="gcs-score-badge">۳</span><span class="gcs-btn-label">کلمات نامناسب</span></button>
+                                        <button class="gcs-btn" data-domain="verbal" data-score="2"><span class="gcs-score-badge">۲</span><span class="gcs-btn-label">صداهای نامفهوم</span></button>
+                                        <button class="gcs-btn" data-domain="verbal" data-score="1"><span class="gcs-score-badge">۱</span><span class="gcs-btn-label">هیچ پاسخی ندارد</span></button>
+                                    </div>
+                                </div>
+
+                                <!-- Motor -->
+                                <div class="gcs-domain">
+                                    <div class="gcs-domain-header">
+                                        <div class="gcs-domain-icon motor"><i class="fas fa-hand-fist"></i></div>
+                                        <div>
+                                            <div class="gcs-domain-title">پاسخ حرکتی — Motor Response (M)</div>
+                                            <div class="gcs-domain-score">امتیاز: <span id="mScore">—</span></div>
+                                        </div>
+                                    </div>
+                                    <div class="gcs-btn-group">
+                                        <button class="gcs-btn" data-domain="motor" data-score="6"><span class="gcs-score-badge">۶</span><span class="gcs-btn-label">از دستورات پیروی می‌کند</span></button>
+                                        <button class="gcs-btn" data-domain="motor" data-score="5"><span class="gcs-score-badge">۵</span><span class="gcs-btn-label">محل درد را پیدا می‌کند</span></button>
+                                        <button class="gcs-btn" data-domain="motor" data-score="4"><span class="gcs-score-badge">۴</span><span class="gcs-btn-label">از درد فرار می‌کند</span></button>
+                                        <button class="gcs-btn" data-domain="motor" data-score="3"><span class="gcs-score-badge">۳</span><span class="gcs-btn-label">دکوریکاسیون (فلکشن)</span></button>
+                                        <button class="gcs-btn" data-domain="motor" data-score="2"><span class="gcs-score-badge">۲</span><span class="gcs-btn-label">دسربراسیون (اکستنشن)</span></button>
+                                        <button class="gcs-btn" data-domain="motor" data-score="1"><span class="gcs-score-badge">۱</span><span class="gcs-btn-label">هیچ پاسخی ندارد</span></button>
+                                    </div>
+                                </div>
+
+                                <!-- GCS Result -->
+                                <div class="gcs-result-box" id="gcsResultBox" style="display:none;">
+                                    <div class="gcs-total-row">
+                                        <div class="gcs-total-label">امتیاز کل GCS</div>
+                                        <div class="gcs-total-score" id="gcsTotalScore">—</div>
+                                        <div class="gcs-total-formula" id="gcsTotalFormula"></div>
+                                    </div>
+                                    <div class="gcs-severity-badge" id="gcsSeverityBadge"></div>
+                                    <div class="gcs-notes" id="gcsNotes"></div>
+                                    <button class="gcs-reset-btn" id="gcsResetBtn"><i class="fas fa-rotate-right"></i> شروع مجدد</button>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <!-- Burns TBSA -->
+                        <div class="accordion-item">
+                            <button class="accordion-header" onclick="toggleAccordion(this)">
+                                <div class="accordion-icon-wrap" style="background:linear-gradient(135deg,#f97316,#ef4444)"><i class="fas fa-fire"></i></div>
+                                <div class="accordion-title-wrap">
+                                    <span class="accordion-title">درصد سطح سوختگی</span>
+                                    <span class="accordion-sub">Total Body Surface Area — TBSA</span>
+                                </div>
+                                <i class="fas fa-chevron-down accordion-chevron"></i>
+                            </button>
+                            <div class="accordion-body">
+
+                                <div class="burns-age-toggle">
+                                    <button class="burns-age-btn active" id="burnsAdultBtn" onclick="setBurnsAge('adult')"><i class="fas fa-person"></i> بزرگسال</button>
+                                    <button class="burns-age-btn" id="burnsPedBtn" onclick="setBurnsAge('pediatric')"><i class="fas fa-child"></i> کودک</button>
+                                </div>
+                                <p class="burns-rule-note" id="burnsRuleNote">قانون نُه — بزرگسال</p>
+
+                                <div class="burns-body-wrap">
+                                    <div class="burns-body-view">
+                                        <div class="burns-view-label">جلو</div>
+                                        <svg class="burns-svg" viewBox="0 0 120 260" id="burnsSvgFront">
+                                            <ellipse cx="60" cy="22" rx="18" ry="20" class="burns-region" data-region="head" data-label="سر"/>
+                                            <rect x="53" y="42" width="14" height="10" rx="4" class="burns-region" data-region="neck" data-label="گردن"/>
+                                            <rect x="34" y="54" width="52" height="36" rx="6" class="burns-region" data-region="chest" data-label="قفسه سینه (جلو)"/>
+                                            <rect x="36" y="92" width="48" height="34" rx="6" class="burns-region" data-region="abdomen" data-label="شکم (جلو)"/>
+                                            <rect x="46" y="128" width="28" height="14" rx="5" class="burns-region" data-region="perineum" data-label="پرینه"/>
+                                            <rect x="14" y="56" width="18" height="32" rx="7" class="burns-region" data-region="l_upper_arm" data-label="بازوی چپ"/>
+                                            <rect x="88" y="56" width="18" height="32" rx="7" class="burns-region" data-region="r_upper_arm" data-label="بازوی راست"/>
+                                            <rect x="8" y="90" width="15" height="26" rx="6" class="burns-region" data-region="l_lower_arm" data-label="ساعد چپ"/>
+                                            <rect x="97" y="90" width="15" height="26" rx="6" class="burns-region" data-region="r_lower_arm" data-label="ساعد راست"/>
+                                            <ellipse cx="15" cy="127" rx="8" ry="10" class="burns-region" data-region="l_hand" data-label="دست چپ"/>
+                                            <ellipse cx="105" cy="127" rx="8" ry="10" class="burns-region" data-region="r_hand" data-label="دست راست"/>
+                                            <rect x="34" y="144" width="22" height="36" rx="7" class="burns-region" data-region="l_thigh_f" data-label="ران چپ (جلو)"/>
+                                            <rect x="64" y="144" width="22" height="36" rx="7" class="burns-region" data-region="r_thigh_f" data-label="ران راست (جلو)"/>
+                                            <rect x="35" y="182" width="20" height="36" rx="6" class="burns-region" data-region="l_leg_f" data-label="ساق چپ (جلو)"/>
+                                            <rect x="65" y="182" width="20" height="36" rx="6" class="burns-region" data-region="r_leg_f" data-label="ساق راست (جلو)"/>
+                                            <ellipse cx="45" cy="225" rx="12" ry="8" class="burns-region" data-region="l_foot" data-label="پای چپ"/>
+                                            <ellipse cx="75" cy="225" rx="12" ry="8" class="burns-region" data-region="r_foot" data-label="پای راست"/>
+                                        </svg>
+                                    </div>
+                                    <div class="burns-body-view">
+                                        <div class="burns-view-label">پشت</div>
+                                        <svg class="burns-svg" viewBox="0 0 120 260" id="burnsSvgBack">
+                                            <ellipse cx="60" cy="22" rx="18" ry="20" class="burns-region" data-region="head_b" data-label="سر (پشت)"/>
+                                            <rect x="34" y="54" width="52" height="36" rx="6" class="burns-region" data-region="upper_back" data-label="کمربند شانه (پشت)"/>
+                                            <rect x="36" y="92" width="48" height="34" rx="6" class="burns-region" data-region="lower_back" data-label="کمر (پشت)"/>
+                                            <rect x="38" y="128" width="44" height="18" rx="6" class="burns-region" data-region="buttocks" data-label="باسن"/>
+                                            <rect x="14" y="56" width="18" height="32" rx="7" class="burns-region" data-region="l_upper_arm_b" data-label="بازوی چپ (پشت)"/>
+                                            <rect x="88" y="56" width="18" height="32" rx="7" class="burns-region" data-region="r_upper_arm_b" data-label="بازوی راست (پشت)"/>
+                                            <rect x="8" y="90" width="15" height="26" rx="6" class="burns-region" data-region="l_lower_arm_b" data-label="ساعد چپ (پشت)"/>
+                                            <rect x="97" y="90" width="15" height="26" rx="6" class="burns-region" data-region="r_lower_arm_b" data-label="ساعد راست (پشت)"/>
+                                            <rect x="34" y="148" width="22" height="36" rx="7" class="burns-region" data-region="l_thigh_b" data-label="ران چپ (پشت)"/>
+                                            <rect x="64" y="148" width="22" height="36" rx="7" class="burns-region" data-region="r_thigh_b" data-label="ران راست (پشت)"/>
+                                            <rect x="35" y="186" width="20" height="36" rx="6" class="burns-region" data-region="l_leg_b" data-label="ساق چپ (پشت)"/>
+                                            <rect x="65" y="186" width="20" height="36" rx="6" class="burns-region" data-region="r_leg_b" data-label="ساق راست (پشت)"/>
+                                        </svg>
+                                    </div>
+                                </div>
+
+                                <div class="burns-selected-chips" id="burnsChips">
+                                    <span class="burns-chips-placeholder">هیچ ناحیه‌ای انتخاب نشده — روی نواحی بدن ضربه بزنید</span>
+                                </div>
+
+                                <div class="burns-result-box" id="burnsResultBox" style="display:none;">
+                                    <div class="burns-result-row">
+                                        <span class="burns-result-label">درصد کل سوختگی (TBSA)</span>
+                                        <span class="burns-result-value" id="burnsTBSA">0%</span>
+                                    </div>
+                                    <div class="burns-parkland-weight">
+                                        <label style="font-family:var(--font-persian);font-size:12px;color:var(--text-secondary);display:block;margin-bottom:4px;">وزن بیمار برای محاسبه Parkland</label>
+                                        <div class="input-with-unit">
+                                            <input type="number" id="burnsWeight" placeholder="وزن" inputmode="decimal" step="0.1" oninput="updateParkland()">
+                                            <span class="input-unit">kg</span>
+                                        </div>
+                                    </div>
+                                    <div class="burns-result-row" id="parklandRow" style="display:none;">
+                                        <span class="burns-result-label" id="parklandLabel">مایع Parkland 24h</span>
+                                        <span class="burns-result-value" id="parklandResult">—</span>
+                                    </div>
+                                    <div class="burns-notes" id="burnsNotes"></div>
+                                </div>
+
+                                <button class="tool-btn" onclick="resetBurns()" style="margin-top:8px;background:var(--surface-elevated);color:var(--text-secondary);border:1px solid var(--border);box-shadow:none;">
+                                    <i class="fas fa-rotate-right"></i> پاک کردن انتخاب‌ها
+                                </button>
+
+                            </div>
+                        </div>
+
+                        <div class="accordion-item">
+                            <button class="accordion-header" onclick="toggleAccordion(this)">
                                 <div class="accordion-icon-wrap" style="background:linear-gradient(135deg,#4facfe,#00f2fe)"><i class="fas fa-ruler-combined"></i></div>
                                 <div class="accordion-title-wrap">
                                     <span class="accordion-title">سطح بدن</span>
@@ -741,176 +911,6 @@
                         </div>
 
                         <!-- GCS -->
-                        <div class="accordion-item">
-                            <button class="accordion-header" onclick="toggleAccordion(this)">
-                                <div class="accordion-icon-wrap" style="background:linear-gradient(135deg,#6366f1,#8b5cf6)"><i class="fas fa-brain"></i></div>
-                                <div class="accordion-title-wrap">
-                                    <span class="accordion-title">مقیاس کُما گلاسکو</span>
-                                    <span class="accordion-sub">Glasgow Coma Scale — GCS</span>
-                                </div>
-                                <i class="fas fa-chevron-down accordion-chevron"></i>
-                            </button>
-                            <div class="accordion-body" id="gcsAccordionBody">
-
-                                <!-- Eye -->
-                                <div class="gcs-domain">
-                                    <div class="gcs-domain-header">
-                                        <div class="gcs-domain-icon eye"><i class="fas fa-eye"></i></div>
-                                        <div>
-                                            <div class="gcs-domain-title">پاسخ چشمی — Eye Opening (E)</div>
-                                            <div class="gcs-domain-score">امتیاز: <span id="eScore">—</span></div>
-                                        </div>
-                                    </div>
-                                    <div class="gcs-btn-group">
-                                        <button class="gcs-btn" data-domain="eye" data-score="4"><span class="gcs-score-badge">۴</span><span class="gcs-btn-label">خودبخود باز می‌شود</span></button>
-                                        <button class="gcs-btn" data-domain="eye" data-score="3"><span class="gcs-score-badge">۳</span><span class="gcs-btn-label">با صدا باز می‌شود</span></button>
-                                        <button class="gcs-btn" data-domain="eye" data-score="2"><span class="gcs-score-badge">۲</span><span class="gcs-btn-label">با درد باز می‌شود</span></button>
-                                        <button class="gcs-btn" data-domain="eye" data-score="1"><span class="gcs-score-badge">۱</span><span class="gcs-btn-label">هیچ پاسخی ندارد</span></button>
-                                    </div>
-                                </div>
-
-                                <!-- Verbal -->
-                                <div class="gcs-domain">
-                                    <div class="gcs-domain-header">
-                                        <div class="gcs-domain-icon verbal"><i class="fas fa-comment-medical"></i></div>
-                                        <div>
-                                            <div class="gcs-domain-title">پاسخ کلامی — Verbal Response (V)</div>
-                                            <div class="gcs-domain-score">امتیاز: <span id="vScore">—</span></div>
-                                        </div>
-                                    </div>
-                                    <div class="gcs-btn-group">
-                                        <button class="gcs-btn" data-domain="verbal" data-score="5"><span class="gcs-score-badge">۵</span><span class="gcs-btn-label">جواب منطقی می‌دهد</span></button>
-                                        <button class="gcs-btn" data-domain="verbal" data-score="4"><span class="gcs-score-badge">۴</span><span class="gcs-btn-label">گیج و سردرگم</span></button>
-                                        <button class="gcs-btn" data-domain="verbal" data-score="3"><span class="gcs-score-badge">۳</span><span class="gcs-btn-label">کلمات نامناسب</span></button>
-                                        <button class="gcs-btn" data-domain="verbal" data-score="2"><span class="gcs-score-badge">۲</span><span class="gcs-btn-label">صداهای نامفهوم</span></button>
-                                        <button class="gcs-btn" data-domain="verbal" data-score="1"><span class="gcs-score-badge">۱</span><span class="gcs-btn-label">هیچ پاسخی ندارد</span></button>
-                                    </div>
-                                </div>
-
-                                <!-- Motor -->
-                                <div class="gcs-domain">
-                                    <div class="gcs-domain-header">
-                                        <div class="gcs-domain-icon motor"><i class="fas fa-hand-fist"></i></div>
-                                        <div>
-                                            <div class="gcs-domain-title">پاسخ حرکتی — Motor Response (M)</div>
-                                            <div class="gcs-domain-score">امتیاز: <span id="mScore">—</span></div>
-                                        </div>
-                                    </div>
-                                    <div class="gcs-btn-group">
-                                        <button class="gcs-btn" data-domain="motor" data-score="6"><span class="gcs-score-badge">۶</span><span class="gcs-btn-label">از دستورات پیروی می‌کند</span></button>
-                                        <button class="gcs-btn" data-domain="motor" data-score="5"><span class="gcs-score-badge">۵</span><span class="gcs-btn-label">محل درد را پیدا می‌کند</span></button>
-                                        <button class="gcs-btn" data-domain="motor" data-score="4"><span class="gcs-score-badge">۴</span><span class="gcs-btn-label">از درد فرار می‌کند</span></button>
-                                        <button class="gcs-btn" data-domain="motor" data-score="3"><span class="gcs-score-badge">۳</span><span class="gcs-btn-label">دکوریکاسیون (فلکشن)</span></button>
-                                        <button class="gcs-btn" data-domain="motor" data-score="2"><span class="gcs-score-badge">۲</span><span class="gcs-btn-label">دسربراسیون (اکستنشن)</span></button>
-                                        <button class="gcs-btn" data-domain="motor" data-score="1"><span class="gcs-score-badge">۱</span><span class="gcs-btn-label">هیچ پاسخی ندارد</span></button>
-                                    </div>
-                                </div>
-
-                                <!-- GCS Result -->
-                                <div class="gcs-result-box" id="gcsResultBox" style="display:none;">
-                                    <div class="gcs-total-row">
-                                        <div class="gcs-total-label">امتیاز کل GCS</div>
-                                        <div class="gcs-total-score" id="gcsTotalScore">—</div>
-                                        <div class="gcs-total-formula" id="gcsTotalFormula"></div>
-                                    </div>
-                                    <div class="gcs-severity-badge" id="gcsSeverityBadge"></div>
-                                    <div class="gcs-notes" id="gcsNotes"></div>
-                                    <button class="gcs-reset-btn" id="gcsResetBtn"><i class="fas fa-rotate-right"></i> شروع مجدد</button>
-                                </div>
-
-                            </div>
-                        </div>
-
-                        <!-- Burns TBSA -->
-                        <div class="accordion-item">
-                            <button class="accordion-header" onclick="toggleAccordion(this)">
-                                <div class="accordion-icon-wrap" style="background:linear-gradient(135deg,#f97316,#ef4444)"><i class="fas fa-fire"></i></div>
-                                <div class="accordion-title-wrap">
-                                    <span class="accordion-title">درصد سطح سوختگی</span>
-                                    <span class="accordion-sub">Total Body Surface Area — TBSA</span>
-                                </div>
-                                <i class="fas fa-chevron-down accordion-chevron"></i>
-                            </button>
-                            <div class="accordion-body">
-
-                                <div class="burns-age-toggle">
-                                    <button class="burns-age-btn active" id="burnsAdultBtn" onclick="setBurnsAge('adult')"><i class="fas fa-person"></i> بزرگسال</button>
-                                    <button class="burns-age-btn" id="burnsPedBtn" onclick="setBurnsAge('pediatric')"><i class="fas fa-child"></i> کودک</button>
-                                </div>
-                                <p class="burns-rule-note" id="burnsRuleNote">قانون نُه — بزرگسال</p>
-
-                                <div class="burns-body-wrap">
-                                    <div class="burns-body-view">
-                                        <div class="burns-view-label">جلو</div>
-                                        <svg class="burns-svg" viewBox="0 0 120 260" id="burnsSvgFront">
-                                            <ellipse cx="60" cy="22" rx="18" ry="20" class="burns-region" data-region="head" data-label="سر"/>
-                                            <rect x="53" y="42" width="14" height="10" rx="4" class="burns-region" data-region="neck" data-label="گردن"/>
-                                            <rect x="34" y="54" width="52" height="36" rx="6" class="burns-region" data-region="chest" data-label="قفسه سینه (جلو)"/>
-                                            <rect x="36" y="92" width="48" height="34" rx="6" class="burns-region" data-region="abdomen" data-label="شکم (جلو)"/>
-                                            <rect x="46" y="128" width="28" height="14" rx="5" class="burns-region" data-region="perineum" data-label="پرینه"/>
-                                            <rect x="14" y="56" width="18" height="32" rx="7" class="burns-region" data-region="l_upper_arm" data-label="بازوی چپ"/>
-                                            <rect x="88" y="56" width="18" height="32" rx="7" class="burns-region" data-region="r_upper_arm" data-label="بازوی راست"/>
-                                            <rect x="8" y="90" width="15" height="26" rx="6" class="burns-region" data-region="l_lower_arm" data-label="ساعد چپ"/>
-                                            <rect x="97" y="90" width="15" height="26" rx="6" class="burns-region" data-region="r_lower_arm" data-label="ساعد راست"/>
-                                            <ellipse cx="15" cy="127" rx="8" ry="10" class="burns-region" data-region="l_hand" data-label="دست چپ"/>
-                                            <ellipse cx="105" cy="127" rx="8" ry="10" class="burns-region" data-region="r_hand" data-label="دست راست"/>
-                                            <rect x="34" y="144" width="22" height="36" rx="7" class="burns-region" data-region="l_thigh_f" data-label="ران چپ (جلو)"/>
-                                            <rect x="64" y="144" width="22" height="36" rx="7" class="burns-region" data-region="r_thigh_f" data-label="ران راست (جلو)"/>
-                                            <rect x="35" y="182" width="20" height="36" rx="6" class="burns-region" data-region="l_leg_f" data-label="ساق چپ (جلو)"/>
-                                            <rect x="65" y="182" width="20" height="36" rx="6" class="burns-region" data-region="r_leg_f" data-label="ساق راست (جلو)"/>
-                                            <ellipse cx="45" cy="225" rx="12" ry="8" class="burns-region" data-region="l_foot" data-label="پای چپ"/>
-                                            <ellipse cx="75" cy="225" rx="12" ry="8" class="burns-region" data-region="r_foot" data-label="پای راست"/>
-                                        </svg>
-                                    </div>
-                                    <div class="burns-body-view">
-                                        <div class="burns-view-label">پشت</div>
-                                        <svg class="burns-svg" viewBox="0 0 120 260" id="burnsSvgBack">
-                                            <ellipse cx="60" cy="22" rx="18" ry="20" class="burns-region" data-region="head_b" data-label="سر (پشت)"/>
-                                            <rect x="34" y="54" width="52" height="36" rx="6" class="burns-region" data-region="upper_back" data-label="کمربند شانه (پشت)"/>
-                                            <rect x="36" y="92" width="48" height="34" rx="6" class="burns-region" data-region="lower_back" data-label="کمر (پشت)"/>
-                                            <rect x="38" y="128" width="44" height="18" rx="6" class="burns-region" data-region="buttocks" data-label="باسن"/>
-                                            <rect x="14" y="56" width="18" height="32" rx="7" class="burns-region" data-region="l_upper_arm_b" data-label="بازوی چپ (پشت)"/>
-                                            <rect x="88" y="56" width="18" height="32" rx="7" class="burns-region" data-region="r_upper_arm_b" data-label="بازوی راست (پشت)"/>
-                                            <rect x="8" y="90" width="15" height="26" rx="6" class="burns-region" data-region="l_lower_arm_b" data-label="ساعد چپ (پشت)"/>
-                                            <rect x="97" y="90" width="15" height="26" rx="6" class="burns-region" data-region="r_lower_arm_b" data-label="ساعد راست (پشت)"/>
-                                            <rect x="34" y="148" width="22" height="36" rx="7" class="burns-region" data-region="l_thigh_b" data-label="ران چپ (پشت)"/>
-                                            <rect x="64" y="148" width="22" height="36" rx="7" class="burns-region" data-region="r_thigh_b" data-label="ران راست (پشت)"/>
-                                            <rect x="35" y="186" width="20" height="36" rx="6" class="burns-region" data-region="l_leg_b" data-label="ساق چپ (پشت)"/>
-                                            <rect x="65" y="186" width="20" height="36" rx="6" class="burns-region" data-region="r_leg_b" data-label="ساق راست (پشت)"/>
-                                        </svg>
-                                    </div>
-                                </div>
-
-                                <div class="burns-selected-chips" id="burnsChips">
-                                    <span class="burns-chips-placeholder">هیچ ناحیه‌ای انتخاب نشده — روی نواحی بدن ضربه بزنید</span>
-                                </div>
-
-                                <div class="burns-result-box" id="burnsResultBox" style="display:none;">
-                                    <div class="burns-result-row">
-                                        <span class="burns-result-label">درصد کل سوختگی (TBSA)</span>
-                                        <span class="burns-result-value" id="burnsTBSA">0%</span>
-                                    </div>
-                                    <div class="burns-parkland-weight">
-                                        <label style="font-family:var(--font-persian);font-size:12px;color:var(--text-secondary);display:block;margin-bottom:4px;">وزن بیمار برای محاسبه Parkland</label>
-                                        <div class="input-with-unit">
-                                            <input type="number" id="burnsWeight" placeholder="وزن" inputmode="decimal" step="0.1" oninput="updateParkland()">
-                                            <span class="input-unit">kg</span>
-                                        </div>
-                                    </div>
-                                    <div class="burns-result-row" id="parklandRow" style="display:none;">
-                                        <span class="burns-result-label" id="parklandLabel">مایع Parkland 24h</span>
-                                        <span class="burns-result-value" id="parklandResult">—</span>
-                                    </div>
-                                    <div class="burns-notes" id="burnsNotes"></div>
-                                </div>
-
-                                <button class="tool-btn" onclick="resetBurns()" style="margin-top:8px;background:var(--surface-elevated);color:var(--text-secondary);border:1px solid var(--border);box-shadow:none;">
-                                    <i class="fas fa-rotate-right"></i> پاک کردن انتخاب‌ها
-                                </button>
-
-                            </div>
-                        </div>
-
                     </div>
                 </div>
             </div>
