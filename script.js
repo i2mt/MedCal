@@ -1609,6 +1609,9 @@ function loadTheme() {
     const icon = DOM.themeToggle?.querySelector('i');
     if (icon) icon.className = AppState.theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
     fixVolumeButtonColors();
+    // Apply colour theme AFTER dark mode class is set so correct palette is used
+    const savedColor = AppState.settings.colorTheme || 'default';
+    if (savedColor !== 'default') applyTheme(savedColor);
 }
 
 // ============================================
@@ -2611,8 +2614,15 @@ function applyTheme(themeName) {
     const palette = THEMES[themeName] || THEMES.default;
     const vars = isDark ? palette.dark : palette.light;
     const root = document.documentElement;
-    Object.entries(vars).forEach(([k, v]) => root.style.setProperty(k, v));
-    // Update theme-color meta to match new primary
+    // Clear any previously set theme vars first
+    const allVars = ['--primary','--primary-dark','--primary-light','--gradient-primary','--secondary'];
+    if (themeName === 'default') {
+        // Remove overrides so CSS file defaults take over
+        allVars.forEach(k => root.style.removeProperty(k));
+    } else {
+        Object.entries(vars).forEach(([k, v]) => root.style.setProperty(k, v));
+    }
+    // Update theme-color meta
     const meta = document.getElementById('themeColorMeta');
     if (meta) meta.content = isDark ? '#1f2937' : '#ffffff';
     // Mark active swatch
@@ -2630,13 +2640,9 @@ function setupThemePicker() {
             applyTheme(btn.dataset.theme);
         });
     });
-    // Apply saved theme on load
+    // Always apply the saved theme (including default) so dark mode variables are correct
     const saved = AppState.settings.colorTheme || 'default';
-    if (saved !== 'default') applyTheme(saved);
-    // Mark the active swatch
-    document.querySelectorAll('.theme-swatch').forEach(s => {
-        s.classList.toggle('active', s.dataset.theme === saved);
-    });
+    applyTheme(saved);
 }
 
 // ============================================
