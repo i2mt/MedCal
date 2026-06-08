@@ -396,8 +396,6 @@ function setupMobileNumericKeyboard() {
 // ============================================
 function haptic(ms) {
     if (!AppState.settings.hapticFeedback) return;
-    // navigator.vibrate is Android-only; iOS Safari does not support it.
-    // On iOS, the only haptic available from a web page is via native app bridges (e.g. Capacitor).
     try { if (navigator.vibrate) navigator.vibrate(ms || 30); } catch(e) {}
 }
 
