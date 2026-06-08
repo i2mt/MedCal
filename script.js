@@ -396,6 +396,8 @@ function setupMobileNumericKeyboard() {
 // ============================================
 function haptic(ms) {
     if (!AppState.settings.hapticFeedback) return;
+    // navigator.vibrate is Android-only; iOS Safari does not support it.
+    // On iOS, the only haptic available from a web page is via native app bridges (e.g. Capacitor).
     try { if (navigator.vibrate) navigator.vibrate(ms || 30); } catch(e) {}
 }
 
@@ -691,6 +693,7 @@ function initializeApp() {
     setupGCS();
     setupBurns();
     setupThemePicker();
+    setupUpdateDetection();
 }
 
 function setupMobileOptimizations() {
@@ -1333,7 +1336,25 @@ function setupSettingsEventListeners() {
         if (this.checked) haptic(40);
     });
     if (DOM.exportDataBtn) DOM.exportDataBtn.addEventListener('click', exportHistory);
-    if (DOM.checkUpdateBtn) DOM.checkUpdateBtn.addEventListener('click', function() { showToast('بررسی به‌روزرسانی', 'نسخه فعلی 2.1.0 آخرین نسخه موجود است.', 'info'); });
+    if (DOM.checkUpdateBtn) DOM.checkUpdateBtn.addEventListener('click', async function() {
+        this.disabled = true;
+        const origHTML = this.innerHTML;
+        this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> در حال بررسی...';
+        try {
+            const reg = await navigator.serviceWorker.getRegistration();
+            if (reg) {
+                await reg.update();
+                if (reg.waiting) {
+                    showUpdateBanner();
+                } else {
+                    showToast('بروز است', 'شما آخرین نسخه FoxiMed را دارید', 'success');
+                }
+            }
+        } catch(e) {
+            showToast('خطا', 'بررسی به‌روزرسانی ممکن نشد', 'error');
+        }
+        setTimeout(() => { this.disabled = false; this.innerHTML = origHTML; }, 1500);
+    });
 }
 
 // ============================================
@@ -2518,6 +2539,71 @@ function setupOnboarding() {
 
 
 // ============================================
+// UPDATE AVAILABLE BANNER
+// ============================================
+let _pendingWorker = null;
+
+function showUpdateBanner() {
+    if (document.getElementById('updateBanner')) return;
+    const banner = document.createElement('div');
+    banner.id = 'updateBanner';
+    banner.className = 'update-banner';
+    banner.innerHTML =
+        '<div class="update-banner-icon"><i class="fas fa-rocket"></i></div>' +
+        '<div class="update-banner-text">' +
+            '<div class="update-banner-title">نسخه جدید FoxiMed آماده است</div>' +
+            '<div class="update-banner-sub">برای دریافت آخرین تغییرات بروزرسانی کنید</div>' +
+        '</div>' +
+        '<button class="update-banner-btn" id="doUpdateBtn"><i class="fas fa-download"></i> بروزرسانی</button>' +
+        '<button class="update-banner-dismiss" id="dismissBannerBtn"><i class="fas fa-times"></i></button>';
+    document.body.appendChild(banner);
+    haptic(40);
+
+    document.getElementById('doUpdateBtn').addEventListener('click', () => {
+        if (_pendingWorker) {
+            _pendingWorker.postMessage({ type: 'SKIP_WAITING' });
+        } else {
+            window.location.reload();
+        }
+    });
+    document.getElementById('dismissBannerBtn').addEventListener('click', () => {
+        banner.style.animation = 'none';
+        banner.style.opacity = '0';
+        banner.style.transform = 'translateY(-10px) scale(0.96)';
+        banner.style.transition = 'all 0.25s ease';
+        setTimeout(() => banner.remove(), 260);
+    });
+}
+
+function setupUpdateDetection() {
+    if (!('serviceWorker' in navigator)) return;
+
+    navigator.serviceWorker.ready.then(reg => {
+        // Check if there's already a waiting worker
+        if (reg.waiting) {
+            _pendingWorker = reg.waiting;
+            showUpdateBanner();
+        }
+        // Listen for new worker installing
+        reg.addEventListener('updatefound', () => {
+            const newWorker = reg.installing;
+            if (!newWorker) return;
+            newWorker.addEventListener('statechange', () => {
+                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                    _pendingWorker = newWorker;
+                    showUpdateBanner();
+                }
+            });
+        });
+    });
+
+    // When the new SW takes control, reload cleanly
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+        setTimeout(() => window.location.reload(), 300);
+    });
+}
+
+// ============================================
 // THEME COLOR SYSTEM
 // ============================================
 const THEMES = {
@@ -3018,6 +3104,7 @@ window.PersianNumbers = PersianNumbers;
 window.exportHistory = exportHistory;
 window.toggleAccordion = toggleAccordion;
 window.applyTheme = applyTheme;
+window.showUpdateBanner = showUpdateBanner;
 window.toggleAccordionById = toggleAccordionById;
 window.setBurnsAge = setBurnsAge;
 window.resetBurns = resetBurns;
